@@ -4,23 +4,50 @@
   --font-sans: 'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, system-ui, 'Apple SD Gothic Neo',
     'Noto Sans KR', 'Malgun Gothic', sans-serif;
 
-  /* 브랜드 초록 */
+  /*
+   * 브랜드 초록. 50~300 은 옅은 바탕·테두리용, 400 이상은 글자·채움용입니다.
+   * 접근성(WCAG AA) 대비 기준에 맞춰 400 이상은 흰 바탕과 4.5:1 이상이 되게 잡았습니다.
+   *   400: 흰 글자를 올리는 채움(선택된 칩·탭, 주 버튼)  흰 글자 대비 4.6:1
+   *   500: 채움의 hover, 포커스 테두리                    5.4:1
+   *   600: 초록 글자(경쟁률, 링크)                        흰 바탕 5.8:1, brand-50 바탕 5.4:1
+   * 400 채움 위에 진한 글자를 올리면 대비가 부족하니, 채움 위 글자는 흰색으로 씁니다.
+   */
   --color-brand-50: #eefbf2;
   --color-brand-100: #d6f5df;
   --color-brand-200: #b0eac3;
   --color-brand-300: #7fdb9f;
-  --color-brand-400: #5ccf84;
-  --color-brand-500: #34c26b;
-  --color-brand-600: #25a257;
-  --color-brand-700: #1f8047;
-  --color-brand-800: #1d653c;
-  --color-brand-900: #1a5333;
+  --color-brand-400: #16873f;
+  --color-brand-500: #147a3b;
+  --color-brand-600: #137539;
+  --color-brand-700: #116c35;
+  --color-brand-800: #0f5f2f;
+  --color-brand-900: #0d5028;
+
+  /*
+   * 보조 글자 회색. Tailwind 기본 gray-400(#99a1af)은 흰 바탕 대비 2.6:1 이라 글자로 쓰기엔 흐려서,
+   * 흰색·gray-50·canvas 바탕 모두에서 4.5:1 이상인 값으로 바꿉니다. (placeholder·아이콘도 함께 또렷해짐)
+   */
+  --color-gray-400: #6b7280;
 
   /* 페이지 배경 */
   --color-canvas: #f6f7f9;
 }
 
 @layer base {
+  :root {
+    /*
+     * 화면 위에 고정되는 헤더 줄의 높이 (Layout.tsx: 모바일 h-14, md 이상 h-18 + 아래 테두리 1px).
+     * 태블릿·모바일의 메뉴·검색 줄은 고정하지 않으므로 포함하지 않습니다.
+     * 고정 헤더 아래에 맞춰 높이·스크롤 위치를 잡을 때 씁니다.
+     *   예) h-[calc(100dvh-var(--header-h)-32px)], scroll-mt-[calc(var(--header-h)+16px)], top-[calc(var(--header-h)+24px)]
+     */
+    --header-h: 57px;
+  }
+  @media (width >= 48rem) {
+    :root {
+      --header-h: 73px;
+    }
+  }
   html {
     -webkit-text-size-adjust: 100%;
   }

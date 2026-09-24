@@ -15,10 +15,15 @@ export interface University {
   type: FoundType
   /** 캠퍼스 표기 (예: '서울캠퍼스'). 없으면 생략 */
   campus?: string
-  /** 입학처 홈페이지 */
+  /** 대학 대표 홈페이지 (입학처 주소가 아님) */
   homepage?: string
-  /** public/data/univ/{id}.json 에 경쟁률 데이터가 있는지 */
+  /** 경쟁률 데이터가 있는지 ('경쟁률 제공' 배지·추세·학과 검색 기준) */
   hasData: boolean
+  /**
+   * public/data/univ/{id}.json 파일이 있는지 (경쟁률·모집요강·자료실·소식 중 하나라도 있으면 true).
+   * 예전 데이터처럼 이 값이 없으면 hasData 로 판단합니다.
+   */
+  hasDetail?: boolean
 }
 
 /** 전형 유형(대분류) */

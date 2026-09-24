@@ -4,29 +4,35 @@ export function cx(...c: (string | false | null | undefined)[]) {
   return c.filter(Boolean).join(' ')
 }
 
-/** 필터·탭에 쓰는 알약 모양 버튼 */
+const CHIP_SIZE = {
+  md: 'px-4 py-2 text-[15px]',
+  sm: 'px-3 py-1.5 text-[14px]',
+}
+
+/**
+ * 필터·탭에 쓰는 알약 모양 버튼. (모바일에서는 누르기 쉽게 높이 40px 이상)
+ * 크기는 size 로 바꿉니다. (className 으로 px·text 를 덧붙이면 기본값과 겹쳐 적용되지 않을 수 있음)
+ */
 export function Chip({
   active,
+  size = 'md',
   className,
   ...props
-}: ButtonHTMLAttributes<HTMLButtonElement> & { active?: boolean }) {
+}: ButtonHTMLAttributes<HTMLButtonElement> & { active?: boolean; size?: keyof typeof CHIP_SIZE }) {
   return (
     <button
       type="button"
       aria-pressed={active}
       className={cx(
-        'shrink-0 rounded-full px-4 py-2 text-[15px] font-medium transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-500',
+        // 모바일에서는 손가락으로 누르기 쉽게 높이 40px 이상
+        'shrink-0 rounded-full font-medium transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-500 max-md:min-h-10',
+        CHIP_SIZE[size],
         active ? 'bg-brand-400 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200',
         className,
       )}
       {...props}
     />
   )
-}
-
-/** 흰 배경 카드 */
-export function Card({ className, children }: { className?: string; children: ReactNode }) {
-  return <div className={cx('rounded-2xl bg-white', className)}>{children}</div>
 }
 
 export function Loading({ label = '불러오는 중…' }: { label?: string }) {
@@ -38,10 +44,23 @@ export function Loading({ label = '불러오는 중…' }: { label?: string }) {
   )
 }
 
-export function EmptyState({ title, description, action }: { title: string; description?: ReactNode; action?: ReactNode }) {
+/**
+ * 빈 화면·오류 안내. 화면 전체가 이 안내뿐이면(404 등) as="h1" 로 제목을 페이지 제목으로 씁니다.
+ */
+export function EmptyState({
+  title,
+  description,
+  action,
+  as: Title = 'p',
+}: {
+  title: string
+  description?: ReactNode
+  action?: ReactNode
+  as?: 'h1' | 'h2' | 'h3' | 'p'
+}) {
   return (
     <div className="flex flex-col items-center justify-center gap-2 px-4 py-16 text-center">
-      <p className="text-lg font-semibold text-gray-800">{title}</p>
+      <Title className="text-lg font-semibold text-gray-800">{title}</Title>
       {description && <p className="text-[15px] text-gray-500">{description}</p>}
       {action && <div className="mt-3">{action}</div>}
     </div>

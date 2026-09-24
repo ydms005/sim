@@ -7,8 +7,12 @@ export const NOTICE =
 /** 샘플 데이터 여부. 실제 데이터로 교체하면 false 로 바꿉니다. */
 export const IS_SAMPLE_DATA = true
 
-/** public/ 아래 파일 경로를 배포 경로(base)에 맞춰 변환합니다. */
+/**
+ * public/ 아래 파일 경로를 배포 경로(base)에 맞춰 변환합니다.
+ * 폴더·파일 이름은 한 칸씩 인코딩하므로 공백·한글은 물론 #, ? 같은 글자도 주소를 깨뜨리지 않습니다.
+ */
 export function assetUrl(path: string): string {
-  if (/^https?:\/\//.test(path)) return path
-  return import.meta.env.BASE_URL + path.replace(/^\//, '')
+  if (/^https?:\/\//i.test(path)) return path
+  const encoded = path.replace(/^\/+/, '').split('/').map(encodeURIComponent).join('/')
+  return import.meta.env.BASE_URL + encoded
 }

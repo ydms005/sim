@@ -5,8 +5,21 @@
     <link rel="icon" type="image/svg+xml" href="%BASE_URL%favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content="전국 대학의 수시 모집요강, 지난 경쟁률, 입시 자료를 한눈에" />
+    <!--
+      웹 글꼴(Pretendard)은 화면 그리기를 막지 않도록 따로 받습니다. (CDN 이 막히거나 느린 학교망에서도 사이트가 바로 뜸)
+      받기 전·실패 시에는 index.css 의 대체 글꼴(Apple SD Gothic Neo, 맑은 고딕 등)로 보입니다.
+    -->
     <link rel="preconnect" href="https://cdn.jsdelivr.net" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" />
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css"
+      media="print"
+      onload="this.media='all'"
+    />
+    <noscript>
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" />
+    </noscript>
     <title>대학길잡이</title>
   </head>
   <body>

@@ -1,7 +1,9 @@
 import { Link } from 'react-router-dom'
 import { EmptyState } from '../components/common'
+import { useDocumentTitle } from '../hooks/useDocumentTitle'
 
 export default function ComingSoonPage({ title }: { title: string }) {
+  useDocumentTitle(title)
   return (
     <div className="mx-auto max-w-[1440px] px-4 py-16 md:px-10">
       <h1 className="text-center text-3xl font-bold">{title}</h1>
