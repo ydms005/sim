@@ -1,0 +1,6 @@
+node_modules
+dist
+*.local
+.DS_Store
+# scripts/build-data.mjs 가 data/*.csv 로부터 생성하는 파일
+public/data/
