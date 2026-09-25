@@ -2,7 +2,8 @@
 // - UTF-8 BOM, CRLF/CR/LF, 따옴표 안의 쉼표·줄바꿈·"" 이스케이프 지원
 // - 짝이 맞지 않는 따옴표(닫는 따옴표 뒤에 글자가 이어짐, 파일 끝까지 안 닫힘)는 CsvError
 // - 각 행이 시작·끝나는 실제 줄 번호를 함께 돌려주어 오류 메시지에 쓸 수 있습니다.
-import fs from 'node:fs'
+// - 파일 시스템(fs)을 쓰지 않으므로 Node(build-data.mjs)와 브라우저(관리 화면)에서 함께 씁니다.
+//   파일을 읽는 부분은 text-file.mjs(Node 전용)에 있습니다.
 
 export class CsvError extends Error {
   /** @param {string} message @param {number} line */
@@ -116,16 +117,15 @@ export function parseCsv(text) {
 }
 
 /**
- * 파일을 읽어 텍스트로 돌려줍니다. UTF-8 이 아니면 EUC-KR(CP949)로 다시 시도합니다.
- * @param {string} file
+ * 바이트를 텍스트로 바꿉니다. UTF-8 이 아니면 EUC-KR(CP949)로 다시 시도합니다.
+ * @param {Uint8Array | ArrayBuffer} bytes
  * @returns {{ text: string, encoding: 'utf-8' | 'euc-kr' }}
  */
-export function readTextFile(file) {
-  const buf = fs.readFileSync(file)
+export function decodeText(bytes) {
   try {
-    return { text: new TextDecoder('utf-8', { fatal: true }).decode(buf), encoding: 'utf-8' }
+    return { text: new TextDecoder('utf-8', { fatal: true }).decode(bytes), encoding: 'utf-8' }
   } catch {
-    return { text: new TextDecoder('euc-kr').decode(buf), encoding: 'euc-kr' }
+    return { text: new TextDecoder('euc-kr').decode(bytes), encoding: 'euc-kr' }
   }
 }
 

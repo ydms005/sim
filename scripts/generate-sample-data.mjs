@@ -8,7 +8,8 @@
 import fs from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { parseCsv, readTextFile, toCsv, withHeader } from './lib/csv.mjs'
+import { parseCsv, toCsv, withHeader } from './lib/csv.mjs'
+import { readTextFile } from './lib/text-file.mjs'
 import { SAMPLE_UNIVERSITIES } from './sample-profiles.mjs'
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')

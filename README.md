@@ -4,7 +4,7 @@
 학생·교사가 진학 지도에 참고할 수 있게 하는 비상업적 프로젝트입니다.
 
 - **사이트 주소**: <https://ydms005.github.io/sim/>
-- **현재 단계**: 1단계 (화면 + 샘플 데이터)
+- **현재 단계**: 2단계 (엑셀 업로드 · 데이터 관리 화면) 완료 — 데이터는 아직 샘플
 
 > **중요: 지금 사이트의 숫자는 모두 샘플입니다**
 >
@@ -42,6 +42,7 @@
 | 자료실 | `/sim/univ/3/content` | 대입자료·면접자료 PDF 목록과 뷰어 |
 | 대학소식 | `/sim/univ/3/news` | 입시 일정·공지 소식(최신순, 월별 묶음) |
 | 커뮤니티 | `/sim/univ/3/community` | 준비 중 (3단계에서 로그인과 함께 열림) |
+| 데이터 관리 | `/sim/admin` | 선생님용. 엑셀 양식 내려받기 · 파일 검사 · 미리보기 · GitHub에 올리기 (바닥글의 '데이터 관리' 링크) |
 
 - 대학 이름 옆 **하트(찜)** 는 로그인 없이 지금 쓰는 브라우저에만 저장됩니다. 다른 컴퓨터·브라우저에서는 보이지 않습니다.
 - 휴대폰(가로 390px 정도)부터 PC(1440px)까지 화면 크기에 맞춰 배치가 바뀝니다.
@@ -51,12 +52,32 @@
 
 | 단계 | 내용 | 상태 |
 |---|---|---|
-| **1단계** | 화면 + 샘플 데이터 — 대학 검색, 대학별 탭(대학정보·모집요강·지난 경쟁률·자료실·대학소식), 경쟁률 추세 | **지금** |
-| **2단계** | 엑셀·CSV 업로드로 데이터 입력 — 관리 화면에서 파일을 올려 실제 경쟁률·자료를 반영 | 예정 |
+| **1단계** | 화면 + 샘플 데이터 — 대학 검색, 대학별 탭(대학정보·모집요강·지난 경쟁률·자료실·대학소식), 경쟁률 추세 | 완료 |
+| **2단계** | 엑셀 업로드로 데이터 입력 — `data/` 의 엑셀을 빌드에 합치기, 데이터 관리 화면(`/admin`)에서 양식 내려받기·검사·미리보기·GitHub에 올리기 | **완료** |
 | **3단계** | 로그인 · 찜(계정에 저장) · 커뮤니티(Q&A) · AI 상담 | 예정 |
 
-지금(1단계)은 데이터를 `data/` 폴더의 CSV 파일로 관리합니다. 2단계에서도 CSV의 열 이름과 검사 규칙은 그대로 유지할 계획이라,
-지금 CSV에 정리해 두는 자료는 나중에도 그대로 쓸 수 있습니다.
+데이터는 `data/` 폴더의 CSV(샘플)와 **엑셀(.xlsx)** 로 관리합니다. 엑셀의 시트·열 이름은 CSV와 같고 검사 규칙도 같습니다.
+
+### 2단계: 엑셀로 자료 올리기 (요약)
+
+```
+엑셀 수정 ─▶ 검사 ─▶ 미리보기 ─▶ GitHub에 올리기 ─▶ 자동 배포(약 2분)
+ (/admin 에서 양식·현재 데이터 내려받기)   (/admin, 내 브라우저 안에서만)   (토큰 또는 GitHub 웹 업로드)
+```
+
+1. 사이트 바닥글의 **데이터 관리**(<https://ydms005.github.io/sim/admin>)에서 빈 양식이나 현재 데이터를 엑셀로 내려받아 고칩니다.
+2. 같은 화면에 엑셀(과 엑셀이 가리키는 PDF)을 끌어다 놓으면 배포와 **같은 규칙**으로 검사해, 오류를 `파일 › 시트 행 번호` 로 알려 주고 대학별로 무엇이 바뀌는지 보여 줍니다.
+3. **이 데이터로 사이트 미리보기** 로 내 브라우저 탭에서만 결과를 봅니다(실제 사이트는 그대로, 화면 아래 '미리보기 중' 띠).
+4. **GitHub에 올리기**: GitHub 토큰(fine-grained, 이 저장소의 Contents 읽기·쓰기만)을 한 번 붙여 넣으면 엑셀은 `data/`, PDF 는 `public/files/univ/{대학ID}/` 로
+   커밋 하나로 올립니다. 토큰 없이 GitHub 웹의 **Add file → Upload files** 로 `data/` 에 올려도 됩니다.
+5. GitHub Actions 가 다시 검사·빌드해 약 2분 뒤 반영됩니다.
+
+**합치기 규칙** — `대학목록` 시트는 같은 대학ID 의 정보를 바꾸거나 새 대학을 추가합니다.
+`경쟁률`·`모집요강`·`자료실`·`소식` 시트는 **엑셀에 행이 있는 대학의 그 종류 CSV(샘플) 행을 모두 빼고** 엑셀의 행만 씁니다.
+그래서 실제 자료를 올린 대학부터 차례로 샘플이 사라집니다. 자세한 규칙은 [`data/README.md`](data/README.md#엑셀로-관리하기-2단계).
+
+**샘플을 모두 없애려면** — `data/` 의 competition·guidelines·resources·news CSV 에서 머리글만 남기고 행을 지운 뒤(또는 모든 대학을 엑셀로 바꾼 뒤),
+`src/config.ts` 의 `IS_SAMPLE_DATA` 를 `false` 로 바꿉니다.
 
 ## 3. 인터넷에 올리기 — GitHub Pages 자동 배포
 
@@ -81,7 +102,7 @@
 파일 수정 후 커밋(push)
    └─▶ GitHub Actions 실행 (.github/workflows/deploy.yml)
          1) 패키지 설치 (npm ci)
-         2) data/*.csv 검사 → 사이트용 데이터(JSON) 생성   ← CSV에 오류가 있으면 여기서 멈춤
+         2) data/*.csv·엑셀 검사 → 사이트용 데이터(JSON) 생성   ← 오류가 있으면 여기서 멈춤
          3) 사이트 빌드 (npm run build)
          4) GitHub Pages 에 업로드
    └─▶ 1~3분 뒤 https://ydms005.github.io/sim/ 에 반영
@@ -115,7 +136,7 @@ npm run dev      # 개발용 서버 실행
 
 | 명령 | 하는 일 |
 |---|---|
-| `npm run data` | `data/*.csv` 를 검사하고 사이트용 JSON을 다시 만듭니다. 오류가 있으면 파일 이름·줄 번호와 함께 알려 줍니다. |
+| `npm run data` | `data/*.csv`·`data/**/*.xlsx` 를 검사하고 사이트용 JSON을 다시 만듭니다. 오류가 있으면 파일 이름(·시트)·줄 번호와 함께 알려 줍니다. |
 | `npm run build` | 배포용 사이트를 `dist/` 폴더에 만듭니다(GitHub Actions가 하는 일과 같음). |
 | `npm run preview` | `build` 로 만든 결과를 <http://localhost:4173/sim/> 에서 미리 봅니다. |
 | `npm run typecheck` | 코드의 타입 오류를 검사합니다. |
@@ -129,6 +150,8 @@ npm run dev      # 개발용 서버 실행
 export const SITE_NAME = '대학길잡이'          // 왼쪽 위 로고 글자, 아래쪽 안내
 export const NOTICE = '이 사이트의 경쟁률…'      // 홈 화면의 노란 공지 상자 문구
 export const IS_SAMPLE_DATA = true              // 실제 데이터로 모두 바꾸면 false (샘플 표시가 사라짐)
+export const GITHUB_REPO = 'ydms005/sim'        // 데이터 관리 화면의 'GitHub에 올리기' 대상 저장소
+export const GITHUB_BRANCH = 'claude/modest-babbage-sfv411'  // … 대상 브랜치 (자동 배포되는 브랜치)
 ```
 
 - 브라우저 탭에 보이는 제목과 검색엔진 설명은 **`index.html`** 의 `<title>` · `<meta name="description">` 에서 바꿉니다.
@@ -143,12 +166,13 @@ export const IS_SAMPLE_DATA = true              // 실제 데이터로 모두 �
 | `data/guidelines.csv` | 모집요강 PDF 목록 | 예 |
 | `data/resources.csv` | 자료실 파일 목록(대입자료·면접자료) | 예 |
 | `data/news.csv` | 대학소식 | 예 |
+| `data/**/*.xlsx` | 엑셀로 정리한 자료(시트: 대학목록·경쟁률·모집요강·자료실·소식). CSV와 합쳐짐 | 예(데이터 관리 화면 또는 GitHub 웹 업로드) |
 | `public/files/univ/{대학ID}/*.pdf` | 모집요강·자료실 PDF 파일 | 예(파일 추가·교체) |
-| `public/data/*.json` | CSV에서 **자동으로 만들어지는** 사이트용 데이터 | **아니요** (Git에도 올라가지 않음) |
+| `public/data/*.json` | CSV·엑셀에서 **자동으로 만들어지는** 사이트용 데이터 | **아니요** (Git에도 올라가지 않음) |
 
 - 열 이름, 값 규칙, 대학·경쟁률·PDF 추가 방법, 엑셀에서 CSV로 저장하는 방법은 **[`data/README.md`](data/README.md)** 에 자세히 정리되어 있습니다.
 - CSV는 엑셀로 열고 고쳐도 됩니다. 저장할 때는 반드시 **"CSV UTF-8(쉼표로 분리)"** 형식을 고르세요.
-- CSV에 잘못된 값(예: 숫자 칸에 글자, 없는 대학ID)이 있으면 배포가 멈추고 Actions 로그에 어느 파일 몇째 줄이 문제인지 표시됩니다.
+- CSV·엑셀에 잘못된 값(예: 숫자 칸에 글자, 없는 대학ID)이 있으면 배포가 멈추고 Actions 로그에 어느 파일 몇째 줄이 문제인지 표시됩니다.
   잘못된 데이터가 사이트에 올라가는 일을 막기 위한 장치입니다.
 
 ## 7. 폴더 구조
@@ -161,18 +185,20 @@ sim/
 ├─ package.json               ← 사용하는 프로그램 목록과 npm 명령
 ├─ .github/workflows/
 │  └─ deploy.yml              ← GitHub Pages 자동 배포 설정
-├─ data/                      ← ★ 데이터 원본(CSV) + 작성 안내(data/README.md)
-├─ scripts/                   ← CSV 검사·변환(build-data.mjs), 샘플 데이터·PDF 생성 스크립트
+├─ data/                      ← ★ 데이터 원본(CSV·엑셀) + 작성 안내(data/README.md)
+├─ scripts/                   ← 데이터 검사·변환(build-data.mjs), 샘플 데이터·PDF 생성 스크립트
+│  └─ lib/dataset.mjs         ← 검사·합치기 규칙(빌드와 데이터 관리 화면이 함께 씀)
 ├─ public/
 │  ├─ favicon.svg             ← 브라우저 탭 아이콘
 │  ├─ files/univ/{대학ID}/    ← ★ 모집요강·자료실 PDF
-│  └─ data/                   ← CSV에서 자동 생성(수정 금지)
+│  └─ data/                   ← CSV·엑셀에서 자동 생성(수정 금지)
 └─ src/                       ← 화면을 만드는 코드
    ├─ config.ts               ← ★ 사이트 이름·공지·샘플 여부
    ├─ router.tsx              ← 주소(URL)와 화면 연결
    ├─ index.css               ← 색상(초록 브랜드 색)·글꼴
    ├─ components/             ← 머리글·바닥글, 대학 카드, 그래프 등 공용 부품
    ├─ pages/                  ← 홈·검색·경쟁률 추세 화면
+   │  ├─ admin/               ← 데이터 관리 화면(/admin: 엑셀 양식·검사·미리보기·GitHub에 올리기)
    │  └─ univ/                ← 대학 상세 탭(대학정보·모집요강·지난 경쟁률·자료실·대학소식·커뮤니티)
    ├─ data/                   ← 데이터 형식 정의(types.ts)와 불러오기(api.ts)
    ├─ hooks/                  ← 찜 기능 등
@@ -181,7 +207,7 @@ sim/
 
 ★ 표시가 보통 손대게 되는 곳입니다.
 
-사용한 기술(참고): Vite · React · TypeScript · Tailwind CSS · React Router · Recharts(그래프) · react-pdf(PDF 뷰어).
+사용한 기술(참고): Vite · React · TypeScript · Tailwind CSS · React Router · Recharts(그래프) · react-pdf(PDF 뷰어) · read-excel-file / write-excel-file(엑셀).
 
 ## 8. 자주 묻는 질문 · 문제 해결
 
@@ -194,7 +220,7 @@ Actions 탭에서 배포가 끝났는지(초록 체크) 확인하세요. 끝났�
 
 **Q. Actions 에 빨간 X가 떴어요.**
 실패한 실행을 누르면 아래쪽 **Annotations** 에 원인이 짧게 보입니다. 자세히 보려면 **build** → 빨간 단계를 펼쳐 보세요.
-- `[data/competition.csv 12행] …` 같은 메시지 → 해당 CSV 줄을 고쳐 커밋하면 자동으로 다시 배포됩니다.
+- `[data/competition.csv 12행] …` 또는 `[data/2027.xlsx › 경쟁률 12행] …` 같은 메시지 → 해당 파일의 그 행을 고쳐 다시 올리면 자동으로 다시 배포됩니다. (올리기 전에 데이터 관리 화면의 '파일 검사'로 확인하면 이런 실패를 미리 막을 수 있습니다.)
 - `GitHub Pages 설정이 필요합니다` 또는 `Get Pages site failed` → [처음 한 번만 할 일](#처음-한-번만-할-일)의 Pages 설정(Source: GitHub Actions)이 안 된 경우입니다.
   설정을 바꾼 뒤 **Actions** 탭 → **Deploy to GitHub Pages** → **Run workflow** 로 다시 실행하세요.
 - `Branch "…" is not allowed to deploy to github-pages due to environment protection rules` →

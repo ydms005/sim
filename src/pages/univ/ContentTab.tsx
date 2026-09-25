@@ -7,7 +7,7 @@ import { BOX_QUERY, stickyHeaderBottom } from '../../components/pdf/layout'
 import PdfViewer from '../../components/PdfViewer'
 import { UnivEmptyState } from '../../components/UnivEmptyState'
 import { useUniv } from '../../components/UnivLayout'
-import { assetUrl } from '../../config'
+import { fileUrl } from '../../data/api'
 import { RESOURCE_CATEGORIES, type Resource, type ResourceCategory } from '../../data/types'
 import { matchesSearch } from '../../lib/hangul'
 import { scrollBehavior } from '../../lib/motion'
@@ -219,7 +219,7 @@ export default function ContentTab() {
 
       {/* PDF 뷰어 */}
       <div ref={viewerRef} className="min-w-0 lg:col-start-1 lg:row-start-1">
-        <PdfViewer file={assetUrl(selected.file)} title={selected.title} />
+        <PdfViewer file={fileUrl(selected.file)} title={selected.title} />
       </div>
     </div>
   )

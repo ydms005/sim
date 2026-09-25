@@ -1,14 +1,39 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { assetUrl } from '../config'
+import { getPreview, previewFileUrl, subscribePreview } from './preview'
 import type { TrendRow, UnivDetail, University } from './types'
 
 const cache = new Map<string, Promise<unknown>>()
 /** 이미 받아 둔 JSON (다시 방문한 화면을 로딩 없이 바로 그리기 위해) */
 const resolved = new Map<string, unknown>()
 
+// 관리 화면의 미리보기를 켜거나 끄면 받아 둔 데이터를 버리고 새로 읽습니다.
+subscribePreview(() => {
+  cache.clear()
+  resolved.clear()
+})
+
+/** 미리보기 중이면 public/data 대신 미리보기 데이터에서 찾습니다. (없는 파일이면 null) */
+function previewJson(path: string): unknown {
+  const p = getPreview()
+  if (!p) return undefined
+  if (path === UNIVERSITIES) return p.universities
+  if (path === TRENDS) return p.trends
+  const m = /^data\/univ\/(\d+)\.json$/.exec(path)
+  return m ? (p.details[m[1]] ?? null) : null
+}
+
 function fetchJson<T>(path: string): Promise<T> {
   let p = cache.get(path) as Promise<T> | undefined
   if (!p) {
+    const fromPreview = previewJson(path)
+    if (fromPreview !== undefined) {
+      if (fromPreview === null) return Promise.reject(new Error(`404 ${path} (미리보기)`))
+      resolved.set(path, fromPreview)
+      p = Promise.resolve(fromPreview as T)
+      cache.set(path, p)
+      return p
+    }
     p = fetch(assetUrl(path)).then(async (res) => {
       if (!res.ok) throw new Error(`${res.status} ${path}`)
       const data = (await res.json()) as T
@@ -26,6 +51,13 @@ const peek = <T>(path: string) => resolved.get(path) as T | undefined
 const UNIVERSITIES = 'data/universities.json'
 const TRENDS = 'data/trends.json'
 const detailPath = (id: number) => `data/univ/${id}.json`
+
+/**
+ * 모집요강·자료실 PDF 주소. 미리보기 중 관리 화면에서 함께 올린 PDF 면 그 임시 주소를, 아니면 assetUrl() 을 씁니다.
+ */
+export function fileUrl(path: string): string {
+  return previewFileUrl(path) ?? assetUrl(path)
+}
 
 export const loadUniversities = () => fetchJson<University[]>(UNIVERSITIES)
 export const loadTrends = () => fetchJson<TrendRow[]>(TRENDS)

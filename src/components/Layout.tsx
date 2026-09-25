@@ -2,6 +2,7 @@ import { useEffect, useId, useRef, useState, type FormEvent } from 'react'
 import { Link, Outlet, ScrollRestoration, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 import { IS_SAMPLE_DATA, SITE_NAME } from '../config'
 import { cx, SearchIcon } from './common'
+import PreviewBanner from './PreviewBanner'
 
 interface NavItem {
   to: string
@@ -243,7 +244,7 @@ export default function Layout() {
       </div>
 
       {/* 대학 상세·경쟁률 추세는 회색 바탕 카드 화면이라, 내용이 짧아도 푸터까지 같은 바탕이 이어지게 합니다. */}
-      <main className={cx('flex-1', /^\/(univ|trends)(\/|$)/.test(path) && 'bg-canvas')}>
+      <main className={cx('flex-1', /^\/(univ|trends|admin)(\/|$)/.test(path) && 'bg-canvas')}>
         <Outlet />
       </main>
 
@@ -252,8 +253,18 @@ export default function Layout() {
           <p className="font-semibold text-gray-700">{SITE_NAME}</p>
           <p>공교육 현장의 진학 지도를 돕기 위한 비상업적 교육용 프로젝트입니다.</p>
           {IS_SAMPLE_DATA && <p>현재 표시되는 경쟁률·자료는 모두 개발용 샘플 데이터이며 실제 수치가 아닙니다.</p>}
+          <p className="mt-3">
+            <Link
+              to="/admin"
+              className="rounded font-medium text-gray-600 underline decoration-gray-300 underline-offset-4 hover:text-gray-900 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-500"
+            >
+              데이터 관리
+            </Link>
+            <span className="ml-2 text-gray-400">(선생님용 · 엑셀로 자료 올리기)</span>
+          </p>
         </div>
       </footer>
+      <PreviewBanner />
     </div>
   )
 }

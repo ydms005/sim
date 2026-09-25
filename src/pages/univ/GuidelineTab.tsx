@@ -4,7 +4,7 @@ import { cx } from '../../components/common'
 import PdfViewer from '../../components/PdfViewer'
 import { UnivEmptyState } from '../../components/UnivEmptyState'
 import { useUniv } from '../../components/UnivLayout'
-import { assetUrl } from '../../config'
+import { fileUrl } from '../../data/api'
 import type { Guideline } from '../../data/types'
 
 /** 모집요강 탭: 학년도 선택 칩 + PDF 뷰어. 선택한 학년도는 ?year= 에 남깁니다. */
@@ -65,7 +65,7 @@ export default function GuidelineTab() {
         })}
       </div>
 
-      <PdfViewer file={assetUrl(selected.file)} title={selected.title} />
+      <PdfViewer file={fileUrl(selected.file)} title={selected.title} />
     </div>
   )
 }

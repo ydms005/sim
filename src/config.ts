@@ -8,6 +8,14 @@ export const NOTICE =
 export const IS_SAMPLE_DATA = true
 
 /**
+ * 데이터 관리 화면(/admin)의 'GitHub에 올리기'가 파일을 커밋할 저장소(소유자/이름)와 브랜치.
+ * 올린 뒤 자동 배포(.github/workflows/deploy.yml)가 도는 브랜치여야 사이트에 반영됩니다.
+ * 저장소 이름이나 기본 브랜치를 바꾸면 여기도 같이 바꿔 주세요.
+ */
+export const GITHUB_REPO = 'ydms005/sim'
+export const GITHUB_BRANCH = 'claude/modest-babbage-sfv411'
+
+/**
  * public/ 아래 파일 경로를 배포 경로(base)에 맞춰 변환합니다.
  * 폴더·파일 이름은 한 칸씩 인코딩하므로 공백·한글은 물론 #, ? 같은 글자도 주소를 깨뜨리지 않습니다.
  */
