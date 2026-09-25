@@ -84,6 +84,7 @@ function pdfjsAssets(): Plugin {
 const NAMED_CHUNKS: [RegExp, string][] = [
   [/node_modules[\\/]recharts[\\/]/, 'charts'], // 지난 경쟁률·경쟁률 추세 화면에서만 받음
   [/node_modules[\\/]react-router[\\/]/, 'router'],
+  [/node_modules[\\/]@supabase[\\/]/, 'supabase'], // 로그인·커뮤니티를 쓸 때만 받음
 ]
 
 export default defineConfig({

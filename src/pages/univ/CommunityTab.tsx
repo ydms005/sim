@@ -1,264 +1,260 @@
-import type { ReactNode } from 'react'
-import { Link } from 'react-router-dom'
-import { Chip, cx, HeartIcon } from '../../components/common'
+import { useCallback, useEffect, useRef, useState, type FormEvent } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
+import { isAdmin, useAuth } from '../../auth/store'
+import { SearchIcon } from '../../components/common'
+import { BTN_PRIMARY, BTN_SECONDARY } from '../../components/Dialog'
 import { useUniv } from '../../components/UnivLayout'
+import { createQuestion, listQuestions, loadAuthors, PAGE_SIZE, type Author, type Question } from '../../community/api'
+import { toAppError, type AppError } from '../../lib/dbErrors'
+import { showToast } from '../../lib/toast'
+import Composer from './community/Composer'
+import { AuthorLine, CommunityError, ensureWriter, HiddenTag } from './community/parts'
 
-/** 커뮤니티(Q&A)는 3단계(로그인)와 함께 열립니다. 지금은 안내와 미리 보기만 보여 줍니다. */
+/** 대학별 Q&A 게시판: 질문 목록(최신순) · 제목 검색 · 질문하기 */
 export default function CommunityTab() {
-  const { univ, detail } = useUniv()
-  const base = `/univ/${univ.id}`
-  const hasCompetition = (detail?.competition.length ?? 0) > 0
-  const hasResources = (detail?.resources.length ?? 0) > 0
+  const { univ } = useUniv()
+  const auth = useAuth()
+  const navigate = useNavigate()
+  const [search, setSearch] = useState('')
+  const [draftSearch, setDraftSearch] = useState('')
+  const [items, setItems] = useState<Question[]>([])
+  const [authors, setAuthors] = useState<Map<string, Author>>(new Map())
+  const [total, setTotal] = useState(0)
+  const [loading, setLoading] = useState(true)
+  const [loadingMore, setLoadingMore] = useState(false)
+  const [error, setError] = useState<AppError | null>(null)
+  const [moreError, setMoreError] = useState('')
+  const [attempt, setAttempt] = useState(0)
+  const [composing, setComposing] = useState(false)
+  const reqId = useRef(0)
+
+  // 관리자 여부·로그인 사용자가 바뀌면 보이는 글(숨긴 글 포함 여부)이 달라지므로 다시 읽습니다.
+  const viewer = `${auth.userId ?? ''}:${isAdmin(auth)}`
+
+  const fetchPage = useCallback(
+    async (offset: number) => {
+      const res = await listQuestions(univ.id, { offset, search })
+      const map = await loadAuthors(res.items.map((q) => q.user_id)).catch(() => new Map<string, Author>())
+      return { ...res, map }
+    },
+    [univ.id, search],
+  )
+
+  useEffect(() => {
+    const id = ++reqId.current
+    setLoading(true)
+    setError(null)
+    setMoreError('')
+    fetchPage(0).then(
+      (res) => {
+        if (id !== reqId.current) return
+        setItems(res.items)
+        setTotal(res.total)
+        setAuthors(res.map)
+        setLoading(false)
+      },
+      (err: unknown) => {
+        if (id !== reqId.current) return
+        setError(toAppError(err))
+        setLoading(false)
+      },
+    )
+  }, [fetchPage, attempt, viewer])
+
+  const loadMore = async () => {
+    const id = reqId.current
+    setLoadingMore(true)
+    setMoreError('')
+    try {
+      const res = await fetchPage(items.length)
+      if (id !== reqId.current) return
+      // 그사이 새 글이 올라와 겹친 글은 빼고 붙입니다.
+      setItems((prev) => [...prev, ...res.items.filter((q) => !prev.some((p) => p.id === q.id))])
+      setTotal(res.total)
+      setAuthors((prev) => new Map([...prev, ...res.map]))
+    } catch (err) {
+      setMoreError(toAppError(err).message)
+    } finally {
+      setLoadingMore(false)
+    }
+  }
+
+  const onSearch = (e: FormEvent) => {
+    e.preventDefault()
+    setSearch(draftSearch.trim())
+  }
+
+  const startCompose = () => {
+    if (!ensureWriter(auth, '질문을 남기려면 로그인해 주세요.')) return
+    setComposing(true)
+  }
+
+  const notReady = error?.kind === 'not_ready'
 
   return (
     <div className="space-y-5 md:space-y-6">
-      <section aria-labelledby="community-title" className="rounded-2xl bg-white px-5 py-7 md:px-10 md:py-10">
-        <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_420px] lg:items-center lg:gap-12">
-          <div>
-            <span className="inline-flex items-center gap-1.5 rounded-full bg-brand-50 px-3 py-1 text-[13px] font-semibold text-brand-700">
-              <span aria-hidden className="size-1.5 animate-pulse rounded-full bg-brand-500" />
-              준비 중
-            </span>
-            <h2
-              id="community-title"
-              className="mt-4 text-[22px] leading-snug font-bold tracking-tight text-gray-900 md:text-[28px]"
-            >
-              {univ.name} 커뮤니티가 곧 열려요
+      <section aria-labelledby="community-title" className="rounded-2xl bg-white px-5 py-6 md:px-8 md:py-8">
+        <div className="flex flex-wrap items-start justify-between gap-4">
+          <div className="min-w-0">
+            <h2 id="community-title" className="text-[20px] font-bold tracking-tight text-gray-900 md:text-[24px]">
+              {univ.name} 질문 게시판
             </h2>
-            <p className="mt-3 max-w-xl text-[15px] leading-relaxed text-gray-600 md:text-[16px]">
-              전형·학과·학교생활에 대해 궁금한 점을 묻고 답하는 <strong className="text-gray-800">Q&amp;A 공간</strong>
-              입니다. 글쓰기에는 로그인이 필요해서, 로그인 기능이 추가되는{' '}
-              <strong className="text-brand-700">3단계</strong>에 함께 열릴 예정이에요.
+            <p className="mt-1 text-[15px] leading-6 text-gray-600">
+              전형·학과·학교생활에 대해 묻고 답해요. 정확한 입시 정보는 꼭 대학 입학처 공고로 확인하세요.
             </p>
-            <div className="mt-6 flex flex-wrap gap-2.5">
-              {hasCompetition && (
-                <Link to={`${base}/competition`} className={btn(true)}>
-                  지난 경쟁률 보기
-                </Link>
-              )}
-              {hasResources && (
-                <Link to={`${base}/content`} className={btn(!hasCompetition)}>
-                  자료실 보기
-                </Link>
-              )}
-              {!hasCompetition && !hasResources && (
-                <Link to="/" className={btn(true)}>
-                  다른 대학 둘러보기
-                </Link>
+          </div>
+          {!notReady && !composing && (
+            <button type="button" onClick={startCompose} className={BTN_PRIMARY}>
+              <PencilIcon />
+              질문하기
+            </button>
+          )}
+        </div>
+
+        {composing && (
+          <Composer
+            univName={univ.name}
+            onCancel={() => setComposing(false)}
+            onSubmit={async (title, body) => {
+              const q = await createQuestion(univ.id, title, body)
+              setComposing(false)
+              showToast('질문을 올렸어요.')
+              navigate(`/univ/${univ.id}/community/${q.id}`)
+            }}
+          />
+        )}
+
+        {!notReady && (
+          <form role="search" onSubmit={onSearch} className="relative mt-5 max-w-md">
+            <input
+              type="search"
+              value={draftSearch}
+              onChange={(e) => setDraftSearch(e.target.value)}
+              enterKeyHint="search"
+              placeholder="질문 제목 검색"
+              aria-label="질문 제목 검색"
+              className="h-11 w-full rounded-full bg-gray-100 pr-11 pl-5 text-[16px] placeholder:text-gray-400 focus:bg-white focus:ring-2 focus:ring-brand-400 focus:outline-none"
+            />
+            <button type="submit" aria-label="검색" className="absolute top-1/2 right-3 -translate-y-1/2 p-1 text-gray-500">
+              <SearchIcon className="size-5" />
+            </button>
+          </form>
+        )}
+
+        <div className="mt-4">
+          {loading ? (
+            <ListSkeleton />
+          ) : error ? (
+            <CommunityError error={error} onRetry={() => setAttempt((n) => n + 1)} />
+          ) : items.length === 0 ? (
+            <div className="py-14 text-center">
+              {search ? (
+                <>
+                  <p className="text-lg font-semibold text-gray-800">&lsquo;{search}&rsquo; 검색 결과가 없어요</p>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setSearch('')
+                      setDraftSearch('')
+                    }}
+                    className="mt-3 font-semibold text-brand-600"
+                  >
+                    전체 질문 보기
+                  </button>
+                </>
+              ) : (
+                <>
+                  <p className="text-lg font-semibold text-gray-800">아직 질문이 없어요</p>
+                  <p className="mt-1 text-[15px] text-gray-500">{univ.name}에 대해 궁금한 점을 가장 먼저 물어보세요.</p>
+                  {!composing && (
+                    <button type="button" onClick={startCompose} className={`${BTN_SECONDARY} mt-4`}>
+                      첫 질문 남기기
+                    </button>
+                  )}
+                </>
               )}
             </div>
-          </div>
-          <Roadmap />
+          ) : (
+            <>
+              <p className="mb-1 text-[14px] text-gray-500">
+                {search ? `'${search}' 검색 결과 ` : '질문 '}
+                <strong className="font-semibold text-gray-700">{total.toLocaleString('ko-KR')}</strong>개
+              </p>
+              <ul className="divide-y divide-gray-100 border-y border-gray-100">
+                {items.map((q) => (
+                  <li key={q.id}>
+                    <QuestionRow q={q} author={authors.get(q.user_id)} mine={q.user_id === auth.userId} />
+                  </li>
+                ))}
+              </ul>
+              {items.length < total && (
+                <div className="mt-4 flex flex-col items-center gap-2">
+                  <button type="button" onClick={loadMore} disabled={loadingMore} className={BTN_SECONDARY}>
+                    {loadingMore ? '불러오는 중…' : `더보기 (${Math.min(PAGE_SIZE, total - items.length)}개)`}
+                  </button>
+                  {moreError && (
+                    <p role="alert" className="text-[14px] text-red-700">
+                      {moreError}
+                    </p>
+                  )}
+                </div>
+              )}
+            </>
+          )}
         </div>
       </section>
-
-      <div className="grid gap-5 md:gap-6 lg:grid-cols-[minmax(0,1fr)_360px] lg:items-start">
-        <section aria-labelledby="community-preview-title" className="rounded-2xl bg-white px-5 py-6 md:px-8 md:py-8">
-          <div className="flex items-center justify-between gap-3">
-            <h3 id="community-preview-title" className="text-[18px] font-bold text-gray-900 md:text-[20px]">
-              질문 게시판
-            </h3>
-            <span className="rounded-full bg-gray-100 px-3 py-1 text-[13px] font-medium text-gray-600">미리 보기</span>
-          </div>
-          <Composer univName={univ.name} />
-          <EmptyBoard />
-        </section>
-
-        <aside aria-labelledby="community-features-title" className="rounded-2xl bg-white px-5 py-6 md:px-6 md:py-7">
-          <h3 id="community-features-title" className="text-[17px] font-bold text-gray-900">
-            커뮤니티에서 할 수 있는 일
-          </h3>
-          <ul className="mt-4 space-y-4">
-            <Feature icon={<ChatIcon className="size-5" />} title="묻고 답하기">
-              이 대학의 전형·학과·학교생활에 대해 질문하고, 알고 있는 내용을 나눠요.
-            </Feature>
-            <Feature icon={<LockIcon className="size-5" />} title="로그인 후 작성">
-              글과 댓글은 로그인한 사용자만 쓸 수 있게 할 예정이에요.
-            </Feature>
-            <Feature icon={<ShieldIcon className="size-5" />} title="안전한 운영">
-              개인정보가 담긴 글이나 비방 글은 신고와 관리자 검토로 관리할 예정이에요.
-            </Feature>
-          </ul>
-          <p className="mt-5 flex items-start gap-2 rounded-xl bg-gray-50 px-4 py-3 text-[13px] leading-relaxed text-gray-500 md:text-[14px]">
-            <HeartIcon filled className="mt-0.5 size-4 shrink-0 text-rose-400" />
-            <span>
-              관심 대학은 지금도 대학 이름 옆 하트 버튼으로 찜할 수 있어요. 찜 목록은 이 브라우저에 저장됩니다.
-            </span>
-          </p>
-        </aside>
-      </div>
     </div>
   )
 }
 
-const btn = (primary: boolean) =>
-  cx(
-    'inline-flex h-11 items-center rounded-full px-5 text-[15px] font-semibold transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-500',
-    primary ? 'bg-brand-400 text-white hover:bg-brand-500' : 'bg-gray-100 text-gray-700 hover:bg-gray-200',
-  )
-
-const STEPS = [
-  { n: 1, title: '화면 + 샘플 데이터', desc: '대학 검색·경쟁률·모집요강·자료실 화면', status: 'current' },
-  { n: 2, title: '엑셀·CSV 업로드로 데이터 입력', desc: '실제 경쟁률·자료를 손쉽게 반영', status: 'next' },
-  { n: 3, title: '로그인·찜·커뮤니티·AI 상담', desc: '이 게시판이 여기서 열려요', status: 'target' },
-] as const
-
-/** 단계별 로드맵 (세로 타임라인) */
-function Roadmap() {
+function QuestionRow({ q, author, mine }: { q: Question; author: Author | undefined; mine: boolean }) {
+  const preview = q.body.replace(/\s+/g, ' ').trim()
   return (
-    <div className="rounded-2xl bg-gray-50 px-5 py-5 md:px-6 md:py-6">
-      <p className="text-[14px] font-bold text-gray-500">개발 로드맵</p>
-      <ol className="mt-4">
-        {STEPS.map((s, i) => (
-          <li key={s.n} className="relative flex gap-3.5 pb-5 last:pb-0">
-            {i < STEPS.length - 1 && (
-              <span aria-hidden className="absolute top-8 bottom-0 left-[15px] w-0.5 rounded-full bg-gray-200" />
-            )}
-            <span
-              aria-hidden
-              className={cx(
-                'relative flex size-8 shrink-0 items-center justify-center rounded-full text-[14px] font-bold',
-                s.status === 'current' && 'bg-brand-400 text-white',
-                s.status === 'next' && 'bg-white text-gray-400 ring-1 ring-gray-200',
-                s.status === 'target' && 'bg-white text-brand-700 ring-2 ring-brand-300',
-              )}
-            >
-              {s.n}
-            </span>
-            <div className="min-w-0 pt-1">
-              <p className="flex flex-wrap items-center gap-x-2 gap-y-1 text-[15px] leading-snug font-semibold text-gray-900">
-                <span className="sr-only">{s.n}단계:</span>
-                {s.title}
-                {s.status === 'current' && (
-                  <span className="rounded-md bg-brand-100 px-1.5 py-0.5 text-[11px] leading-none font-bold text-brand-800">
-                    지금
-                  </span>
-                )}
-                {s.status === 'target' && (
-                  <span className="rounded-md bg-amber-100 px-1.5 py-0.5 text-[11px] leading-none font-bold text-amber-800">
-                    커뮤니티 오픈
-                  </span>
-                )}
-              </p>
-              <p className="mt-0.5 text-[13px] text-gray-500 md:text-[14px]">{s.desc}</p>
-            </div>
-          </li>
-        ))}
-      </ol>
-    </div>
-  )
-}
-
-const TOPICS = ['입시 질문', '학과 질문', '학교생활']
-
-/** 비활성화된 글쓰기 상자 (모양만 미리 보기) */
-function Composer({ univName }: { univName: string }) {
-  return (
-    <fieldset disabled aria-describedby="composer-note" className="mt-5 rounded-2xl border border-gray-200 p-3 md:p-4">
-      <legend className="sr-only">질문 작성 (준비 중)</legend>
-      <div className="flex flex-wrap gap-1.5 md:gap-2">
-        {TOPICS.map((t, i) => (
-          <Chip key={t} size="sm" active={i === 0} className="cursor-not-allowed opacity-60">
-            {t}
-          </Chip>
-        ))}
-      </div>
-      <textarea
-        rows={3}
-        placeholder={`로그인하면 ${univName}에 대해 질문을 남길 수 있어요.`}
-        aria-label="질문 내용"
-        className="mt-3 block w-full cursor-not-allowed resize-none rounded-xl bg-gray-50 px-4 py-3 text-[15px] placeholder:text-gray-400"
-      />
-      <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
-        <p id="composer-note" className="flex items-center gap-1.5 text-[13px] text-gray-500 md:text-[14px]">
-          <LockIcon className="size-4 shrink-0 text-gray-400" />
-          3단계에서 로그인 후 이용할 수 있어요
+    <Link
+      to={String(q.id)}
+      className="group flex items-start gap-4 px-1 py-4 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-brand-500 md:px-2"
+    >
+      <div className="min-w-0 flex-1">
+        <p className="flex items-start gap-2">
+          {q.is_hidden && <HiddenTag />}
+          <span className="line-clamp-2 text-[16px] leading-snug font-semibold break-words text-gray-900 group-hover:text-brand-700 md:text-[17px]">
+            {q.title}
+          </span>
         </p>
-        <button
-          type="button"
-          className="ml-auto h-10 cursor-not-allowed rounded-xl bg-gray-200 px-5 text-[15px] font-semibold text-gray-400"
-        >
-          질문 등록
-        </button>
+        {preview && <p className="mt-1 line-clamp-1 text-[14px] break-all text-gray-500">{preview}</p>}
+        <AuthorLine author={author} createdAt={q.created_at} mine={mine} className="mt-2 text-[13px]" />
       </div>
-    </fieldset>
-  )
-}
-
-/** 글 목록 자리 (가짜 글 대신 흐린 자리표시자) */
-function EmptyBoard() {
-  const widths = ['w-3/4', 'w-2/3', 'w-4/5']
-  return (
-    <div className="relative mt-6">
-      <ul aria-hidden className="divide-y divide-gray-100 border-t border-gray-100">
-        {widths.map((w) => (
-          <li key={w} className="flex items-start gap-3.5 py-4">
-            <span className="h-6 w-16 shrink-0 rounded-full bg-gray-100" />
-            <div className="min-w-0 flex-1 space-y-2 pt-0.5">
-              <div className={cx('h-4 rounded bg-gray-100', w)} />
-              <div className="h-3 w-1/3 rounded bg-gray-100/80" />
-            </div>
-          </li>
-        ))}
-      </ul>
-      <div className="absolute inset-0 flex items-center justify-center p-4">
-        <div className="max-w-sm rounded-2xl bg-white/95 px-6 py-4 text-center shadow-sm ring-1 ring-gray-100">
-          <p className="text-[15px] font-semibold text-gray-800">아직 게시글이 없어요</p>
-          <p className="mt-1 text-[13px] text-gray-500 md:text-[14px]">
-            커뮤니티가 열리면 이곳에 질문과 답변이 표시됩니다.
-          </p>
-        </div>
-      </div>
-    </div>
-  )
-}
-
-function Feature({ icon, title, children }: { icon: ReactNode; title: string; children: ReactNode }) {
-  return (
-    <li className="flex gap-3.5">
-      <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-brand-50 text-brand-600">
-        {icon}
+      <span
+        className={`mt-0.5 flex shrink-0 flex-col items-center rounded-xl px-3 py-1.5 ${q.answer_count ? 'bg-brand-50 text-brand-700' : 'bg-gray-50 text-gray-500'}`}
+      >
+        <span className="text-[17px] leading-tight font-bold tabular-nums">{q.answer_count}</span>
+        <span className="text-[12px]">답변</span>
       </span>
-      <div className="min-w-0">
-        <p className="text-[15px] font-semibold text-gray-900">{title}</p>
-        <p className="mt-0.5 text-[14px] leading-relaxed text-gray-500">{children}</p>
-      </div>
-    </li>
+    </Link>
   )
 }
 
-type IconProps = { className?: string }
-const stroke = {
-  fill: 'none',
-  stroke: 'currentColor',
-  strokeWidth: 1.8,
-  strokeLinecap: 'round',
-  strokeLinejoin: 'round',
-} as const
-
-function ChatIcon({ className }: IconProps) {
+function ListSkeleton() {
   return (
-    <svg viewBox="0 0 24 24" className={className} aria-hidden {...stroke}>
-      <path d="M4 5.5A1.5 1.5 0 0 1 5.5 4h9A1.5 1.5 0 0 1 16 5.5v6a1.5 1.5 0 0 1-1.5 1.5H9l-3.5 3v-3h0A1.5 1.5 0 0 1 4 11.5z" />
-      <path d="M16 8h2.5A1.5 1.5 0 0 1 20 9.5v6a1.5 1.5 0 0 1-1.5 1.5H18v3l-3.5-3H11a1.5 1.5 0 0 1-1.5-1.5V15" />
-    </svg>
+    <ul aria-busy="true" aria-label="질문 목록 불러오는 중" className="divide-y divide-gray-100 border-y border-gray-100">
+      {['w-3/4', 'w-2/3', 'w-4/5'].map((w) => (
+        <li key={w} className="flex items-start gap-4 py-4">
+          <div className="min-w-0 flex-1 space-y-2 pt-0.5">
+            <div className={`h-4 animate-pulse rounded bg-gray-100 ${w}`} />
+            <div className="h-3 w-1/3 animate-pulse rounded bg-gray-100" />
+          </div>
+          <span className="h-12 w-12 animate-pulse rounded-xl bg-gray-100" />
+        </li>
+      ))}
+    </ul>
   )
 }
 
-function LockIcon({ className }: IconProps) {
+function PencilIcon() {
   return (
-    <svg viewBox="0 0 24 24" className={className} aria-hidden {...stroke}>
-      <rect x="5" y="10.5" width="14" height="10" rx="2" />
-      <path d="M8 10.5V8a4 4 0 0 1 8 0v2.5" />
-    </svg>
-  )
-}
-
-function ShieldIcon({ className }: IconProps) {
-  return (
-    <svg viewBox="0 0 24 24" className={className} aria-hidden {...stroke}>
-      <path d="M12 3.5 5 6v5.5c0 4.3 3 7.7 7 9 4-1.3 7-4.7 7-9V6z" />
-      <path d="m9 12 2.2 2.2L15.5 10" />
+    <svg viewBox="0 0 24 24" className="size-5" aria-hidden fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M4 20h4L19 9l-4-4L4 16z" />
+      <path d="m13.5 6.5 4 4" />
     </svg>
   )
 }

@@ -4,7 +4,7 @@
 학생·교사가 진학 지도에 참고할 수 있게 하는 비상업적 프로젝트입니다.
 
 - **사이트 주소**: <https://ydms005.github.io/sim/>
-- **현재 단계**: 2단계 (엑셀 업로드 · 데이터 관리 화면) 완료 — 데이터는 아직 샘플
+- **현재 단계**: 3단계 (구글 로그인 · 계정 찜 · 대학별 Q&A 커뮤니티) 코드 완료 — **Supabase 설정 필요**([`supabase/README.md`](supabase/README.md)) · 데이터는 아직 샘플
 
 > **중요: 지금 사이트의 숫자는 모두 샘플입니다**
 >
@@ -41,10 +41,14 @@
 | 지난 경쟁률 | `/sim/univ/3/competition` | 학과·전형을 골라 연도별 지원자 수·모집 정원·경쟁률 그래프와 표 |
 | 자료실 | `/sim/univ/3/content` | 대입자료·면접자료 PDF 목록과 뷰어 |
 | 대학소식 | `/sim/univ/3/news` | 입시 일정·공지 소식(최신순, 월별 묶음) |
-| 커뮤니티 | `/sim/univ/3/community` | 준비 중 (3단계에서 로그인과 함께 열림) |
+| 커뮤니티 | `/sim/univ/3/community` | 대학별 질문 게시판(Q&A). 누구나 읽기, 로그인하면 질문·답변 쓰기. 제목 검색·더보기 |
+| 질문 상세 | `/sim/univ/3/community/12` | 질문 본문과 답변, 내 글 수정·삭제, 관리자 숨기기·삭제 |
+| 내 정보 | `/sim/me` | 닉네임 변경, 찜한 대학, 내가 쓴 질문·답변, 회원 탈퇴 |
+| 이용 규칙 · 개인정보 처리방침 | `/sim/terms` · `/sim/privacy` | 바닥글에 링크 |
 | 데이터 관리 | `/sim/admin` | 선생님용. 엑셀 양식 내려받기 · 파일 검사 · 미리보기 · GitHub에 올리기 (바닥글의 '데이터 관리' 링크) |
 
-- 대학 이름 옆 **하트(찜)** 는 로그인 없이 지금 쓰는 브라우저에만 저장됩니다. 다른 컴퓨터·브라우저에서는 보이지 않습니다.
+- 대학 이름 옆 **하트(찜)** 는 로그인 전에는 지금 쓰는 브라우저에만 저장되고, 로그인(+이용 동의)하면 계정에 저장됩니다.
+  이때 브라우저에 찜해 둔 대학은 계정으로 옮겨지고 브라우저 목록은 비워집니다(공용 컴퓨터 대비).
 - 휴대폰(가로 390px 정도)부터 PC(1440px)까지 화면 크기에 맞춰 배치가 바뀝니다.
 - 실제 대학 로고는 저작권 문제로 쓰지 않고, 대학 이름 첫 글자로 만든 아이콘을 보여 줍니다.
 
@@ -54,7 +58,8 @@
 |---|---|---|
 | **1단계** | 화면 + 샘플 데이터 — 대학 검색, 대학별 탭(대학정보·모집요강·지난 경쟁률·자료실·대학소식), 경쟁률 추세 | 완료 |
 | **2단계** | 엑셀 업로드로 데이터 입력 — `data/` 의 엑셀을 빌드에 합치기, 데이터 관리 화면(`/admin`)에서 양식 내려받기·검사·미리보기·GitHub에 올리기 | **완료** |
-| **3단계** | 로그인 · 찜(계정에 저장) · 커뮤니티(Q&A) · AI 상담 | 예정 |
+| **3단계** | 구글 로그인 · 찜(계정에 저장) · 대학별 커뮤니티(Q&A) · 내 정보 · 이용 규칙/개인정보 처리방침 | **코드 완료 — Supabase 설정 필요** |
+| 이후 | AI 상담 (`/ai`) | 보류 (준비 중 화면) |
 
 데이터는 `data/` 폴더의 CSV(샘플)와 **엑셀(.xlsx)** 로 관리합니다. 엑셀의 시트·열 이름은 CSV와 같고 검사 규칙도 같습니다.
 
@@ -78,6 +83,24 @@
 
 **샘플을 모두 없애려면** — `data/` 의 competition·guidelines·resources·news CSV 에서 머리글만 남기고 행을 지운 뒤(또는 모든 대학을 엑셀로 바꾼 뒤),
 `src/config.ts` 의 `IS_SAMPLE_DATA` 를 `false` 로 바꿉니다.
+
+### 3단계: 로그인 · 커뮤니티 켜기 (요약)
+
+로그인·찜·커뮤니티는 **Supabase**(무료 데이터베이스·로그인 서비스)를 씁니다. 사이트 코드에는 프로젝트 주소와 공개(anon) 키만 들어 있고(`src/config.ts`),
+선생님이 대시보드에서 한 번 설정하면 열립니다. **자세한 순서(메뉴 이름 포함)는 [`supabase/README.md`](supabase/README.md)** 를 보세요.
+
+1. Supabase **SQL Editor** 에 [`supabase/migrations/0001_stage3.sql`](supabase/migrations/0001_stage3.sql) 전체를 붙여 넣고 **Run**.
+2. **Google Cloud Console** 에서 OAuth 동의 화면(외부) + OAuth 클라이언트 ID(웹) 만들기. 리디렉션 URI: `https://pjxvsloaujvqmbccwtjf.supabase.co/auth/v1/callback`
+3. Supabase **Authentication → Sign In / Providers → Google** 켜고 클라이언트 ID·보안 비밀번호 붙여 넣기.
+4. Supabase **Authentication → URL Configuration**: Site URL `https://ydms005.github.io/sim/`, Redirect URLs `https://ydms005.github.io/sim/**`, `http://localhost:5173/sim/**`.
+5. 사이트에서 한 번 로그인한 뒤 SQL 로 내 계정을 관리자로 지정(`update public.profiles set role = 'admin' where id = (select id from auth.users where email = '내 이메일');`).
+6. `src/config.ts` 의 `PRIVACY_OFFICER`(개인정보 보호 책임자 이름·연락처)를 실제 값으로 바꾸기.
+
+설정 전에는 커뮤니티 탭에 '커뮤니티 준비 중' 안내가 보이고 다른 화면은 그대로 동작합니다.
+Supabase 무료 프로젝트는 **1주일 동안 쓰지 않으면 일시 정지**되니, 정지되면 대시보드에서 **Restore project** 를 누르세요.
+
+보안 설계: 모든 표에 RLS(행 수준 보안), 구글 이메일은 공개되지 않고 닉네임만 보임, 작성자·숨김 여부는 글쓴이가 못 바꿈,
+관리자만 숨기기, 도배 방지(질문 10분 5개·답변 10분 20개), 글은 HTML 로 해석하지 않고 글자 그대로 표시.
 
 ## 3. 인터넷에 올리기 — GitHub Pages 자동 배포
 
@@ -186,6 +209,7 @@ sim/
 ├─ .github/workflows/
 │  └─ deploy.yml              ← GitHub Pages 자동 배포 설정
 ├─ data/                      ← ★ 데이터 원본(CSV·엑셀) + 작성 안내(data/README.md)
+├─ supabase/                  ← 3단계 데이터베이스 SQL(migrations/0001_stage3.sql) + 설정 안내(supabase/README.md)
 ├─ scripts/                   ← 데이터 검사·변환(build-data.mjs), 샘플 데이터·PDF 생성 스크립트
 │  └─ lib/dataset.mjs         ← 검사·합치기 규칙(빌드와 데이터 관리 화면이 함께 씀)
 ├─ public/
@@ -193,11 +217,13 @@ sim/
 │  ├─ files/univ/{대학ID}/    ← ★ 모집요강·자료실 PDF
 │  └─ data/                   ← CSV·엑셀에서 자동 생성(수정 금지)
 └─ src/                       ← 화면을 만드는 코드
-   ├─ config.ts               ← ★ 사이트 이름·공지·샘플 여부
+   ├─ config.ts               ← ★ 사이트 이름·공지·샘플 여부, Supabase 주소, 개인정보 책임자
    ├─ router.tsx              ← 주소(URL)와 화면 연결
    ├─ index.css               ← 색상(초록 브랜드 색)·글꼴
    ├─ components/             ← 머리글·바닥글, 대학 카드, 그래프 등 공용 부품
-   ├─ pages/                  ← 홈·검색·경쟁률 추세 화면
+   ├─ auth/                   ← 로그인 상태(구글 로그인·프로필·동의)
+   ├─ community/              ← 커뮤니티(Q&A) 서버 요청
+   ├─ pages/                  ← 홈·검색·경쟁률 추세·내 정보·이용 규칙·개인정보 처리방침 화면
    │  ├─ admin/               ← 데이터 관리 화면(/admin: 엑셀 양식·검사·미리보기·GitHub에 올리기)
    │  └─ univ/                ← 대학 상세 탭(대학정보·모집요강·지난 경쟁률·자료실·대학소식·커뮤니티)
    ├─ data/                   ← 데이터 형식 정의(types.ts)와 불러오기(api.ts)
@@ -207,7 +233,7 @@ sim/
 
 ★ 표시가 보통 손대게 되는 곳입니다.
 
-사용한 기술(참고): Vite · React · TypeScript · Tailwind CSS · React Router · Recharts(그래프) · react-pdf(PDF 뷰어) · read-excel-file / write-excel-file(엑셀).
+사용한 기술(참고): Vite · React · TypeScript · Tailwind CSS · React Router · Recharts(그래프) · react-pdf(PDF 뷰어) · read-excel-file / write-excel-file(엑셀) · Supabase(로그인·데이터베이스, supabase-js).
 
 ## 8. 자주 묻는 질문 · 문제 해결
 
@@ -237,8 +263,15 @@ Actions 탭에서 배포가 끝났는지(초록 체크) 확인하세요. 끝났�
 글꼴은 화면 그리기를 막지 않게 따로 받으므로(`index.html`), CDN 이 느리거나 응답하지 않아도 사이트는 바로 뜹니다.
 PDF 뷰어가 쓰는 한글 글꼴 정보(CMap)·표준 글꼴은 빌드할 때 사이트(`/sim/pdfjs/`)에 함께 올라가므로 CDN이 막혀도 PDF 한글이 보입니다.
 
-**Q. 커뮤니티·로그인·AI 상담은 언제 되나요?**
-3단계에서 추가할 예정입니다. 지금 화면에는 "준비 중" 안내만 있고, 가짜 게시글은 넣지 않았습니다.
+**Q. 커뮤니티에 '커뮤니티 준비 중'만 보여요.**
+Supabase 에서 SQL 을 아직 실행하지 않았거나 실패한 경우입니다. [`supabase/README.md`](supabase/README.md) 의 A 단계를 해 주세요.
+잘 되던 커뮤니티가 갑자기 '연결하지 못했어요' 로 바뀌었다면 무료 프로젝트가 일시 정지된 것이니 대시보드에서 **Restore project** 를 누르세요.
+
+**Q. 로그인 문제(구글 오류 화면, 로그인 뒤 엉뚱한 곳으로 이동)가 생겨요.**
+[`supabase/README.md`](supabase/README.md) 맨 아래 '문제 해결' 표를 보세요.
+
+**Q. AI 상담은 언제 되나요?**
+보류 중입니다. `/ai` 화면은 '준비 중' 안내만 보여 줍니다.
 
 ## 9. 저작권 · 이용 안내
 

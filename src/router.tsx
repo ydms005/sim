@@ -20,6 +20,11 @@ const CompetitionTab = lazy(() => import('./pages/univ/CompetitionTab'))
 const ContentTab = lazy(() => import('./pages/univ/ContentTab'))
 const NewsTab = lazy(() => import('./pages/univ/NewsTab'))
 const CommunityTab = lazy(() => import('./pages/univ/CommunityTab'))
+const QuestionPage = lazy(() => import('./pages/univ/QuestionPage'))
+// 3단계: 내 정보 · 이용 규칙 · 개인정보 처리방침
+const MePage = lazy(() => import('./pages/MePage'))
+const PrivacyPage = lazy(() => import('./pages/PrivacyPage'))
+const TermsPage = lazy(() => import('./pages/TermsPage'))
 
 const s = (node: ReactNode) => <Suspense fallback={<Loading />}>{node}</Suspense>
 
@@ -48,6 +53,9 @@ export const router = createBrowserRouter(
             { path: 'activities', element: s(<ComingSoonPage title="활동정리" />) },
             { path: 'ai', element: s(<ComingSoonPage title="AI 연동" />) },
             { path: 'admin', element: s(<AdminPage />) },
+            { path: 'me', element: s(<MePage />) },
+            { path: 'privacy', element: s(<PrivacyPage />) },
+            { path: 'terms', element: s(<TermsPage />) },
             {
               path: 'univ/:univId',
               element: <UnivLayout />,
@@ -62,6 +70,7 @@ export const router = createBrowserRouter(
                     { path: 'content', element: s(<ContentTab />) },
                     { path: 'news', element: s(<NewsTab />) },
                     { path: 'community', element: s(<CommunityTab />) },
+                    { path: 'community/:questionId', element: s(<QuestionPage />) },
                   ],
                 },
               ],

@@ -76,6 +76,17 @@ export default function AdminPage() {
         </Callout>
       </div>
 
+      <div className="mt-3">
+        <Callout tone="ok" title="커뮤니티(질문 게시판) 관리">
+          관리자로 지정된 계정으로 로그인하면 각 대학 &lsquo;커뮤니티&rsquo; 탭의 글과 답변에 <strong>숨기기 · 다시 보이기 · 삭제</strong> 버튼이 보이고, 내 글에는
+          &lsquo;선생님&rsquo; 표시가 붙습니다. 관리자 지정과 데이터베이스 설정 방법은 저장소의{' '}
+          <a href={`https://github.com/${GITHUB_REPO}/blob/${GITHUB_BRANCH}/supabase/README.md`} target="_blank" rel="noreferrer" className={LINK}>
+            supabase/README.md
+          </a>
+          를 보세요.
+        </Callout>
+      </div>
+
       {loadError ? (
         <div className="mt-6">
           <Callout tone="error" title="현재 사이트 데이터를 불러오지 못했습니다">

@@ -55,8 +55,12 @@ function UnivPage({ id }: { id: number }) {
 
   const univ = list.data?.find((u) => u.id === id)
   const path = trimSlash(pathname)
-  const tab = TABS.find((t) => t.to && path.endsWith(`/${t.to}`)) ?? TABS[0]
-  useDocumentTitle(univ ? `${univFullName(univ)} ${tab.label}` : list.data ? '대학을 찾을 수 없음' : undefined)
+  // /univ/3/community/12 (질문 상세)처럼 탭 아래 주소도 그 탭으로 봅니다.
+  const section = path.split('/')[3] ?? ''
+  const tab = TABS.find((t) => t.to && t.to === section) ?? TABS[0]
+  // 질문 상세처럼 탭 아래 화면은 그 화면이 제목을 정합니다.
+  const subPage = path.split('/').length > 4
+  useDocumentTitle(univ && subPage ? null : univ ? `${univFullName(univ)} ${tab.label}` : list.data ? '대학을 찾을 수 없음' : undefined)
 
   // 모바일에서 가로로 넘치는 탭: 선택된 탭이 보이도록 탭 줄만 스크롤 (페이지는 그대로)
   useLayoutEffect(() => {

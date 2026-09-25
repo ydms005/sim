@@ -1,8 +1,12 @@
-import { useEffect, useId, useRef, useState, type FormEvent } from 'react'
+import { Suspense, useEffect, useId, useRef, useState, type FormEvent } from 'react'
 import { Link, Outlet, ScrollRestoration, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import { useAuth } from '../auth/store'
 import { IS_SAMPLE_DATA, SITE_NAME } from '../config'
+import { lazyWithReload as lazy } from '../lib/chunkReload'
+import AccountButton from './auth/AccountButton'
 import { cx, SearchIcon } from './common'
 import PreviewBanner from './PreviewBanner'
+import Toaster from './Toaster'
 
 interface NavItem {
   to: string
@@ -17,6 +21,12 @@ const NAV: NavItem[] = [
   { to: '/ai', label: 'AI 연동' },
   { to: '/trends', label: '경쟁률 추세' },
 ]
+
+// 로그인 안내·이용 동의 창은 필요할 때만 받습니다(첫 화면을 가볍게).
+const AuthDialogs = lazy(() => import('./auth/AuthDialogs'))
+
+const FOOTER_LINK =
+  'rounded font-medium text-gray-600 underline decoration-gray-300 underline-offset-4 hover:text-gray-900 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-500'
 
 /** 끝의 '/' 를 뗀 경로 (루트는 '/') */
 const trimSlash = (p: string) => p.replace(/\/+$/, '') || '/'
@@ -76,34 +86,6 @@ function GlobalSearch({
   )
 }
 
-function LoginButton() {
-  const [open, setOpen] = useState(false)
-  const ref = useRef<HTMLDivElement>(null)
-  useEffect(() => {
-    if (!open) return
-    const close = (e: MouseEvent) => !ref.current?.contains(e.target as Node) && setOpen(false)
-    document.addEventListener('mousedown', close)
-    return () => document.removeEventListener('mousedown', close)
-  }, [open])
-  return (
-    <div ref={ref} className="relative">
-      <button
-        type="button"
-        onClick={() => setOpen((v) => !v)}
-        aria-expanded={open}
-        className="h-10 shrink-0 rounded-xl bg-brand-400 px-4 text-[15px] font-semibold text-white hover:bg-brand-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-500 md:h-11 md:px-5"
-      >
-        로그인
-      </button>
-      {open && (
-        <div role="status" className="absolute top-full right-0 z-30 mt-2 w-60 rounded-xl border border-gray-100 bg-white p-4 text-sm text-gray-600 shadow-lg">
-          로그인 기능은 준비 중입니다. 찜한 대학은 지금 이 브라우저에 저장됩니다.
-        </div>
-      )}
-    </div>
-  )
-}
-
 /** 모바일 헤더 검색 버튼 아이콘 (열림 상태에선 닫기 X) */
 function SearchToggleIcon({ open }: { open: boolean }) {
   if (!open) return <SearchIcon className="size-6" />
@@ -123,6 +105,7 @@ export default function Layout() {
   const barRef = useRef<HTMLElement>(null)
   const toggleRef = useRef<HTMLButtonElement>(null)
   const panelId = useId()
+  const auth = useAuth()
 
   // 끝에 '/' 가 붙은 주소(/univ/3/competition/)는 표준 주소로 바꿔 메뉴·탭 강조와 제목이 맞게 합니다.
   useEffect(() => {
@@ -210,7 +193,7 @@ export default function Layout() {
             </button>
           )}
           <div className={cx('md:ml-0', !mobileSearch && 'ml-auto')}>
-            <LoginButton />
+            <AccountButton />
           </div>
         </div>
         {/* 모바일: 스크롤해 내려간 뒤에도 검색할 수 있도록 고정 줄 아래에 펼치는 검색창 */}
@@ -244,7 +227,7 @@ export default function Layout() {
       </div>
 
       {/* 대학 상세·경쟁률 추세는 회색 바탕 카드 화면이라, 내용이 짧아도 푸터까지 같은 바탕이 이어지게 합니다. */}
-      <main className={cx('flex-1', /^\/(univ|trends|admin)(\/|$)/.test(path) && 'bg-canvas')}>
+      <main className={cx('flex-1', /^\/(univ|trends|admin|me)(\/|$)/.test(path) && 'bg-canvas')}>
         <Outlet />
       </main>
 
@@ -253,7 +236,15 @@ export default function Layout() {
           <p className="font-semibold text-gray-700">{SITE_NAME}</p>
           <p>공교육 현장의 진학 지도를 돕기 위한 비상업적 교육용 프로젝트입니다.</p>
           {IS_SAMPLE_DATA && <p>현재 표시되는 경쟁률·자료는 모두 개발용 샘플 데이터이며 실제 수치가 아닙니다.</p>}
-          <p className="mt-3">
+          <p className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1">
+            <Link to="/terms" className={FOOTER_LINK}>
+              이용 규칙
+            </Link>
+            <Link to="/privacy" className={cx(FOOTER_LINK, 'font-bold text-gray-700')}>
+              개인정보 처리방침
+            </Link>
+          </p>
+          <p className="mt-2">
             <Link
               to="/admin"
               className="rounded font-medium text-gray-600 underline decoration-gray-300 underline-offset-4 hover:text-gray-900 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-500"
@@ -265,6 +256,12 @@ export default function Layout() {
         </div>
       </footer>
       <PreviewBanner />
+      {(auth.loginOpen || auth.status === 'signedIn') && (
+        <Suspense fallback={null}>
+          <AuthDialogs />
+        </Suspense>
+      )}
+      <Toaster />
     </div>
   )
 }
