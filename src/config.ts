@@ -41,8 +41,8 @@ export const SUPABASE_ANON_KEY: string =
  * ★ 사이트를 학생들에게 알리기 전에 실제 담당자 이름과 연락용 이메일로 바꿔 주세요.
  */
 export const PRIVACY_OFFICER = {
-  name: '(담당 선생님 이름을 적어 주세요)',
-  contact: '(연락용 이메일을 적어 주세요)',
+  name: '조지훈',
+  contact: '010-8714-7996',
 }
 
 /** 이용 규칙·개인정보 처리방침 시행일. 내용을 바꾸면 날짜도 함께 바꿉니다. */
