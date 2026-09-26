@@ -199,7 +199,12 @@ const INDICATORS = [
     unit: '%',
     service: 'StudentService',
     operation: 'getNoticeFreshmanDrafteesRate',
-    valueField: 'indctVal1',
+    // 응답: indctVal1 = 정원내 모집인원, indctVal2 = 정원내 입학자, indctVal4 = 신입생 충원율(%)
+    valueField: 'indctVal4',
+    extra: [
+      { field: 'indctVal1', label: '정원내 모집인원', unit: '명' },
+      { field: 'indctVal2', label: '정원내 입학자', unit: '명' },
+    ],
   },
   {
     key: 'enrolledFillRate',
@@ -262,7 +267,8 @@ async function main() {
 
   const { matches, unmatchedOurIds } = matchUniversities(ourUnivs, fourYearCodes, (row) => ({
     name: row.schlKrnNm,
-    branchKind: row.schlDivNm,
+    // clgcpDivNm: '본교' · '분교' · '제2캠퍼스' … (표준데이터 표기 '제2캠퍼'에 맞춤)
+    branchKind: String(row.clgcpDivNm ?? '').replace(/캠퍼스$/, '캠퍼'),
   }))
   console.log(`대학ID 매칭: ${matches.size}곳 (우리 목록 ${ourUnivs.length}곳 중 ${unmatchedOurIds.length}곳 매칭 안 됨)`)
   {
@@ -303,8 +309,11 @@ async function main() {
       }
       if (univIndex <= 2) console.log(`[debug] 대학ID ${univId} ${ind.label} 응답 항목:`, JSON.stringify(items))
       const value = items[0][ind.valueField]
-      if (value === undefined || value === '') continue
-      indicatorRows.push([String(univId), String(svyYr), ind.label, value, ind.unit, SOURCE])
+      if (value !== undefined && value !== '') indicatorRows.push([String(univId), String(svyYr), ind.label, value, ind.unit, SOURCE])
+      for (const ex of ind.extra ?? []) {
+        const v = items[0][ex.field]
+        if (v !== undefined && v !== '') indicatorRows.push([String(univId), String(svyYr), ex.label, v, ex.unit, SOURCE])
+      }
     }
     if (univIndex % 20 === 0) console.log(`  ${univIndex}/${matches.size} 대학 처리…`)
   }
