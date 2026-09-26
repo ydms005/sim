@@ -47,3 +47,12 @@ export const PRIVACY_OFFICER = {
 
 /** 이용 규칙·개인정보 처리방침 시행일. 내용을 바꾸면 날짜도 함께 바꿉니다. */
 export const POLICY_EFFECTIVE_DATE = '2026년 9월 25일'
+
+/**
+ * 어디가 모집요강 PDF 를 사이트 안 뷰어로 보여 줄 때 거치는 수파베이스 중계 함수(supabase/functions/adiga-pdf).
+ * 어디가 주소를 넘기면 PDF 형식·파일 이름을 붙여 돌려줍니다.
+ */
+export function adigaPdfUrl(url: string, name: string): string | null {
+  if (!url.startsWith('https://www.adiga.kr/cmm/com/file/fileDown.do?')) return null
+  return `${SUPABASE_URL}/functions/v1/adiga-pdf?${new URLSearchParams({ url, name })}`
+}

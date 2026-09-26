@@ -189,3 +189,15 @@
    - `PROXY_TOKEN` : 영문·숫자로 20자 이상 아무렇게나 만든 문자열
 5. GitHub 저장소 **Settings → Secrets and variables → Actions** 에 `PROXY_TOKEN` 을 **같은 값**으로 추가
 6. GitHub **Actions → 대학알리미 지표 업데이트 → Run workflow**
+
+## 모집요강 PDF 중계 함수 (adiga-pdf)
+
+어디가 모집요강 PDF 를 사이트 안 뷰어로 바로 보여 주기 위한 함수입니다.
+
+1. 수파베이스 → **Edge Functions → Deploy a new function → Via Editor**
+2. 함수 이름: `adiga-pdf`
+3. `supabase/functions/adiga-pdf/index.ts` 내용을 붙여넣고 **Deploy function**
+4. 배포된 함수 → **Details(설정)** 에서 **Verify JWT(JWT 검증)** 을 **끄고** 저장
+   (브라우저가 인증 없이 바로 부르기 때문. 어디가 파일 주소만 중계하도록 막혀 있습니다.)
+
+무료 요금제의 Edge Function 호출·전송량 한도 안에서 동작합니다. 사용량은 수파베이스 **Usage** 에서 확인하세요.

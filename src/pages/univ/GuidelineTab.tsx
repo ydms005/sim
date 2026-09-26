@@ -5,6 +5,7 @@ import { ExternalFileCard } from '../../components/ExternalFileCard'
 import PdfViewer from '../../components/PdfViewer'
 import { UnivEmptyState } from '../../components/UnivEmptyState'
 import { useUniv } from '../../components/UnivLayout'
+import { adigaPdfUrl } from '../../config'
 import { fileUrl } from '../../data/api'
 import type { Guideline } from '../../data/types'
 
@@ -69,17 +70,33 @@ export default function GuidelineTab() {
         })}
       </div>
 
-      {isExternalUrl(selected.file) ? (
-        <ExternalFileCard
-          url={selected.file}
-          title={selected.title}
-          buttonLabel="모집요강 PDF 열기 (새 창)"
-          note="대입정보포털 어디가(한국대학교육협의회)에서 제공하는 공식 PDF 파일입니다. 내려받은 파일 이름이 fileDown.do 로 저장되면, 이름 끝을 .pdf 로 바꾸면 열립니다."
-          source="링크 목록 출처: github.com/KyunghwanP/ynhs"
-        />
-      ) : (
-        <PdfViewer file={fileUrl(selected.file)} title={selected.title} />
-      )}
+      {(() => {
+        // 어디가 링크는 수파베이스 중계 함수를 거쳐 사이트 안 뷰어로 바로 보여 줍니다.
+        const proxied = adigaPdfUrl(selected.file, `${univ.name}_${selected.title}`)
+        if (proxied)
+          return (
+            <>
+              <PdfViewer file={proxied} title={`${univ.name} ${selected.title}`} />
+              <p className="mt-3 text-[13px] text-gray-500">
+                출처: 대입정보포털 어디가(한국대학교육협의회) ·{' '}
+                <a href={selected.file} target="_blank" rel="noopener" className="underline underline-offset-2">
+                  원본 파일
+                </a>{' '}
+                · 링크 목록: github.com/KyunghwanP/ynhs
+              </p>
+            </>
+          )
+        if (isExternalUrl(selected.file))
+          return (
+            <ExternalFileCard
+              url={selected.file}
+              title={selected.title}
+              buttonLabel="모집요강 PDF 열기 (새 창)"
+              note="외부 사이트에서 제공하는 파일입니다."
+            />
+          )
+        return <PdfViewer file={fileUrl(selected.file)} title={selected.title} />
+      })()}
     </div>
   )
 }
