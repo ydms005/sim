@@ -16,6 +16,7 @@
     "data:import-standard": "node scripts/import-standard-univ.mjs",
     "data:import-kess": "node scripts/import-kess-departments.mjs",
     "data:import-guidelines": "node scripts/import-adiga-guidelines.mjs",
+    "data:import-susi": "node scripts/import-susi-ratio.mjs",
     "data:fetch": "node scripts/fetch-academyinfo.mjs"
   },
   "dependencies": {

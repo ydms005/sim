@@ -93,7 +93,9 @@ export default function InfoTab() {
 
         <div className="mt-5 flex flex-col gap-2 text-[13px] text-gray-400 sm:flex-row sm:items-center sm:justify-between md:text-[14px]">
           <p>
-            원서접수 최종 경쟁률 집계 기준{IS_SAMPLE_DATA && ' · 샘플 데이터'}
+            출처: 진학어플라이·유웨이어플라이 경쟁률 페이지(esteacher2026/susi-ratio 수집 자료) · 원서접수 마감 기준
+            {year === 2027 && ' · 2027학년도는 진학어플라이 접수 대학만 제공'}
+            {IS_SAMPLE_DATA && ' · 샘플 데이터'}
           </p>
           <HomepageLink univ={univ} className="text-[14px]" />
         </div>

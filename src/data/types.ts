@@ -39,7 +39,7 @@ export interface University {
 }
 
 /** 전형 유형(대분류) */
-export const ADMISSION_CATEGORIES = ['학생부종합', '학생부교과', '논술', '실기/실적'] as const
+export const ADMISSION_CATEGORIES = ['학생부종합', '학생부교과', '논술', '실기/실적', '기타'] as const
 export type AdmissionCategory = (typeof ADMISSION_CATEGORIES)[number]
 
 /** 경쟁률 한 건 = (학년도, 모집단위, 전형) */

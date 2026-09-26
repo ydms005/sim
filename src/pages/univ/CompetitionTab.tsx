@@ -291,7 +291,9 @@ export default function CompetitionTab() {
           <p className="mt-2 px-1 text-[12px] text-gray-400 md:px-3 md:text-[13px]">
             {kessMode
               ? '출처: 한국교육개발원 교육통계(KESS) 학교별 학과별 주요 현황 · 수시+정시 합산 · 매년 4월 1일 기준'
-              : `원서접수 최종 경쟁률 기준${IS_SAMPLE_DATA ? ' · 샘플 데이터' : ''}`}
+              : `출처: 진학어플라이·유웨이어플라이 경쟁률 페이지(esteacher2026/susi-ratio 수집 자료) · 원서접수 마감 기준${
+                  rows.some((r) => r.year === 2027) ? ' · 2027학년도는 진학어플라이 접수 대학만 제공' : ''
+                }${IS_SAMPLE_DATA ? ' · 샘플 데이터' : ''}`}
           </p>
         </section>
       </div>
