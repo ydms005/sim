@@ -74,7 +74,7 @@ export default function GuidelineTab() {
           url={selected.file}
           title={selected.title}
           buttonLabel="모집요강 PDF 열기 (새 창)"
-          note="대입정보포털 어디가(한국대학교육협의회)에서 제공하는 공식 파일입니다. 파일이 바로 내려받아질 수 있어요."
+          note="대입정보포털 어디가(한국대학교육협의회)에서 제공하는 공식 PDF 파일입니다. 내려받은 파일 이름이 fileDown.do 로 저장되면, 이름 끝을 .pdf 로 바꾸면 열립니다."
           source="링크 목록 출처: github.com/KyunghwanP/ynhs"
         />
       ) : (
