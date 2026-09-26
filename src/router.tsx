@@ -11,6 +11,7 @@ const HomePage = lazy(() => import('./pages/HomePage'))
 const SearchPage = lazy(() => import('./pages/SearchPage'))
 const TrendsPage = lazy(() => import('./pages/TrendsPage'))
 const ComingSoonPage = lazy(() => import('./pages/ComingSoonPage'))
+const AiPage = lazy(() => import('./pages/AiPage'))
 const NotFoundPage = lazy(() => import('./pages/NotFoundPage'))
 // 데이터 관리(선생님용). 엑셀 읽기·쓰기 라이브러리가 들어 있어 이 화면을 열 때만 받습니다.
 const AdminPage = lazy(() => import('./pages/admin/AdminPage'))
@@ -51,7 +52,7 @@ export const router = createBrowserRouter(
             { path: 'search', element: s(<SearchPage />) },
             { path: 'trends', element: s(<TrendsPage />) },
             { path: 'activities', element: s(<ComingSoonPage title="활동정리" />) },
-            { path: 'ai', element: s(<ComingSoonPage title="AI 연동" />) },
+            { path: 'ai', element: s(<AiPage />) },
             { path: 'admin', element: s(<AdminPage />) },
             { path: 'me', element: s(<MePage />) },
             { path: 'privacy', element: s(<PrivacyPage />) },

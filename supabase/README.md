@@ -190,6 +190,28 @@
 5. GitHub 저장소 **Settings → Secrets and variables → Actions** 에 `PROXY_TOKEN` 을 **같은 값**으로 추가
 6. GitHub **Actions → 대학알리미 지표 업데이트 → Run workflow**
 
+## AI 연동 MCP 서버 (mcp)
+
+Claude(claude.ai 커스텀 커넥터, Claude Desktop, Claude Code)와 ChatGPT(개발자 모드) 같은 AI 채팅이 이 사이트의 공개 데이터(대학 목록·경쟁률·모집요강 등)를
+읽기 전용으로 조회할 수 있게 하는 함수입니다. 로그인·인증이 필요 없습니다.
+
+1. 수파베이스 → **Edge Functions → Deploy a new function → Via Editor**
+2. 함수 이름: `mcp`
+3. 편집기 내용을 모두 지우고 `supabase/functions/mcp/index.ts` 내용을 통째로 붙여넣은 뒤 **Deploy function**
+4. 배포된 함수 → **Details(설정)** 에서 **Verify JWT(JWT 검증)** 을 **끄고** 저장
+   (누구나 인증 없이 바로 부르기 때문입니다. 이 함수는 공개 데이터만 읽으므로 안전합니다.)
+5. 별도 Secret 설정은 필요 없습니다. (데이터는 사이트가 GitHub Pages 로 배포한 정적 JSON(`https://ydms005.github.io/sim/data/`)에서 그대로 가져옵니다.
+   다른 주소를 쓰려면 Edge Functions → Secrets 에 `MCP_DATA_BASE` 를 추가하세요.)
+
+**주소**: `https://pjxvsloaujvqmbccwtjf.supabase.co/functions/v1/mcp`
+
+**확인해 보기(claude.ai)**:
+1. claude.ai 오른쪽 위 프로필 → **설정** → **커넥터**(Connectors) → **커스텀 커넥터 추가**(Add custom connector)
+2. 이름은 자유롭게, 주소 칸에 위 URL을 붙여 넣고 저장
+3. 새 대화에서 커넥터를 켜고 "건국대학교 서울캠퍼스 정보 알려줘" 처럼 물어보면 대학 정보를 찾아 답합니다.
+
+사이트의 **AI 연동**(`/ai`) 화면에도 학생·선생님이 볼 수 있게 같은 안내(claude.ai·Claude Desktop·Claude Code·ChatGPT 등록 방법, 예시 질문)가 있습니다.
+
 ## 모집요강 PDF 중계 함수 (adiga-pdf)
 
 어디가 모집요강 PDF 를 사이트 안 뷰어로 바로 보여 주기 위한 함수입니다.

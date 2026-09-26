@@ -49,6 +49,12 @@ export const PRIVACY_OFFICER = {
 export const POLICY_EFFECTIVE_DATE = '2026년 9월 25일'
 
 /**
+ * AI 연동(/ai)에서 안내하는 MCP(Model Context Protocol) 서버 주소 (supabase/functions/mcp).
+ * Claude·ChatGPT 같은 AI 채팅에서 이 사이트의 공개 데이터를 읽기 전용으로 조회할 때 씁니다. 인증이 필요 없습니다.
+ */
+export const MCP_URL = `${SUPABASE_URL}/functions/v1/mcp`
+
+/**
  * 어디가 모집요강 PDF 를 사이트 안 뷰어로 보여 줄 때 거치는 수파베이스 중계 함수(supabase/functions/adiga-pdf).
  * 어디가 주소를 넘기면 PDF 형식·파일 이름을 붙여 돌려줍니다.
  */
