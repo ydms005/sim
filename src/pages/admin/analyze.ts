@@ -342,6 +342,7 @@ const KEYS: Record<DetailDataset, (x: never) => string> = {
   guidelines: (g: { year: number }) => String(g.year),
   resources: (r: { id: string }) => r.id,
   news: (n: { id: string }) => n.id,
+  departments: (d: { year: number; department: string }) => `${d.year}\u0001${d.department}`,
 }
 
 function countChange<T>(before: T[], after: T[], key: (x: T) => string): CountChange {
@@ -375,7 +376,7 @@ export function diffSite(current: CurrentSite, next: SiteOutput): Changes {
       infoChanged: !!before && info(before) !== info(u),
       datasets: {},
     }
-    for (const d of ['competition', 'guidelines', 'resources', 'news'] as const) {
+    for (const d of ['competition', 'guidelines', 'resources', 'news', 'departments'] as const) {
       const c = countChange<never>(
         (oldD.get(u.id)?.[d] ?? []) as never[],
         (newD.get(u.id)?.[d] ?? []) as never[],

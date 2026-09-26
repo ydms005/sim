@@ -2,7 +2,7 @@
 // dataset.mjs 의 내보내기를 바꾸면 이 파일도 같이 고쳐 주세요.
 import type { TrendRow, UnivDetail, University } from '../../src/data/types.ts'
 
-export type DatasetName = 'universities' | 'competition' | 'guidelines' | 'resources' | 'news'
+export type DatasetName = 'universities' | 'competition' | 'guidelines' | 'resources' | 'news' | 'departments'
 
 export interface DatasetSpec {
   /** 엑셀 시트 이름 (예: '경쟁률') */
@@ -81,17 +81,21 @@ export interface BuildOptions {
 export interface SiteOutput {
   universities: University[]
   trends: TrendRow[]
+  /** 학과별 모집현황(KESS)의 대학·학년도별 합계. trends.json 과 같은 모양이지만 수시+정시 합산입니다. */
+  deptTrends: TrendRow[]
   details: UnivDetail[]
 }
 
 export interface BuildStats {
   universities: number
   withCompetition: number
+  withDeptData: number
   details: number
   competition: number
   guidelines: number
   resources: number
   news: number
+  departments: number
 }
 
 export type BuildResult = { issues: Issue[]; output: null; stats?: undefined } | { issues: Issue[]; output: SiteOutput; stats: BuildStats }

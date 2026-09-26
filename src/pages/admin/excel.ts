@@ -9,8 +9,14 @@ export async function readWorkbook(file: Blob) {
   return readExcelFile(file)
 }
 
+/**
+ * 엑셀 양식/내려받기에서 다루는 데이터 종류. departments(학과별 모집현황)는 KESS 원본에서
+ * scripts/import-kess-departments.mjs 로만 만드는 자료라 이 엑셀 워크플로에는 포함하지 않습니다.
+ */
+const EXCEL_DATASETS = DATASET_NAMES.filter((d): d is Exclude<DatasetName, 'departments'> => d !== 'departments')
+
 /** 열 너비(글자 수) */
-const WIDTHS: Record<DatasetName, number[]> = {
+const WIDTHS: Record<Exclude<DatasetName, 'departments'>, number[]> = {
   universities: [8, 22, 8, 10, 14, 34, 40, 10, 16, 30, 12],
   competition: [8, 8, 24, 30, 12, 10, 10],
   guidelines: [8, 8, 34, 40],
@@ -24,7 +30,7 @@ const headerRow = (dataset: DatasetName) =>
   allColumns(dataset).map((c) => ({ value: c, fontWeight: 'bold' as const, backgroundColor: '#E8F6EE' }))
 
 /** 각 시트 열의 설명 (안내 시트용) */
-const COLUMN_HELP: Record<DatasetName, [string, string, string][]> = {
+const COLUMN_HELP: Record<Exclude<DatasetName, 'departments'>, [string, string, string][]> = {
   universities: [
     ['대학ID', '1 이상의 정수. 한 번 정하면 바꾸거나 다른 대학에 다시 쓰지 않습니다(사이트 주소 /univ/3 의 3).', '3'],
     ['대학명', '공식 교명', '건국대학교'],
@@ -87,7 +93,7 @@ function guideSheet(): SheetData {
     [],
     [bold('시트'), bold('열'), bold('설명'), bold('예')],
   ]
-  for (const d of DATASET_NAMES) {
+  for (const d of EXCEL_DATASETS) {
     for (const [col, help, ex] of COLUMN_HELP[d]) rows.push([DATASETS[d].title, col, wrap(help), ex])
   }
   return rows
@@ -95,7 +101,7 @@ function guideSheet(): SheetData {
 
 type Workbook = Parameters<typeof writeExcelFile>[0]
 
-function datasetSheet(dataset: DatasetName, rows: string[][] = []) {
+function datasetSheet(dataset: Exclude<DatasetName, 'departments'>, rows: string[][] = []) {
   const numberCols = allColumns(dataset).map((c) => NUMBER_COLUMNS.has(c))
   const data: SheetData = [
     headerRow(dataset),
@@ -123,7 +129,7 @@ async function toBlob(sheets: Workbook): Promise<Blob> {
 export function buildTemplate(): Promise<Blob> {
   return toBlob([
     { sheet: GUIDE_SHEET, data: guideSheet(), columns: [{ width: 12 }, { width: 12 }, { width: 80 }, { width: 34 }] },
-    ...DATASET_NAMES.map((d) => datasetSheet(d)),
+    ...EXCEL_DATASETS.map((d) => datasetSheet(d)),
   ] as Workbook)
 }
 
@@ -131,7 +137,7 @@ export function buildTemplate(): Promise<Blob> {
 export function buildExport(rows: Record<DatasetName, string[][]>): Promise<Blob> {
   return toBlob([
     { sheet: GUIDE_SHEET, data: guideSheet(), columns: [{ width: 12 }, { width: 12 }, { width: 80 }, { width: 34 }] },
-    ...DATASET_NAMES.map((d) => datasetSheet(d, rows[d])),
+    ...EXCEL_DATASETS.map((d) => datasetSheet(d, rows[d])),
   ] as Workbook)
 }
 

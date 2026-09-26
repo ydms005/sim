@@ -27,8 +27,10 @@ export interface University {
   nameEn?: string
   /** 설립일자 (YYYY-MM-DD) */
   foundedAt?: string
-  /** 경쟁률 데이터가 있는지 ('경쟁률 제공' 배지·추세·학과 검색 기준) */
+  /** 경쟁률 데이터가 있는지 (수시 전형별 경쟁률 행 기준. '경쟁률 제공' 배지·추세·학과 검색은 hasData || hasDeptData 를 씁니다) */
   hasData: boolean
+  /** 학과별 모집 현황(KESS, 수시+정시 합산) 데이터가 있는지 */
+  hasDeptData?: boolean
   /**
    * public/data/univ/{id}.json 파일이 있는지 (경쟁률·모집요강·자료실·소식 중 하나라도 있으면 true).
    * 예전 데이터처럼 이 값이 없으면 hasData 로 판단합니다.
@@ -87,6 +89,24 @@ export interface NewsItem {
   url?: string
 }
 
+/**
+ * 학과별 모집 현황 한 건(한국교육개발원 교육통계 KESS, 수시+정시 합산, 매년 4월 1일 기준).
+ * scripts/import-kess-departments.mjs 로 data/departments.csv 를 만듭니다.
+ */
+export interface DepartmentStat {
+  year: number
+  /** 학과명(주간·야간이 모두 있으면 야간 쪽에 '(야간)'을 붙여 구분) */
+  department: string
+  /** 대계열(예: '인문계열') */
+  field: string
+  /** 모집인원(학부, 정원내+정원외 합계) */
+  quota: number
+  /** 지원자 수(수시+정시 합산) */
+  applicants: number
+  /** 입학자 수 */
+  admitted: number
+}
+
 /** public/data/univ/{id}.json */
 export interface UnivDetail {
   id: number
@@ -94,6 +114,8 @@ export interface UnivDetail {
   guidelines: Guideline[]
   resources: Resource[]
   news: NewsItem[]
+  /** 학과별 모집 현황(KESS). 자료가 없으면 생략 */
+  departments?: DepartmentStat[]
 }
 
 /** public/data/indicators.json 의 대학별 지표 한 건 (대학알리미 공시, scripts/fetch-academyinfo.mjs 로 생성) */

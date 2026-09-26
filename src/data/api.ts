@@ -19,6 +19,7 @@ function previewJson(path: string): unknown {
   if (!p) return undefined
   if (path === UNIVERSITIES) return p.universities
   if (path === TRENDS) return p.trends
+  if (path === DEPT_TRENDS) return p.deptTrends ?? []
   const m = /^data\/univ\/(\d+)\.json$/.exec(path)
   return m ? (p.details[m[1]] ?? null) : null
 }
@@ -50,6 +51,7 @@ const peek = <T>(path: string) => resolved.get(path) as T | undefined
 
 const UNIVERSITIES = 'data/universities.json'
 const TRENDS = 'data/trends.json'
+const DEPT_TRENDS = 'data/dept-trends.json'
 const INDICATORS = 'data/indicators.json'
 const detailPath = (id: number) => `data/univ/${id}.json`
 
@@ -62,6 +64,8 @@ export function fileUrl(path: string): string {
 
 export const loadUniversities = () => fetchJson<University[]>(UNIVERSITIES)
 export const loadTrends = () => fetchJson<TrendRow[]>(TRENDS)
+/** 학과별 모집현황(KESS, 수시+정시 합산)의 대학·학년도별 합계. 경쟁률(수시) 추세가 없는 대학의 대체용 */
+export const loadDeptTrends = () => fetchJson<TrendRow[]>(DEPT_TRENDS)
 
 /** 대학 상세 파일(univ/{id}.json)이 있는 대학인지. 예전 데이터(hasDetail 없음)는 hasData 로 판단 */
 export const hasDetailFile = (u: University) => u.hasDetail ?? u.hasData
@@ -129,6 +133,7 @@ export function useAsync<T>(load: () => Promise<T>, deps: unknown[], peekFn?: ()
 
 export const useUniversities = () => useAsync(loadUniversities, [], () => peek<University[]>(UNIVERSITIES))
 export const useTrends = () => useAsync(loadTrends, [], () => peek<TrendRow[]>(TRENDS))
+export const useDeptTrends = () => useAsync(loadDeptTrends, [], () => peek<TrendRow[]>(DEPT_TRENDS))
 
 /** 대학알리미 공시 지표(대학ID별). 파일이 없거나(엑셀 관리 화면 미리보기 등) 그 대학 값이 없으면 빈 배열. */
 export const loadIndicators = () => fetchJson<Record<string, IndicatorItem[]>>(INDICATORS).catch(() => ({}) as Record<string, IndicatorItem[]>)

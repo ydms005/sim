@@ -446,11 +446,12 @@ function PreviewSection({ analysis, files }: { analysis: Analysis | null; files:
 
   const start = () => {
     if (!analysis?.output) return
-    const { universities, trends, details } = analysis.output
+    const { universities, trends, deptTrends, details } = analysis.output
     startPreview(
       {
         universities,
         trends,
+        deptTrends,
         details: Object.fromEntries(details.map((d) => [String(d.id), d])),
         sources: files.map((f) => f.name),
         createdAt: new Date().toISOString(),

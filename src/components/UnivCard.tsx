@@ -47,7 +47,7 @@ function UnivCard({ univ, query }: Props) {
             <span className="shrink-0">
               {univ.region} · {univ.type}
             </span>
-            {univ.hasData && (
+            {(univ.hasData || univ.hasDeptData) && (
               <span className="inline-flex min-w-0 items-center gap-0.5 rounded-md bg-brand-50 px-1.5 py-0.5 text-[12px] leading-4 font-semibold whitespace-nowrap text-brand-700">
                 <ChartIcon className="size-3 shrink-0" />
                 경쟁률 제공

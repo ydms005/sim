@@ -57,10 +57,19 @@ export const DATASETS = {
     multiline: ['요약'],
     optionalFile: true,
   },
+  departments: {
+    title: '학과별 모집현황',
+    file: 'departments.csv',
+    columns: ['대학ID', '학년도', '학과명', '계열', '모집인원', '지원자', '입학자'],
+    multiline: [],
+    optionalFile: true,
+  },
 }
 
 /** 처리 순서(= 엑셀 양식의 시트 순서) */
-export const DATASET_NAMES = /** @type {const} */ (['universities', 'competition', 'guidelines', 'resources', 'news'])
+export const DATASET_NAMES = /** @type {const} */ ([
+  'universities', 'competition', 'guidelines', 'resources', 'news', 'departments',
+])
 
 /** 엑셀 양식의 설명 시트 이름. 데이터로 읽지 않습니다. */
 export const GUIDE_SHEET = '안내'
@@ -800,6 +809,35 @@ export function buildSite(tables, options) {
     return out
   }
 
+  /**
+   * 학과별 모집 현황(KESS, scripts/import-kess-departments.mjs 로 만든 data/departments.csv).
+   * '지원자'가 0 이어도 오류로 보지 않습니다(경쟁률 자료와 달리, 정원이 있어도 지원자가 0인 신설·정원미달 학과가 실제로 있을 수 있음).
+   */
+  function buildDepartments(univs) {
+    const { prepared } = collect('departments')
+    const checkDup = duplicateChecker('대학ID+학년도+학과명')
+    /** @type {Map<number, any[]>} */
+    const out = new Map()
+    for (const r of rowsOf(prepared)) {
+      const univId = requireUnivId(r, univs)
+      const year = requireYear(r)
+      const department = requireText(r, '학과명')
+      const field = requireText(r, '계열')
+      const quota = requireCount(r, '모집인원')
+      const applicants = requireCount(r, '지원자')
+      const admitted = requireCount(r, '입학자')
+      if (univId === null || year === null || !department || !field || quota === null || applicants === null || admitted === null) continue
+      if (!checkDup(`${univId}\u0001${year}\u0001${department}`, r)) continue
+      const list = out.get(univId) ?? []
+      list.push({ year, department, field, quota, applicants, admitted })
+      out.set(univId, list)
+    }
+    for (const list of out.values()) {
+      list.sort((a, b) => a.year - b.year || collator.compare(a.department, b.department))
+    }
+    return out
+  }
+
   function buildNews(univs) {
     const { prepared } = collect('news')
     const checkDup = duplicateChecker('대학ID+날짜+제목')
@@ -829,16 +867,25 @@ export function buildSite(tables, options) {
   const guidelines = buildGuidelines(univs)
   const resources = buildResources(univs)
   const news = buildNews(univs)
+  const departments = buildDepartments(univs)
   reportSkippedRefs()
 
   if (issues.some((i) => i.level === 'error')) return { issues, output: null }
 
-  // 경쟁률·모집요강·자료실·소식 중 하나라도 있으면 univ/{id}.json 을 씁니다.
-  const detailIds = new Set([...competition.keys(), ...guidelines.keys(), ...resources.keys(), ...news.keys()])
-  // hasData  : 경쟁률 행이 있음 ('경쟁률 제공' 배지·추세·학과 검색 대상)
-  // hasDetail: univ/{id}.json 이 있음 (사이트는 이 값으로 상세 파일을 불러옵니다. 모집요강만 먼저 올린 대학도 true)
+  // 경쟁률·모집요강·자료실·소식·학과별 모집현황 중 하나라도 있으면 univ/{id}.json 을 씁니다.
+  const detailIds = new Set([
+    ...competition.keys(), ...guidelines.keys(), ...resources.keys(), ...news.keys(), ...departments.keys(),
+  ])
+  // hasData    : 경쟁률(수시 전형별) 행이 있음
+  // hasDeptData: 학과별 모집현황(KESS, 수시+정시 합산) 행이 있음 ('경쟁률 제공' 배지·추세·학과 검색은 hasData || hasDeptData)
+  // hasDetail  : univ/{id}.json 이 있음 (사이트는 이 값으로 상세 파일을 불러옵니다. 모집요강만 먼저 올린 대학도 true)
   const universities = [...univs.values()]
-    .map((u) => ({ ...u, hasData: (competition.get(u.id)?.length ?? 0) > 0, hasDetail: detailIds.has(u.id) }))
+    .map((u) => ({
+      ...u,
+      hasData: (competition.get(u.id)?.length ?? 0) > 0,
+      hasDeptData: (departments.get(u.id)?.length ?? 0) > 0,
+      hasDetail: detailIds.has(u.id),
+    }))
     .sort((a, b) => collator.compare(a.name, b.name) || a.id - b.id)
 
   const trends = []
@@ -861,20 +908,37 @@ export function buildSite(tables, options) {
       guidelines: guidelines.get(id) ?? [],
       resources: resources.get(id) ?? [],
       news: news.get(id) ?? [],
+      ...(departments.has(id) ? { departments: departments.get(id) } : {}),
     }))
+
+  // 학과별 모집현황(KESS)의 대학·학년도별 합계. 경쟁률(수시 전형별) 자료가 없는 대학도 추세 비교에 쓸 수 있도록
+  // trends.json 과 같은 모양({univId, year, quota, applicants})으로 따로 냅니다(수시+정시 합산이라 경쟁률과는 성격이 다름).
+  const deptTrends = []
+  for (const [univId, rows] of [...departments].sort((a, b) => a[0] - b[0])) {
+    const byYear = new Map()
+    for (const r of rows) {
+      const t = byYear.get(r.year) ?? { univId, year: r.year, quota: 0, applicants: 0 }
+      t.quota += r.quota
+      t.applicants += r.applicants
+      byYear.set(r.year, t)
+    }
+    deptTrends.push(...[...byYear.values()].sort((a, b) => a.year - b.year))
+  }
 
   const count = (m) => [...m.values()].reduce((s, l) => s + l.length, 0)
   return {
     issues,
-    output: { universities, trends, details },
+    output: { universities, trends, deptTrends, details },
     stats: {
       universities: universities.length,
       withCompetition: competition.size,
+      withDeptData: departments.size,
       details: detailIds.size,
       competition: count(competition),
       guidelines: count(guidelines),
       resources: count(resources),
       news: count(news),
+      departments: count(departments),
     },
   }
 }
@@ -890,7 +954,7 @@ export function buildSite(tables, options) {
 export function siteToRows(universities, details) {
   const s = (v) => (v === undefined || v === null ? '' : String(v))
   /** @type {Record<string, string[][]>} */
-  const rows = { universities: [], competition: [], guidelines: [], resources: [], news: [] }
+  const rows = { universities: [], competition: [], guidelines: [], resources: [], news: [], departments: [] }
   for (const u of [...universities].sort((a, b) => a.id - b.id)) {
     rows.universities.push([
       s(u.id),
@@ -912,6 +976,7 @@ export function siteToRows(universities, details) {
     for (const g of [...d.guidelines].sort((a, b) => a.year - b.year)) rows.guidelines.push([id, s(g.year), g.title, g.file])
     for (const r of d.resources) rows.resources.push([id, r.category, r.title, s(r.subtitle), r.file])
     for (const n of [...d.news].sort((a, b) => (a.date < b.date ? -1 : a.date > b.date ? 1 : 0))) rows.news.push([id, n.date, n.title, n.summary, s(n.url)])
+    for (const dep of d.departments ?? []) rows.departments.push([id, s(dep.year), dep.department, dep.field, s(dep.quota), s(dep.applicants), s(dep.admitted)])
   }
   return rows
 }

@@ -7,7 +7,7 @@ import { yearRange, yearsOf, type Totals } from '../components/competition/stats
 import UnivPicker, { type PickerOption, type UnivPickerHandle } from '../components/competition/UnivPicker'
 import { CheckIcon, CloseIcon, PlusIcon, SortIcon } from '../components/icons'
 import { IS_SAMPLE_DATA } from '../config'
-import { useTrends, useUniversities } from '../data/api'
+import { useDeptTrends, useTrends, useUniversities } from '../data/api'
 import { REGIONS, type Region, type TrendRow, type University } from '../data/types'
 import { useDocumentTitle } from '../hooks/useDocumentTitle'
 import { useFavorites } from '../hooks/useFavorites'
@@ -63,8 +63,9 @@ export default function TrendsPage() {
   useDocumentTitle('경쟁률 추세')
   const univs = useUniversities()
   const trends = useTrends()
+  const deptTrends = useDeptTrends()
 
-  if (univs.loading || trends.loading) return <Loading />
+  if (univs.loading || trends.loading || deptTrends.loading) return <Loading />
   if (univs.error || trends.error || !univs.data || !trends.data)
     return (
       <EmptyState
@@ -85,32 +86,37 @@ export default function TrendsPage() {
         }
       />
     )
-  return <Trends universities={univs.data} rows={trends.data} />
+  return <Trends universities={univs.data} rows={trends.data} deptRows={deptTrends.data ?? []} />
 }
 
-function Trends({ universities, rows }: { universities: University[]; rows: TrendRow[] }) {
+function Trends({ universities, rows, deptRows }: { universities: University[]; rows: TrendRow[]; deptRows: TrendRow[] }) {
   const [params, setParams] = useSearchParams()
   const { ids: favIds } = useFavorites()
 
-  // 대학별로 묶기 (목록에 없는 대학 id 는 무시)
-  const { trends, years, latestYear } = useMemo(() => {
+  // 대학별로 묶기 (목록에 없는 대학 id 는 무시). 수시 전형별 경쟁률(rows)이 없는 대학은 KESS 학과별
+  // 모집현황 합계(deptRows, 수시+정시 합산)로 대신합니다 — deptOnlyIds 로 어느 대학이 그런지 표시합니다.
+  const { trends, years, latestYear, deptOnlyIds } = useMemo(() => {
     const byId = new Map(universities.map((u) => [u.id, u]))
+    const competitionIds = new Set(rows.map((r) => r.univId))
+    const deptOnlyIds = new Set(deptRows.filter((r) => !competitionIds.has(r.univId)).map((r) => r.univId))
+    const merged = [...rows, ...deptRows.filter((r) => deptOnlyIds.has(r.univId))]
     const map = new Map<number, UnivTrend>()
-    for (const r of rows) {
+    for (const r of merged) {
       const univ = byId.get(r.univId)
       if (!univ || r.quota <= 0) continue
       let t = map.get(r.univId)
       if (!t) map.set(r.univId, (t = { univ, byYear: new Map() }))
       t.byYear.set(r.year, r)
     }
-    const valid = rows.filter((r) => map.has(r.univId))
+    const valid = merged.filter((r) => map.has(r.univId))
     const years = yearRange(yearsOf(valid))
     return {
       trends: [...map.values()].sort((a, b) => koCompare(a.univ.name, b.univ.name)),
       years,
       latestYear: years.at(-1),
+      deptOnlyIds,
     }
-  }, [universities, rows])
+  }, [universities, rows, deptRows])
 
   const trendById = useMemo(() => new Map(trends.map((t) => [t.univ.id, t])), [trends])
 
@@ -298,6 +304,7 @@ function Trends({ universities, rows }: { universities: University[]; rows: Tren
         pickedIds={pickedIds}
         full={picks.length >= MAX_SERIES}
         onToggle={toggle}
+        deptOnlyIds={deptOnlyIds}
       />
     </PageShell>
   )
@@ -439,6 +446,7 @@ function RankingSection({
   pickedIds,
   full,
   onToggle,
+  deptOnlyIds,
 }: {
   rows: RankRow[]
   year: number
@@ -446,6 +454,8 @@ function RankingSection({
   pickedIds: number[]
   full: boolean
   onToggle: (id: number) => void
+  /** 수시 전형별 경쟁률이 아니라 KESS 학과별 모집현황(수시+정시 합산)으로 대신 계산한 대학 */
+  deptOnlyIds: Set<number>
 }) {
   const [region, setRegion] = useState<Region | null>(null)
   const [sort, setSort] = useState<{ key: SortKey; dir: SortDir }>({ key: 'ratio', dir: 'desc' })
@@ -580,6 +590,11 @@ function RankingSection({
                         <span className="block font-semibold text-gray-900">
                           {r.univ.name}
                           {r.univ.campus && <span className="ml-1.5 text-[12px] font-medium text-gray-400">{r.univ.campus}</span>}
+                          {deptOnlyIds.has(r.univ.id) && (
+                            <span className="ml-1.5 rounded-md bg-gray-100 px-1.5 py-0.5 text-[11px] font-semibold whitespace-nowrap text-gray-500">
+                              학과 전체(수시+정시)
+                            </span>
+                          )}
                         </span>
                         <span className="block text-[12px] text-gray-500 lg:hidden">
                           {r.univ.region}
@@ -629,7 +644,9 @@ function RankingSection({
         </table>
       )}
       <p className="mt-4 text-[12px] text-gray-400 md:text-[13px]">
-        수시 전체 모집인원·지원자 합계 기준 · 전년 대비는 경쟁률(대 1) 차이{IS_SAMPLE_DATA && ' · 샘플 데이터'}
+        수시 전체 모집인원·지원자 합계 기준 · 전년 대비는 경쟁률(대 1) 차이
+        {deptOnlyIds.size > 0 && ' · \'학과 전체(수시+정시)\' 대학은 KESS 학과별 모집현황(수시+정시 합산) 기준'}
+        {IS_SAMPLE_DATA && ' · 샘플 데이터'}
       </p>
     </section>
   )

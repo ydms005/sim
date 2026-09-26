@@ -12,6 +12,8 @@ import type { TrendRow, UnivDetail, University } from './types'
 export interface PreviewData {
   universities: University[]
   trends: TrendRow[]
+  /** 학과별 모집현황(KESS)의 대학·학년도별 합계(선택). 예전 미리보기 데이터에는 없을 수 있음 */
+  deptTrends?: TrendRow[]
   details: Record<string, UnivDetail>
   /** 미리보기에 쓴 파일 이름들 (안내용) */
   sources: string[]

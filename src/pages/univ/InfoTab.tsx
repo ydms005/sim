@@ -12,13 +12,14 @@ import {
   type CategorySummary,
   type YearTotals,
 } from '../../components/competition/stats'
+import { Link as RouterLink } from 'react-router-dom'
 import { cx } from '../../components/common'
 import { HomepageLink } from '../../components/HomepageLink'
 import { ArrowRightIcon, ExternalIcon } from '../../components/icons'
 import { useUniv } from '../../components/UnivLayout'
 import { IS_SAMPLE_DATA } from '../../config'
 import { useIndicators } from '../../data/api'
-import type { IndicatorItem, University } from '../../data/types'
+import type { DepartmentStat, IndicatorItem, University } from '../../data/types'
 import { formatNumber, formatRatio } from '../../lib/format'
 
 export default function InfoTab() {
@@ -40,12 +41,21 @@ export default function InfoTab() {
     }
   }, [detail])
 
+  const deptSummary = useMemo(() => {
+    const rows = detail?.departments ?? []
+    const year = latestYearOf(rows)
+    if (year === undefined) return null
+    const thisYear = rows.filter((r) => r.year === year)
+    return { year, totals: sumTotals(thisYear), rows: thisYear }
+  }, [detail])
+
   if (!summary) {
     return (
       <div className="space-y-5 md:space-y-6">
         <BasicInfoCard univ={univ} />
         <IndicatorsCard items={indicators.data} />
-        <NoCompetitionData univ={univ} hasDetail={detail !== null} />
+        <DepartmentOverviewCard summary={deptSummary} />
+        {!deptSummary && <NoCompetitionData univ={univ} hasDetail={detail !== null} />}
       </div>
     )
   }
@@ -56,6 +66,7 @@ export default function InfoTab() {
     <div className="space-y-5 md:space-y-6">
       <BasicInfoCard univ={univ} />
       <IndicatorsCard items={indicators.data} />
+      <DepartmentOverviewCard summary={deptSummary} />
       <section aria-labelledby="info-title" className="rounded-2xl bg-white px-5 py-6 md:px-8 md:py-8">
         <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between sm:gap-6">
           <h2 id="info-title" className="text-[20px] leading-snug font-bold tracking-tight text-gray-900 md:text-[24px]">
@@ -196,6 +207,68 @@ function IndicatorsCard({ items }: { items: IndicatorItem[] | undefined }) {
         ))}
       </ul>
       <p className="mt-4 text-[12px] text-gray-400">출처: {items[0].source ?? '대학알리미(공공데이터포털)'}</p>
+    </section>
+  )
+}
+
+/**
+ * 학과별 모집 현황(KESS, 수시+정시 합산) 요약 카드. 경쟁률(수시 전형별) 자료가 없어도 학과 자료만 있으면 보입니다.
+ * '수시 전형별 모집 현황' 카드와 달리 모든 전형을 합친 값이라 성격이 다름을 배지·안내 문구로 분명히 밝힙니다.
+ */
+function DepartmentOverviewCard({
+  summary,
+}: {
+  summary: { year: number; totals: { quota: number; applicants: number }; rows: DepartmentStat[] } | null
+}) {
+  if (!summary) return null
+  const { year, totals, rows } = summary
+  const top = [...rows]
+    .filter((r) => r.quota > 0)
+    .sort((a, b) => b.applicants / b.quota - a.applicants / a.quota)
+    .slice(0, 10)
+
+  return (
+    <section aria-labelledby="dept-overview-title" className="rounded-2xl bg-white px-5 py-6 md:px-8 md:py-8">
+      <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between sm:gap-6">
+        <h2 id="dept-overview-title" className="text-[18px] leading-snug font-bold tracking-tight text-gray-900 md:text-[20px]">
+          학과별 모집 현황 ({year}학년도, 수시+정시 합산)
+        </h2>
+        <RouterLink
+          to="competition"
+          className="group -my-2.5 inline-flex shrink-0 items-center gap-1 self-start py-2.5 text-[15px] font-medium text-brand-600 hover:text-brand-700 sm:-mt-1.5 md:text-[16px]"
+        >
+          전체 학과 보기
+          <ArrowRightIcon className="size-4 transition-transform group-hover:translate-x-0.5" />
+        </RouterLink>
+      </div>
+
+      <ul className="mt-4 flex flex-wrap gap-2 md:mt-5 md:gap-3" aria-label={`${year}학년도 학과별 모집 현황 요약`}>
+        <SummaryPill label="모집인원 합계" value={`${formatNumber(totals.quota)}명`} />
+        <SummaryPill label="지원자 합계" value={`${formatNumber(totals.applicants)}명`} />
+        <SummaryPill label="전체 경쟁률" value={formatRatio(totals.applicants, totals.quota)} />
+        <SummaryPill label="학과 수" value={`${formatNumber(rows.length)}개`} />
+      </ul>
+
+      {top.length > 0 && (
+        <>
+          <h3 className="mt-6 text-[14px] font-semibold text-gray-700 md:text-[15px]">경쟁률 상위 {top.length}개 학과</h3>
+          <ol className="mt-3 divide-y divide-gray-100 border-t border-gray-100">
+            {top.map((r) => (
+              <li key={r.department} className="flex items-center justify-between gap-3 py-2.5 text-[14px] md:text-[15px]">
+                <span className="min-w-0 truncate text-gray-800">{r.department}</span>
+                <span className="shrink-0 tabular-nums">
+                  <span className="mr-2 text-gray-400">모집 {formatNumber(r.quota)} · 지원 {formatNumber(r.applicants)}</span>
+                  <span className="font-semibold text-brand-600">{formatRatio(r.applicants, r.quota)}</span>
+                </span>
+              </li>
+            ))}
+          </ol>
+        </>
+      )}
+
+      <p className="mt-5 text-[12px] text-gray-400">
+        출처: 한국교육개발원 교육통계(KESS) 학교별 학과별 주요 현황 · 수시+정시 합산 · 매년 4월 1일 기준
+      </p>
     </section>
   )
 }

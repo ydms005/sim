@@ -183,7 +183,7 @@ function SearchResults({ q }: { q: string }) {
   const univEmpty = !list.loading && !list.error && univs.length === 0
   const deptEmpty = !deptLoading && !depts.error && deptHits.length === 0
   const deptScope = depts.data?.univCount
-    ? `경쟁률 데이터가 있는 ${formatNumber(depts.data.univCount)}개 대학의 모집단위에서 찾고 있어요`
+    ? `경쟁률·학과별 모집현황 데이터가 있는 ${formatNumber(depts.data.univCount)}개 대학의 모집단위에서 찾고 있어요`
     : '아직 학과별 경쟁률 데이터가 준비된 대학이 없어요'
   const univHint = '대학 이름의 일부나 초성(예: ㄱㄱ)으로도 찾을 수 있어요'
 
@@ -307,7 +307,7 @@ function SearchResults({ q }: { q: string }) {
               <>
                 <DeptTable rows={deptHits.slice(0, deptLimit)} q={q} listRef={deptListRef} />
                 <p className="mt-3 text-[13px] text-gray-400">
-                  경쟁률 데이터가 있는 {depts.data?.univCount}개 대학 기준 · 가장 최근 학년도 수시 모집단위 합계
+                  경쟁률·학과별 모집현황 데이터가 있는 {depts.data?.univCount}개 대학 기준 · 가장 최근 학년도 합계(수시 모집단위 또는 KESS 수시+정시 합산)
                 </p>
                 {deptHits.length > deptLimit && (
                   <MoreButton onClick={showMoreDepts}>

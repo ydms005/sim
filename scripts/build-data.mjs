@@ -263,20 +263,21 @@ async function main() {
   }
 
   // 검사를 모두 통과한 뒤에만 기존 결과를 지우고 새로 씁니다.
-  const { universities, trends, details } = result.output
+  const { universities, trends, deptTrends, details } = result.output
   fs.rmSync(OUT_DIR, { recursive: true, force: true })
   fs.mkdirSync(path.join(OUT_DIR, 'univ'), { recursive: true })
   const writeJson = (file, value) => fs.writeFileSync(path.join(OUT_DIR, file), JSON.stringify(value))
   writeJson('universities.json', universities)
   writeJson('trends.json', trends)
+  writeJson('dept-trends.json', deptTrends)
   for (const d of details) writeJson(`univ/${d.id}.json`, d)
   const indicators = loadIndicators(new Set(universities.map((u) => u.id)))
   writeJson('indicators.json', indicators)
 
   const s = result.stats
   console.log(
-    `${rel(OUT_DIR)} 생성 완료: 대학 ${s.universities}곳 (경쟁률 보유 ${s.withCompetition}곳, 상세 파일 ${s.details}개) · ` +
-      `경쟁률 ${s.competition}행 · 모집요강 ${s.guidelines}건 · 자료실 ${s.resources}건 · 소식 ${s.news}건`,
+    `${rel(OUT_DIR)} 생성 완료: 대학 ${s.universities}곳 (경쟁률 보유 ${s.withCompetition}곳, 학과별 모집현황 보유 ${s.withDeptData}곳, 상세 파일 ${s.details}개) · ` +
+      `경쟁률 ${s.competition}행 · 모집요강 ${s.guidelines}건 · 자료실 ${s.resources}건 · 소식 ${s.news}건 · 학과별 모집현황 ${s.departments}행`,
   )
 }
 

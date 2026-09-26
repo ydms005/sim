@@ -109,7 +109,13 @@ export function IssueList({ issues }: { issues: Issue[] }) {
   )
 }
 
-const DATASET_LABEL: Record<DetailDataset, string> = { competition: '경쟁률', guidelines: '모집요강', resources: '자료실', news: '소식' }
+const DATASET_LABEL: Record<DetailDataset, string> = {
+  competition: '경쟁률',
+  guidelines: '모집요강',
+  resources: '자료실',
+  news: '소식',
+  departments: '학과별 모집현황',
+}
 
 function CountText({ c }: { c: CountChange }) {
   const parts: string[] = []

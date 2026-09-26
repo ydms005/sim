@@ -5,7 +5,8 @@
 
 - **사이트 주소**: <https://ydms005.github.io/sim/>
 - **현재 단계**: 3단계 (구글 로그인 · 계정 찜 · 대학별 Q&A 커뮤니티) 코드 완료 — **Supabase 설정 필요**([`supabase/README.md`](supabase/README.md))
-- **데이터 현황**: 대학 목록(201곳)·모집요강 링크(대입정보포털 어디가 제공)는 실제 자료입니다. 경쟁률·자료실·대학소식은 선생님이
+- **데이터 현황**: 대학 목록(201곳)·모집요강 링크(대입정보포털 어디가 제공)·학과별 모집 현황(한국교육개발원 교육통계 KESS,
+  201개 대학·2024~2026학년도·수시+정시 합산)은 실제 자료입니다. 수시 전형별 경쟁률·자료실·대학소식은 선생님이
   올리는 대로 채워지며, 아직 올라오지 않은 대학은 각 탭에 '아직 자료가 없습니다' 안내가 보입니다.
 
 > **실제 입시 정보의 기준은 대학 입학처와 대입정보포털입니다**
@@ -194,6 +195,7 @@ export const GITHUB_BRANCH = 'claude/modest-babbage-sfv411'  // … 대상 브�
 | `data/guidelines.csv` | 모집요강 PDF 목록 | 예 |
 | `data/resources.csv` | 자료실 파일 목록(대입자료·면접자료) | 예 |
 | `data/news.csv` | 대학소식 | 예 |
+| `data/departments.csv` | 학과별 모집 현황(KESS, 수시+정시 합산). `npm run data:import-kess` 로 생성 | 아니요(스크립트로 생성, [`data/README.md`](data/README.md) 참고) |
 | `data/**/*.xlsx` | 엑셀로 정리한 자료(시트: 대학목록·경쟁률·모집요강·자료실·소식). CSV와 합쳐짐 | 예(데이터 관리 화면 또는 GitHub 웹 업로드) |
 | `public/files/univ/{대학ID}/*.pdf` | 모집요강·자료실 PDF 파일 | 예(파일 추가·교체) |
 | `public/data/*.json` | CSV·엑셀에서 **자동으로 만들어지는** 사이트용 데이터 | **아니요** (Git에도 올라가지 않음) |

@@ -7,23 +7,27 @@ import { yearRange, yearsOf } from '../../components/competition/stats'
 import { Chip } from '../../components/common'
 import { useUniv } from '../../components/UnivLayout'
 import { IS_SAMPLE_DATA } from '../../config'
-import type { CompetitionRecord } from '../../data/types'
+import type { CompetitionRecord, DepartmentStat } from '../../data/types'
 import { useMediaQuery } from '../../hooks/useMediaQuery'
 import { formatNumber, ratio } from '../../lib/format'
 import { scrollBehavior } from '../../lib/motion'
 
+/** KESS 학과별 모집현황(수시+정시 합산)만 있는 학과에서 쓰는 가상 '전형' 이름 */
+const WHOLE_ADMISSION = '전체 (수시+정시 합산)'
+
 interface CompetitionIndex {
-  /** 모든 학년도의 모집단위 (영문 → 가나다순) */
+  /** 모든 학년도의 모집단위 (영문 → 가나다순, 경쟁률·KESS 학과 자료 통틀어) */
   depts: string[]
   /**
    * 모집단위 → 그 모집단위에 있었던 전형.
    * 그 모집단위의 마지막 학년도에 모집한 전형을 먼저(영문 → 가나다순) 두고, 그 전에만 있던 전형은 뒤로(최근 순).
    * 첫 항목이 기본 선택이라, 기본으로 고른 전형은 늘 최신 학년도 자료가 있습니다.
+   * 수시 전형별 경쟁률이 없는 학과는 KESS 학과별 모집현황으로 만든 가상 전형(WHOLE_ADMISSION) 하나만 둡니다.
    */
   admissionsByDept: Map<string, string[]>
   /** 모집단위 → (그 모집단위의 마지막 학년도에는 모집하지 않은 전형 → 마지막으로 모집한 학년도) */
   endedByDept: Map<string, Map<string, number>>
-  /** 첫 해부터 마지막 해까지 (빠진 해 포함) */
+  /** 첫 해부터 마지막 해까지 (빠진 해 포함, 경쟁률 자료 기준) */
   years: number[]
 }
 
@@ -34,7 +38,7 @@ interface CompetitionIndex {
  */
 const byName = new Intl.Collator('en', { numeric: true }).compare
 
-function buildIndex(records: readonly CompetitionRecord[]): CompetitionIndex {
+function buildIndex(records: readonly CompetitionRecord[], departments: readonly DepartmentStat[]): CompetitionIndex {
   // 모집단위 → 전형 → 마지막으로 모집한 학년도
   const lastYear = new Map<string, Map<string, number>>()
   for (const r of records) {
@@ -50,7 +54,11 @@ function buildIndex(records: readonly CompetitionRecord[]): CompetitionIndex {
     admissionsByDept.set(dept, entries.map(([a]) => a))
     endedByDept.set(dept, new Map(entries.filter(([, y]) => y < latest)))
   }
-  const depts = [...lastYear.keys()].sort(byName)
+  // KESS 학과별 모집현황에만 있는 학과(수시 전형별 경쟁률이 없음): 가상 전형 하나만 둡니다.
+  for (const d of departments) {
+    if (!admissionsByDept.has(d.department)) admissionsByDept.set(d.department, [WHOLE_ADMISSION])
+  }
+  const depts = [...admissionsByDept.keys()].sort(byName)
   return { depts, admissionsByDept, endedByDept, years: yearRange(yearsOf(records)) }
 }
 
@@ -67,14 +75,30 @@ export default function CompetitionTab() {
   const wide = useMediaQuery('(min-width: 768px)')
 
   const records = useMemo(() => detail?.competition ?? [], [detail])
-  const index = useMemo(() => buildIndex(records), [records])
+  const departments = useMemo(() => detail?.departments ?? [], [detail])
+  const index = useMemo(() => buildIndex(records, departments), [records, departments])
 
   const dept = pick(params.get('dept'), index.depts)
   const admissions = (dept && index.admissionsByDept.get(dept)) || []
   const ended = dept ? index.endedByDept.get(dept) : undefined
   const adm = pick(params.get('adm'), admissions)
+  const kessMode = adm === WHOLE_ADMISSION
+
+  const deptStats = useMemo(() => departments.filter((d) => d.department === dept), [departments, dept])
 
   const { points, rows, missingYears } = useMemo(() => {
+    if (kessMode) {
+      const years = yearRange(yearsOf(deptStats))
+      const byYear = new Map(deptStats.map((d) => [d.year, d]))
+      const points: MetricPoint[] = years.map((year) => {
+        const d = byYear.get(year)
+        return d
+          ? { year, applicants: d.applicants, quota: d.quota, ratio: Number(ratio(d.applicants, d.quota).toFixed(2)) }
+          : { year, applicants: null, quota: null, ratio: null }
+      })
+      const rows = [...deptStats].sort((a, b) => b.year - a.year)
+      return { points, rows, missingYears: years.filter((y) => !byYear.has(y)) }
+    }
     const byYear = new Map<number, { quota: number; applicants: number }>()
     for (const r of records) {
       if (r.department !== dept || r.admission !== adm) continue
@@ -89,10 +113,10 @@ export default function CompetitionTab() {
         ? { year, applicants: t.applicants, quota: t.quota, ratio: Number(ratio(t.applicants, t.quota).toFixed(2)) }
         : { year, applicants: null, quota: null, ratio: null }
     })
-    const rows = [...byYear.entries()].map(([year, t]) => ({ year, ...t })).sort((a, b) => b.year - a.year)
+    const rows = [...byYear.entries()].map(([year, t]) => ({ year, ...t, admitted: 0 })).sort((a, b) => b.year - a.year)
     const missingYears = index.years.filter((y) => !byYear.has(y))
     return { points, rows, missingYears }
-  }, [records, index, dept, adm])
+  }, [records, deptStats, index, dept, adm, kessMode])
 
   if (!dept || !adm) return <NoCompetitionData univ={univ} hasDetail={detail !== null} />
 
@@ -137,20 +161,31 @@ export default function CompetitionTab() {
         emptyText="일치하는 학과가 없습니다"
         className="max-h-[360px] md:h-[420px] md:max-h-none lg:h-[720px]"
       />
-      <SelectList
-        key={dept}
-        title="전형 목록"
-        items={admissions}
-        selected={adm}
-        onSelect={selectAdm}
-        note={(a) => {
-          const y = ended?.get(a)
-          return y === undefined ? undefined : `${y}학년도까지 모집`
-        }}
-        placeholder="전형 검색…"
-        emptyText="일치하는 전형이 없습니다"
-        className="max-h-[320px] md:h-[420px] md:max-h-none lg:h-[720px]"
-      />
+      {admissions.length <= 1 && admissions[0] === WHOLE_ADMISSION ? (
+        <section
+          aria-label="전형 목록"
+          className="hidden items-center justify-center rounded-2xl bg-gray-50 px-5 py-6 text-center text-[14px] leading-6 text-gray-500 md:flex md:h-[420px] lg:h-[720px]"
+        >
+          이 학과는 KESS 학과별 모집현황(수시+정시 합산) 기준으로만 자료가 있어
+          <br />
+          전형별 경쟁률은 제공되지 않습니다.
+        </section>
+      ) : (
+        <SelectList
+          key={dept}
+          title="전형 목록"
+          items={admissions}
+          selected={adm}
+          onSelect={selectAdm}
+          note={(a) => {
+            const y = ended?.get(a)
+            return y === undefined ? undefined : `${y}학년도까지 모집`
+          }}
+          placeholder="전형 검색…"
+          emptyText="일치하는 전형이 없습니다"
+          className="max-h-[320px] md:h-[420px] md:max-h-none lg:h-[720px]"
+        />
+      )}
 
       <div className="flex min-w-0 flex-col gap-4 md:col-span-2 md:gap-5 lg:col-span-1 lg:gap-6">
         <section
@@ -184,45 +219,77 @@ export default function CompetitionTab() {
           </div>
           {missingYears.length > 0 && (
             <p className="mt-1 text-[13px] text-gray-500">
-              {missingYears.map((y) => `${y}학년도`).join(', ')}에는 이 학과에서 해당 전형으로 모집하지 않았어요.
+              {missingYears.map((y) => `${y}학년도`).join(', ')}에는 이 학과에서 {kessMode ? '' : '해당 전형으로 '}모집하지 않았어요.
             </p>
           )}
         </section>
 
         <section aria-label="연도별 경쟁률 표" className="rounded-2xl bg-white px-4 py-3 md:px-7 md:py-5">
-          <table className="w-full border-collapse text-[15px] md:text-[16px]">
-            <caption className="sr-only">
-              {dept} {adm} 연도별 지원자 수, 모집 정원, 경쟁률 (최근 학년도부터)
-            </caption>
-            <thead>
-              <tr className="border-b border-gray-200 text-[13px] whitespace-nowrap text-gray-500 md:text-[14px]">
-                <th scope="col" className="py-3 pr-2 pl-1 text-left font-medium md:pl-3">연도</th>
-                <th scope="col" className="hidden px-3 py-3 text-left font-medium sm:table-cell lg:hidden xl:table-cell">전형</th>
-                <th scope="col" className="px-2 py-3 text-right font-medium md:px-3">지원자 수</th>
-                <th scope="col" className="px-2 py-3 text-right font-medium md:px-3">모집 정원</th>
-                <th scope="col" className="py-3 pr-1 pl-2 text-right font-medium md:pr-3">경쟁률</th>
-              </tr>
-            </thead>
-            <tbody className="tabular-nums">
-              {rows.map((r) => (
-                <tr key={r.year} className="border-b border-gray-100 last:border-b-0">
-                  <th scope="row" className="py-3.5 pr-2 pl-1 text-left font-medium text-gray-900 md:py-4 md:pl-3">
-                    {r.year}
-                  </th>
-                  <td className="hidden max-w-0 truncate px-3 py-4 text-gray-700 sm:table-cell sm:w-[38%] lg:hidden xl:table-cell" title={adm}>
-                    {adm}
-                  </td>
-                  <td className="px-2 py-3.5 text-right text-gray-900 md:px-3 md:py-4">{formatNumber(r.applicants)}</td>
-                  <td className="px-2 py-3.5 text-right text-gray-900 md:px-3 md:py-4">{formatNumber(r.quota)}</td>
-                  <td className="py-3.5 pr-1 pl-2 text-right md:py-4 md:pr-3">
-                    <Ratio applicants={r.applicants} quota={r.quota} />
-                  </td>
+          {kessMode ? (
+            <table className="w-full border-collapse text-[15px] md:text-[16px]">
+              <caption className="sr-only">{dept} 연도별 모집인원, 지원자, 입학자, 경쟁률(수시+정시 합산)</caption>
+              <thead>
+                <tr className="border-b border-gray-200 text-[13px] whitespace-nowrap text-gray-500 md:text-[14px]">
+                  <th scope="col" className="py-3 pr-2 pl-1 text-left font-medium md:pl-3">연도</th>
+                  <th scope="col" className="px-2 py-3 text-right font-medium md:px-3">모집인원</th>
+                  <th scope="col" className="px-2 py-3 text-right font-medium md:px-3">지원자</th>
+                  <th scope="col" className="px-2 py-3 text-right font-medium md:px-3">입학자</th>
+                  <th scope="col" className="py-3 pr-1 pl-2 text-right font-medium md:pr-3">경쟁률</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody className="tabular-nums">
+                {rows.map((r) => (
+                  <tr key={r.year} className="border-b border-gray-100 last:border-b-0">
+                    <th scope="row" className="py-3.5 pr-2 pl-1 text-left font-medium text-gray-900 md:py-4 md:pl-3">
+                      {r.year}
+                    </th>
+                    <td className="px-2 py-3.5 text-right text-gray-900 md:px-3 md:py-4">{formatNumber(r.quota)}</td>
+                    <td className="px-2 py-3.5 text-right text-gray-900 md:px-3 md:py-4">{formatNumber(r.applicants)}</td>
+                    <td className="px-2 py-3.5 text-right text-gray-700 md:px-3 md:py-4">{formatNumber(r.admitted)}</td>
+                    <td className="py-3.5 pr-1 pl-2 text-right md:py-4 md:pr-3">
+                      <Ratio applicants={r.applicants} quota={r.quota} />
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          ) : (
+            <table className="w-full border-collapse text-[15px] md:text-[16px]">
+              <caption className="sr-only">
+                {dept} {adm} 연도별 지원자 수, 모집 정원, 경쟁률 (최근 학년도부터)
+              </caption>
+              <thead>
+                <tr className="border-b border-gray-200 text-[13px] whitespace-nowrap text-gray-500 md:text-[14px]">
+                  <th scope="col" className="py-3 pr-2 pl-1 text-left font-medium md:pl-3">연도</th>
+                  <th scope="col" className="hidden px-3 py-3 text-left font-medium sm:table-cell lg:hidden xl:table-cell">전형</th>
+                  <th scope="col" className="px-2 py-3 text-right font-medium md:px-3">지원자 수</th>
+                  <th scope="col" className="px-2 py-3 text-right font-medium md:px-3">모집 정원</th>
+                  <th scope="col" className="py-3 pr-1 pl-2 text-right font-medium md:pr-3">경쟁률</th>
+                </tr>
+              </thead>
+              <tbody className="tabular-nums">
+                {rows.map((r) => (
+                  <tr key={r.year} className="border-b border-gray-100 last:border-b-0">
+                    <th scope="row" className="py-3.5 pr-2 pl-1 text-left font-medium text-gray-900 md:py-4 md:pl-3">
+                      {r.year}
+                    </th>
+                    <td className="hidden max-w-0 truncate px-3 py-4 text-gray-700 sm:table-cell sm:w-[38%] lg:hidden xl:table-cell" title={adm}>
+                      {adm}
+                    </td>
+                    <td className="px-2 py-3.5 text-right text-gray-900 md:px-3 md:py-4">{formatNumber(r.applicants)}</td>
+                    <td className="px-2 py-3.5 text-right text-gray-900 md:px-3 md:py-4">{formatNumber(r.quota)}</td>
+                    <td className="py-3.5 pr-1 pl-2 text-right md:py-4 md:pr-3">
+                      <Ratio applicants={r.applicants} quota={r.quota} />
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
           <p className="mt-2 px-1 text-[12px] text-gray-400 md:px-3 md:text-[13px]">
-            원서접수 최종 경쟁률 기준{IS_SAMPLE_DATA && ' · 샘플 데이터'}
+            {kessMode
+              ? '출처: 한국교육개발원 교육통계(KESS) 학교별 학과별 주요 현황 · 수시+정시 합산 · 매년 4월 1일 기준'
+              : `원서접수 최종 경쟁률 기준${IS_SAMPLE_DATA ? ' · 샘플 데이터' : ''}`}
           </p>
         </section>
       </div>
