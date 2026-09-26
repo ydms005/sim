@@ -23,6 +23,9 @@ export const DATASETS = {
     title: '대학목록',
     file: 'universities.csv',
     columns: ['대학ID', '대학명', '지역', '설립구분', '캠퍼스', '홈페이지'],
+    // 대학알리미 표준데이터(scripts/import-standard-univ.mjs)로 채우는 선택 열. 없어도 오류가 아니고(예전 파일과 호환),
+    // 있으면 값을 읽어 University 에 담습니다. multiline 은 이 열들에 대해서는 지원하지 않습니다(줄바꿈 없음 가정).
+    optional: ['주소', '우편번호', '대표전화', '영문명', '설립일자'],
     multiline: [],
     optionalFile: false,
   },
@@ -273,6 +276,7 @@ export function buildSite(tables, options) {
     const spec = DATASETS[table.dataset]
     const { label } = table
     const required = spec.columns
+    const optionalCols = spec.optional ?? []
     const multiline = spec.multiline
     if (table.header.length === 0) return { table, rows: [], broken: [], dropped: 0, unreadable: !!table.unreadable }
     if (table.blankRows > 0) {
@@ -287,7 +291,7 @@ export function buildSite(tables, options) {
       fail(label, table.headerLine, `필수 열이 없습니다: ${missing.join(', ')} (현재 열: ${table.header.join(', ')})${hint}`)
       return { table, rows: [], broken: [], dropped: 0, unreadable: true }
     }
-    const extra = table.header.filter((h) => h && !required.includes(h))
+    const extra = table.header.filter((h) => h && !required.includes(h) && !optionalCols.includes(h))
     if (extra.length) warn(label, table.headerLine, `알 수 없는 열은 무시합니다: ${extra.join(', ')}`)
     const dup = table.header.filter((h, i) => h && table.header.indexOf(h) !== i)
     if (dup.length) fail(label, table.headerLine, `열 이름이 중복되었습니다: ${[...new Set(dup)].join(', ')}`)
@@ -312,7 +316,7 @@ export function buildSite(tables, options) {
         rec.fields.forEach((f, i) => {
           if (!table.header[i] && String(f).trim() !== '') unnamed.add(columnLetter(i))
         })
-        const withBreak = required.filter((h) => !multiline.includes(h) && /[\r\n]/.test(get(h)))
+        const withBreak = [...required, ...optionalCols].filter((h) => !multiline.includes(h) && /[\r\n]/.test(get(h)))
         if (withBreak.length) {
           fail(
             label,
@@ -332,7 +336,7 @@ export function buildSite(tables, options) {
       // 줄바꿈은 요약·부제에만 쓸 수 있습니다. 다른 열(대학ID·학년도·모집단위·숫자·날짜·파일·링크·제목 등)의 줄바꿈은
       // 거의 언제나 따옴표가 짝이 맞지 않아 뒤의 행들이 값 하나로 합쳐진 것입니다. 그 행은 오류로 알리고
       // 이후 검사에서 빼서(broken) 같은 행에 '정수가 아닙니다' 같은 오류가 겹쳐 나오지 않게 합니다.
-      const withBreak = required.filter((h) => !multiline.includes(h) && /[\r\n]/.test(get(h)))
+      const withBreak = [...required, ...optionalCols].filter((h) => !multiline.includes(h) && /[\r\n]/.test(get(h)))
       if (withBreak.length) {
         const col = withBreak[0]
         fail(
@@ -406,6 +410,18 @@ export function buildSite(tables, options) {
       return undefined
     }
     return v || undefined
+  }
+  /** 선택 열의 날짜: 비어 있으면 undefined, 형식이 잘못되면 경고만 하고 무시합니다(필수 열의 requireDate 와 달리 빌드를 멈추지 않음). */
+  function optionalDate(r, col) {
+    const v = r.get(col)
+    if (!v) return undefined
+    const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(v)
+    const d = m ? new Date(Date.UTC(+m[1], +m[2] - 1, +m[3])) : null
+    if (!m || !d || d.getUTCFullYear() !== +m[1] || d.getUTCMonth() !== +m[2] - 1 || d.getUTCDate() !== +m[3]) {
+      warn(r.label, r.line, `'${col}' 값 '${v}' 은(는) YYYY-MM-DD 형식이 아니어서 무시합니다.`)
+      return undefined
+    }
+    return v
   }
   function requireDate(r, col = '날짜') {
     const v = r.get(col)
@@ -605,6 +621,11 @@ export function buildSite(tables, options) {
         const type = requireOneOf(r, '설립구분', FOUND_TYPES)
         const campus = r.get('캠퍼스')
         const homepage = optionalUrl(r, '홈페이지')
+        const address = r.get('주소') || undefined
+        const zipCode = r.get('우편번호') || undefined
+        const phone = r.get('대표전화') || undefined
+        const nameEn = r.get('영문명') || undefined
+        const foundedAt = optionalDate(r, '설립일자')
         const idOk = checkId(String(id), r)
         checkName(`${name}\u0001${campus}`, r)
         if (!idOk || !name || !region || !type) {
@@ -615,6 +636,11 @@ export function buildSite(tables, options) {
         const univ = { id, name, region, type }
         if (campus) univ.campus = campus
         if (homepage) univ.homepage = homepage
+        if (address) univ.address = address
+        if (zipCode) univ.zipCode = zipCode
+        if (phone) univ.phone = phone
+        if (nameEn) univ.nameEn = nameEn
+        if (foundedAt) univ.foundedAt = foundedAt
         if (isExcel) {
           const count = upserts.get(r.label) ?? [0, 0, 0]
           const prev = byId.get(id)
@@ -866,7 +892,19 @@ export function siteToRows(universities, details) {
   /** @type {Record<string, string[][]>} */
   const rows = { universities: [], competition: [], guidelines: [], resources: [], news: [] }
   for (const u of [...universities].sort((a, b) => a.id - b.id)) {
-    rows.universities.push([s(u.id), u.name, u.region, u.type, s(u.campus), s(u.homepage)])
+    rows.universities.push([
+      s(u.id),
+      u.name,
+      u.region,
+      u.type,
+      s(u.campus),
+      s(u.homepage),
+      s(u.address),
+      s(u.zipCode),
+      s(u.phone),
+      s(u.nameEn),
+      s(u.foundedAt),
+    ])
   }
   for (const d of [...details].sort((a, b) => a.id - b.id)) {
     const id = s(d.id)
@@ -889,11 +927,16 @@ export function tableFromRows(dataset, label, rows) {
     dataset,
     kind: 'csv',
     label,
-    header: [...DATASETS[dataset].columns],
+    header: allColumns(dataset),
     headerLine: 1,
     records: rows.map((fields, i) => ({ line: i + 2, endLine: i + 2, fields })),
     blankRows: 0,
   }
+}
+
+/** 필수 열 + 선택 열(있으면). 엑셀 양식·내려받기, siteToRows/tableFromRows 의 열 순서로 씁니다. */
+export function allColumns(dataset) {
+  return [...DATASETS[dataset].columns, ...(DATASETS[dataset].optional ?? [])]
 }
 
 /** CSV 파일 바이트 → 텍스트 (UTF-8, 아니면 EUC-KR). 관리 화면에서 올린 CSV 를 읽을 때 씁니다. */

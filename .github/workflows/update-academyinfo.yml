@@ -1,0 +1,62 @@
+# 대학알리미(공공데이터포털) 지표를 받아 data/indicators.csv · data/academyinfo-ids.csv 를 다시 만들고,
+# 값이 바뀌었으면 커밋해서 올립니다. 저장소 Settings → Secrets and variables → Actions 에
+# DATA_GO_KR_KEY(data.go.kr 에서 발급받은 인증키)를 등록해 두어야 합니다.
+#
+# 이 워크플로가 올리는 커밋은 GITHUB_TOKEN 으로 push 되어 deploy.yml 의 push 트리거를 스스로 일으키지
+# 못합니다. 그래서 deploy.yml 에 이 워크플로를 바라보는 workflow_run 트리거를 따로 추가해 뒀습니다
+# (이 워크플로가 성공으로 끝나면 이어서 배포가 자동으로 실행됩니다).
+#
+# data.go.kr 은 해외(GitHub Actions) 서버의 요청을 막을 수 있습니다. 이 워크플로가 실패하면
+# data/README.md 의 안내대로 내 컴퓨터에서 `DATA_GO_KR_KEY=... npm run data:fetch` 를 실행한 뒤
+# data/indicators.csv · data/academyinfo-ids.csv 를 GitHub 웹 업로드로 올리세요.
+name: 대학알리미 지표 업데이트
+
+on:
+  workflow_dispatch:
+  # 매달 1일 새벽 3시(UTC)에 자동 실행. 필요 없으면 이 schedule 을 지우고 workflow_dispatch 로만 쓰세요.
+  schedule:
+    - cron: '0 3 1 * *'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: update-academyinfo
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 코드 가져오기
+        uses: actions/checkout@v4
+
+      - name: Node.js 22 준비
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: 패키지 설치
+        run: npm ci
+
+      - name: 대학알리미 지표 가져오기
+        env:
+          DATA_GO_KR_KEY: ${{ secrets.DATA_GO_KR_KEY }}
+        run: node scripts/fetch-academyinfo.mjs
+
+      # 받은 CSV 가 사이트 빌드에 올바르게 들어가는지 확인(오류가 있으면 커밋하지 않고 여기서 멈춤).
+      - name: 데이터 검사(빌드 확인)
+        run: node scripts/build-data.mjs
+
+      - name: 바뀐 내용이 있으면 커밋 후 올리기
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add data/indicators.csv data/academyinfo-ids.csv
+          if git diff --cached --quiet; then
+            echo "변경 없음 — 커밋하지 않습니다."
+          else
+            git commit -m "Update academyinfo indicators"
+            git push
+          fi

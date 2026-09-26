@@ -3,6 +3,7 @@
 //   public/data/universities.json   대학 목록 (대학명 가나다순, hasData·hasDetail 포함)
 //   public/data/univ/{id}.json      대학별 상세(경쟁률·모집요강·자료실·소식)
 //   public/data/trends.json         대학·학년도별 수시 전체 합계
+//   public/data/indicators.json     대학알리미 공시 지표(선택, scripts/fetch-academyinfo.mjs 로 만든 data/indicators.csv 가 있을 때만)
 //
 // 입력을 엄격하게 검사하고, 문제가 있으면 파일 이름·줄 번호가 담긴 한국어 오류를 모두 출력한 뒤
 // 아무것도 쓰지 않고 종료 코드 1로 끝납니다.
@@ -15,6 +16,7 @@ import fs from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import readExcelFile from 'read-excel-file/node'
+import { parseCsv } from './lib/csv.mjs'
 import {
   buildSite,
   DATASET_NAMES,
@@ -83,6 +85,50 @@ function loadCsv(dataset, hasExcel) {
   const { table, issues } = tableFromCsv(dataset, label, text)
   fileIssues.push(...issues)
   return table
+}
+
+// ───────────────────────── indicators.csv (선택, 대학알리미 공시 지표) ─────────────────────────
+/**
+ * data/indicators.csv(대학ID,공시연도,지표,값,단위,출처) → { [대학ID]: [{ year, indicator, value, unit, source }] }
+ * 파일이 없으면 빈 객체(정상). 형식이 잘못돼도 build-data 전체를 멈추지 않고 경고만 남깁니다(자동 생성 파일이라
+ * 필수 CSV 만큼 엄격하게 검사하지 않습니다 — scripts/fetch-academyinfo.mjs 가 항상 이 형식으로 씁니다).
+ * @param {Set<number>} universityIds
+ */
+function loadIndicators(universityIds) {
+  const file = path.join(DATA_DIR, 'indicators.csv')
+  if (!fs.existsSync(file)) return {}
+  const label = rel(file)
+  const { text } = readTextFile(file)
+  let parsed
+  try {
+    parsed = parseCsv(text)
+  } catch (e) {
+    console.warn(`경고 [${label}] 읽지 못했습니다(${e.message}). 무시합니다.`)
+    return {}
+  }
+  const need = ['대학ID', '공시연도', '지표', '값', '단위', '출처']
+  const idx = Object.fromEntries(parsed.header.map((h, i) => [h, i]))
+  if (need.some((h) => !(h in idx))) {
+    console.warn(`경고 [${label}] 필수 열(${need.join(', ')})이 없어 무시합니다.`)
+    return {}
+  }
+  /** @type {Record<number, any[]>} */
+  const out = {}
+  for (const r of parsed.records) {
+    const id = Number(r.fields[idx['대학ID']])
+    if (!Number.isInteger(id) || !universityIds.has(id)) continue
+    const year = Number(r.fields[idx['공시연도']])
+    const indicator = r.fields[idx['지표']]?.trim()
+    const value = r.fields[idx['값']]?.trim()
+    if (!Number.isFinite(year) || !indicator || !value) continue
+    const item = { year, indicator, value }
+    const unit = r.fields[idx['단위']]?.trim()
+    const source = r.fields[idx['출처']]?.trim()
+    if (unit) item.unit = unit
+    if (source) item.source = source
+    ;(out[id] ??= []).push(item)
+  }
+  return out
 }
 
 // ───────────────────────── 엑셀 읽기 ─────────────────────────
@@ -224,6 +270,8 @@ async function main() {
   writeJson('universities.json', universities)
   writeJson('trends.json', trends)
   for (const d of details) writeJson(`univ/${d.id}.json`, d)
+  const indicators = loadIndicators(new Set(universities.map((u) => u.id)))
+  writeJson('indicators.json', indicators)
 
   const s = result.stats
   console.log(

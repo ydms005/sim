@@ -1,202 +1,202 @@
-대학ID,대학명,지역,설립구분,캠퍼스,홈페이지
-1,가천대학교,경기,사립,,https://www.gachon.ac.kr
-2,강원대학교,강원,국립,,https://www.kangwon.ac.kr
-3,건국대학교,서울,사립,서울캠퍼스,https://www.konkuk.ac.kr
-4,서울시립대학교,서울,공립,,https://www.uos.ac.kr
-5,부산대학교,부산,국립,,https://www.pusan.ac.kr
-6,가야대학교,경남,사립,,https://www.kaya.ac.kr
-7,가톨릭관동대학교,강원,사립,,https://www.cku.ac.kr
-8,가톨릭꽃동네대학교,충북,사립,,https://www.kkot.ac.kr
-9,가톨릭대학교,경기,사립,,https://www.catholic.ac.kr
-10,감리교신학대학교,서울,사립,,https://www.mtu.ac.kr
-11,강남대학교,경기,사립,,https://www.kangnam.ac.kr
-12,강서대학교,서울,사립,,https://gangseo.ac.kr
-13,건국대학교,충북,사립,GLOCAL캠퍼스,https://www.kku.ac.kr
-14,건양대학교,충남,사립,,https://www.konyang.ac.kr
-15,경기대학교,경기,사립,,https://www.kyonggi.ac.kr
-16,경남대학교,경남,사립,,https://www.kyungnam.ac.kr
-17,경동대학교,강원,사립,,https://www.kduniv.ac.kr
-18,경북대학교,대구,국립,,https://www.knu.ac.kr
-19,경상국립대학교,경남,국립,,https://www.gnu.ac.kr
-20,경성대학교,부산,사립,,https://ks.ac.kr
-21,경운대학교,경북,사립,,https://www.ikw.ac.kr
-22,경인교육대학교,인천,국립,,https://www.ginue.ac.kr
-23,경일대학교,경북,사립,,https://www.kiu.ac.kr
-24,경희대학교,서울,사립,,https://www.khu.ac.kr
-25,계명대학교,대구,사립,,https://www.kmu.ac.kr
-26,고려대학교,서울,사립,서울캠퍼스,https://www.korea.ac.kr
-27,고려대학교,세종,사립,세종캠퍼스,https://sejong.korea.ac.kr
-28,고신대학교,부산,사립,,https://www.kosin.ac.kr
-29,공주교육대학교,충남,국립,,https://www.gjue.ac.kr
-30,광신대학교,광주,사립,,https://www.kwangshin.ac.kr
-31,광운대학교,서울,사립,,https://www.kw.ac.kr
-32,광주가톨릭대학교,전남,사립,,https://www.gjcatholic.ac.kr
-33,광주과학기술원,광주,국립,,https://www.gist.ac.kr
-34,광주교육대학교,광주,국립,,https://www.gnue.ac.kr
-35,광주대학교,광주,사립,,https://www.gwangju.ac.kr
-36,광주여자대학교,광주,사립,,https://www.kwu.ac.kr
-37,국립경국대학교,경북,국립,,https://www.gknu.ac.kr
-38,국립공주대학교,충남,국립,,https://www.kongju.ac.kr
-39,국립군산대학교,전북,국립,,https://www.kunsan.ac.kr
-40,국립금오공과대학교,경북,국립,,https://www.kumoh.ac.kr
-41,국립목포대학교,전남,국립,,https://www.mokpo.ac.kr
-42,국립목포해양대학교,전남,국립,,https://www.mmu.ac.kr
-43,국립부경대학교,부산,국립,,https://www.pknu.ac.kr
-44,국립순천대학교,전남,국립,,https://www.scnu.ac.kr
-45,국립창원대학교,경남,국립,,https://www.changwon.ac.kr
-46,국립한국교통대학교,충북,국립,,https://www.ut.ac.kr
-47,국립한국해양대학교,부산,국립,,https://www.kmou.ac.kr
-48,국립한밭대학교,대전,국립,,https://www.hanbat.ac.kr
-49,국민대학교,서울,사립,,https://www.kookmin.ac.kr
-50,극동대학교,충북,사립,,https://www.kdu.ac.kr
-51,금강대학교,충남,사립,,https://www.ggu.ac.kr
-52,김천대학교,경북,사립,,https://www.gimcheon.ac.kr
-53,나사렛대학교,충남,사립,,https://www.kornu.ac.kr
-54,남부대학교,광주,사립,,https://www.nambu.ac.kr
-55,남서울대학교,충남,사립,,https://www.nsu.ac.kr
-56,단국대학교,경기,사립,,https://www.dankook.ac.kr
-57,대구가톨릭대학교,경북,사립,,https://www.cu.ac.kr
-58,대구경북과학기술원,대구,국립,,https://www.dgist.ac.kr
-59,대구교육대학교,대구,국립,,https://www.dnue.ac.kr
-60,대구대학교,경북,사립,,https://www.daegu.ac.kr
-61,대구예술대학교,경북,사립,,https://www.dgau.ac.kr
-62,대구한의대학교,경북,사립,,https://www.dhu.ac.kr
-63,대신대학교,경북,사립,,https://www.daeshin.ac.kr
-64,대전가톨릭대학교,세종,사립,,https://www.dcatholic.ac.kr
-65,대전대학교,대전,사립,,https://www.dju.ac.kr
-66,대전신학대학교,대전,사립,,https://www.daejeon.ac.kr
-67,대진대학교,경기,사립,,https://www.daejin.ac.kr
-68,덕성여자대학교,서울,사립,,https://www.duksung.ac.kr
-69,동국대학교,서울,사립,서울캠퍼스,https://www.dongguk.edu
-70,동국대학교,경북,사립,WISE캠퍼스,https://wise.dongguk.ac.kr
-71,동덕여자대학교,서울,사립,,https://www.dongduk.ac.kr
-72,동명대학교,부산,사립,,https://www.tu.ac.kr
-73,동서대학교,부산,사립,,https://www.dongseo.ac.kr
-74,동신대학교,전남,사립,,https://www.dsu.ac.kr
-75,동아대학교,부산,사립,,https://www.donga.ac.kr
-76,동양대학교,경북,사립,,https://www.dyu.ac.kr
-77,동의대학교,부산,사립,,https://www.deu.ac.kr
-78,루터대학교,경기,사립,,https://www.ltu.ac.kr
-79,명지대학교,경기,사립,,https://www.mju.ac.kr
-80,목원대학교,대전,사립,,https://www.mokwon.ac.kr
-81,목포가톨릭대학교,전남,사립,,https://www.mcu.ac.kr
-82,배재대학교,대전,사립,,https://www.pcu.ac.kr
-83,백석대학교,충남,사립,,https://www.bu.ac.kr
-84,부산가톨릭대학교,부산,사립,,https://www.cup.ac.kr
-85,부산교육대학교,부산,국립,,https://www.bnue.ac.kr
-86,부산외국어대학교,부산,사립,,https://www.bufs.ac.kr
-87,부산장신대학교,경남,사립,,https://www.bpu.ac.kr
-88,삼육대학교,서울,사립,,https://www.syu.ac.kr
-89,상명대학교,서울,사립,,https://www.smu.ac.kr
-90,상지대학교,강원,사립,,https://www.sangji.ac.kr
-91,서강대학교,서울,사립,,https://www.sogang.ac.kr
-92,서경대학교,서울,사립,,https://www.skuniv.ac.kr
-93,서울과학기술대학교,서울,국립,,https://www.seoultech.ac.kr
-94,서울교육대학교,서울,국립,,https://www.snue.ac.kr
-95,서울기독대학교,서울,사립,,https://www.scu.ac.kr
-96,서울대학교,서울,국립,,https://www.snu.ac.kr
-97,서울신학대학교,경기,사립,,https://www.stu.ac.kr
-98,서울여자대학교,서울,사립,,https://www.swu.ac.kr
-99,서울장신대학교,경기,사립,,https://www.sjs.ac.kr
-100,서울한영대학교,서울,사립,,https://shyu.ac.kr
-101,서원대학교,충북,사립,,https://www.seowon.ac.kr
-102,선문대학교,충남,사립,,https://www.sunmoon.ac.kr
-103,성결대학교,경기,사립,,https://www.sungkyul.ac.kr
-104,성공회대학교,서울,사립,,https://www.skhu.ac.kr
-105,성균관대학교,서울,사립,,https://www.skku.edu
-106,성신여자대학교,서울,사립,,https://www.sungshin.ac.kr
-107,세명대학교,충북,사립,,https://www.semyung.ac.kr
-108,세종대학교,서울,사립,,https://www.sejong.ac.kr
-109,세한대학교,전남,사립,,https://www.sehan.ac.kr
-110,송원대학교,광주,사립,,https://www.songwon.ac.kr
-111,수원가톨릭대학교,경기,사립,,https://www.suwoncatholic.ac.kr
-112,수원대학교,경기,사립,,https://www.suwon.ac.kr
-113,숙명여자대학교,서울,사립,,https://www.sookmyung.ac.kr
-114,순천향대학교,충남,사립,,https://www.sch.ac.kr
-115,숭실대학교,서울,사립,,https://www.ssu.ac.kr
-116,신경주대학교,경북,사립,,https://sgu.ac.kr
-117,신라대학교,부산,사립,,https://www.silla.ac.kr
-118,신한대학교,경기,사립,,https://www.shinhan.ac.kr
-119,아신대학교,경기,사립,,https://www.acts.ac.kr
-120,아주대학교,경기,사립,,https://www.ajou.ac.kr
-121,안양대학교,경기,사립,,https://www.anyang.ac.kr
-122,연세대학교,서울,사립,서울캠퍼스,https://www.yonsei.ac.kr
-123,연세대학교,강원,사립,미래캠퍼스,https://www.yonsei.ac.kr/wj
-124,영남대학교,경북,사립,,https://www.yu.ac.kr
-125,영남신학대학교,경북,사립,,https://www.ytus.ac.kr
-126,영산대학교,경남,사립,,https://www.ysu.ac.kr
-127,영산선학대학교,전남,사립,,https://www.youngsan.ac.kr
-128,예수대학교,전북,사립,,https://www.jesus.ac.kr
-129,예원예술대학교,전북,사립,,https://www.yewon.ac.kr
-130,용인대학교,경기,사립,,https://www.yongin.ac.kr
-131,우석대학교,전북,사립,,https://www.woosuk.ac.kr
-132,우송대학교,대전,사립,,https://www.wsu.ac.kr
-133,울산과학기술원,울산,국립,,https://www.unist.ac.kr
-134,울산대학교,울산,사립,,https://www.ulsan.ac.kr
-135,원광대학교,전북,사립,,https://www.wonkwang.ac.kr
-136,위덕대학교,경북,사립,,https://www.uu.ac.kr
-137,유원대학교,충북,사립,,https://www.u1.ac.kr
-138,을지대학교,대전,사립,,https://www.eulji.ac.kr
-139,이화여자대학교,서울,사립,,https://www.ewha.ac.kr
-140,인제대학교,경남,사립,,https://www.inje.ac.kr
-141,인천가톨릭대학교,인천,사립,,https://www.iccu.ac.kr
-142,인천대학교,인천,국립,,https://www.inu.ac.kr
-143,인하대학교,인천,사립,,https://www.inha.ac.kr
-144,장로회신학대학교,서울,사립,,https://www.puts.ac.kr
-145,전남대학교,광주,국립,,https://www.chonnam.ac.kr
-146,전북대학교,전북,국립,,https://www.jbnu.ac.kr
-147,전주교육대학교,전북,국립,,https://www.jnue.kr
-148,전주대학교,전북,사립,,https://www.jj.ac.kr
-149,제주국제대학교,제주,사립,,https://www.jeju.ac.kr
-150,제주대학교,제주,국립,,https://www.jejunu.ac.kr
-151,조선대학교,광주,사립,,https://www.chosun.ac.kr
-152,중부대학교,충남,사립,,https://www.joongbu.ac.kr
-153,중앙대학교,서울,사립,,https://www.cau.ac.kr
-154,중앙승가대학교,경기,사립,,http://www.sangha.ac.kr
-155,중원대학교,충북,사립,,https://www.jwu.ac.kr
-156,진주교육대학교,경남,국립,,https://www.cue.ac.kr
-157,차의과학대학교,경기,사립,,https://www.cha.ac.kr
-158,창신대학교,경남,사립,,https://www.cs.ac.kr
-159,청운대학교,충남,사립,,https://www.chungwoon.ac.kr
-160,청주교육대학교,충북,국립,,https://www.cje.ac.kr
-161,청주대학교,충북,사립,,https://www.cju.ac.kr
-162,초당대학교,전남,사립,,https://www.cdu.ac.kr
-163,총신대학교,서울,사립,,https://www.chongshin.ac.kr
-164,추계예술대학교,서울,사립,,https://www.chugye.ac.kr
-165,춘천교육대학교,강원,국립,,https://www.cnue.ac.kr
-166,충남대학교,대전,국립,,https://www.cnu.ac.kr
-167,충북대학교,충북,국립,,https://www.chungbuk.ac.kr
-168,칼빈대학교,경기,사립,,https://www.calvin.ac.kr
-169,평택대학교,경기,사립,,https://www.ptu.ac.kr
-170,포항공과대학교,경북,사립,,https://www.postech.ac.kr
-171,한경국립대학교,경기,국립,,https://www.hknu.ac.kr
-172,한국공학대학교,경기,사립,,https://www.tukorea.ac.kr
-173,한국과학기술원,대전,국립,,https://www.kaist.ac.kr
-174,한국교원대학교,충북,국립,,https://www.knue.ac.kr
-175,한국기술교육대학교,충남,사립,,https://www.koreatech.ac.kr
-176,한국성서대학교,서울,사립,,https://www.bible.ac.kr
-177,한국에너지공과대학교,전남,국립,,https://www.kentech.ac.kr
-178,한국외국어대학교,서울,사립,,https://www.hufs.ac.kr
-179,한국전통문화대학교,충남,국립,,https://www.nuch.ac.kr
-180,한국체육대학교,서울,국립,,https://www.knsu.ac.kr
-181,한국침례신학대학교,대전,사립,,https://www.kbtus.ac.kr
-182,한국항공대학교,경기,사립,,https://www.kau.ac.kr
-183,한남대학교,대전,사립,,https://www.hannam.ac.kr
-184,한동대학교,경북,사립,,https://www.handong.edu
-185,한라대학교,강원,사립,,https://www.halla.ac.kr
-186,한림대학교,강원,사립,,https://www.hallym.ac.kr
-187,한서대학교,충남,사립,,https://www.hanseo.ac.kr
-188,한성대학교,서울,사립,,https://www.hansung.ac.kr
-189,한세대학교,경기,사립,,https://www.hansei.ac.kr
-190,한신대학교,경기,사립,,https://www.hs.ac.kr
-191,한양대학교,서울,사립,서울캠퍼스,https://www.hanyang.ac.kr
-192,한양대학교,경기,사립,ERICA캠퍼스,https://www.hanyang.ac.kr/erica
-193,한일장신대학교,전북,사립,,https://www.hanil.ac.kr
-194,협성대학교,경기,사립,,https://www.uhs.ac.kr
-195,호남대학교,광주,사립,,https://www.honam.ac.kr
-196,호남신학대학교,광주,사립,,https://www.htus.ac.kr
-197,호서대학교,충남,사립,,https://www.hoseo.ac.kr
-198,호원대학교,전북,사립,,https://www.howon.ac.kr
-199,홍익대학교,서울,사립,서울캠퍼스,https://www.hongik.ac.kr
-200,홍익대학교,세종,사립,세종캠퍼스,https://sejong.hongik.ac.kr
-201,화성의과학대학교,경기,사립,,https://www.hsmu.ac.kr
+대학ID,대학명,지역,설립구분,캠퍼스,홈페이지,주소,우편번호,대표전화,영문명,설립일자
+1,가천대학교,경기,사립,,https://www.gachon.ac.kr,경기도 성남시 수정구 성남대로 1342,13120,031-750-5114,Gachon University,2012-03-01
+2,강원대학교,강원,국립,,https://www.kangwon.ac.kr,강원특별자치도 춘천시 강원대학길 1,24341,033-250-6114,Kangwon National University,1970-03-01
+3,건국대학교,서울,사립,서울캠퍼스,https://www.konkuk.ac.kr,서울특별시 광진구 능동로 120,05029,02-450-3114,Konkuk University,1931-05-15
+4,서울시립대학교,서울,공립,,https://www.uos.ac.kr,서울특별시 동대문구 서울시립대로 163,02504,02-6490-6114,University Of Seoul,1918-05-01
+5,부산대학교,부산,국립,,https://www.pusan.ac.kr,부산광역시 금정구 부산대학로63번길 2,46241,051-512-0311,Pusan National University,1946-05-15
+6,가야대학교,경남,사립,,https://www.kaya.ac.kr,경상남도 김해시 삼계로 208,50830,055-330-1000,Kaya University,1993-03-13
+7,가톨릭관동대학교,강원,사립,,https://www.cku.ac.kr,강원특별자치도 강릉시 범일로579번길 24,25601,033-649-7114,Catholic Kwandong University,1955-04-26
+8,가톨릭꽃동네대학교,충북,사립,,https://www.kkot.ac.kr,충청북도 청주시 서원구 현도면 상삼길 133,28211,043-270-0109,Catholic Kkottongnae University,1998-11-30
+9,가톨릭대학교,경기,사립,,https://www.catholic.ac.kr,경기도 부천시 원미구 지봉로 43,14662,02-2164-4114,The Catholic University Of Korea,1995-03-01
+10,감리교신학대학교,서울,사립,,https://www.mtu.ac.kr,서울특별시 서대문구 독립문로 56,03745,02-361-9257,Methodist Theological University,1887-09-29
+11,강남대학교,경기,사립,,https://www.kangnam.ac.kr,경기도 용인시 기흥구 강남로 40,16979,031-280-3500,Kangnam University,1948-08-12
+12,강서대학교,서울,사립,,https://gangseo.ac.kr,서울특별시 강서구 까치산로24길 47,07661,02-2600-2400,GANGSEO UNIVERSITY,1958-04-19
+13,건국대학교,충북,사립,GLOCAL캠퍼스,https://www.kku.ac.kr,충청북도 충주시 충원대로 268,27478,043-840-3114,Konkuk University,1980-01-05
+14,건양대학교,충남,사립,,https://www.konyang.ac.kr,충청남도 논산시 대학로 121,32992,041-730-5114,Konyang University,1990-11-28
+15,경기대학교,경기,사립,,https://www.kyonggi.ac.kr,경기도 수원시 영통구 광교산로 154-42,16227,031-249-9114,Kyonggi University,1947-11-08
+16,경남대학교,경남,사립,,https://www.kyungnam.ac.kr,경상남도 창원시 마산합포구 경남대학로 7,51767,055-245-5000,Kyungnam University,1946-12-27
+17,경동대학교,강원,사립,,https://www.kduniv.ac.kr,강원특별자치도 고성군 토성면 봉포4길 46,24764,033-631-2000,Kyungdong University,1997-03-01
+18,경북대학교,대구,국립,,https://www.knu.ac.kr,대구광역시 북구 대학로 80,41566,053-950-5114,Kyungpook National University,1946-05-28
+19,경상국립대학교,경남,국립,,https://www.gnu.ac.kr,경상남도 진주시 진주대로 501,52828,055-772-1114,Gyeongsang National University,1910-04-30
+20,경성대학교,부산,사립,,https://ks.ac.kr,부산광역시 남구 수영로 309,48434,051-663-4114,Kyungsung University,1963-01-28
+21,경운대학교,경북,사립,,https://www.ikw.ac.kr,경상북도 구미시 산동읍 강동로 730,39160,054-479-1114,Kyungwoon University,1997-03-01
+22,경인교육대학교,인천,국립,,https://www.ginue.ac.kr,인천광역시 계양구 계산로 62,21044,032-540-1114,Gyeongin National University Of Education,1962-02-17
+23,경일대학교,경북,사립,,https://www.kiu.ac.kr,경상북도 경산시 하양읍 가마실길 50,38428,053-600-4000,Kyungil University,1996-12-11
+24,경희대학교,서울,사립,,https://www.khu.ac.kr,서울특별시 동대문구 경희대로 26,02447,02-961-0114,Kyung Hee University,1951-05-18
+25,계명대학교,대구,사립,,https://www.kmu.ac.kr,대구광역시 달서구 달구벌대로 1095,42601,053-580-5114,Keimyung University,1954-05-20
+26,고려대학교,서울,사립,서울캠퍼스,https://www.korea.ac.kr,서울특별시 성북구 안암로 145 (안암동5가),02841,02-3290-1114,Korea University,1905-05-05
+27,고려대학교,세종,사립,세종캠퍼스,https://sejong.korea.ac.kr,세종특별자치시 조치원읍 세종로 2511,30019,044-860-1114,Korea University Sejong Campus,1980-03-02
+28,고신대학교,부산,사립,,https://www.kosin.ac.kr,부산광역시 영도구 와치로 194,49104,051-990-2114,Kosin University,1946-09-20
+29,공주교육대학교,충남,국립,,https://www.gjue.ac.kr,충청남도 공주시 웅진로 27,32553,041-850-1114,Gongju National University Of Education,1938-04-01
+30,광신대학교,광주,사립,,https://www.kwangshin.ac.kr,광주광역시 북구 양산택지소로 36,61027,062-605-1004,Kwangshin University,1996-12-11
+31,광운대학교,서울,사립,,https://www.kw.ac.kr,서울특별시 노원구 광운로 20,01897,02-940-5026,Kwangwoon University,1934-05-20
+32,광주가톨릭대학교,전남,사립,,https://www.gjcatholic.ac.kr,전라남도 나주시 남평읍 중남길 12-25,58230,061-337-2181,Gwangju Catholic University,1965-01-13
+33,광주과학기술원,광주,국립,,https://www.gist.ac.kr,광주광역시 북구 첨단과기로 123,61005,062-715-2114,Gwangju Institute Of Science And Technology,1993-11-17
+34,광주교육대학교,광주,국립,,https://www.gnue.ac.kr,광주광역시 북구 필문대로 55,61204,062-520-4114,Gwangju National University Of Education,1963-03-01
+35,광주대학교,광주,사립,,https://www.gwangju.ac.kr,광주광역시 남구 효덕로 277,61743,062-670-2114,Gwangju University,2004-03-01
+36,광주여자대학교,광주,사립,,https://www.kwu.ac.kr,광주광역시 광산구 광주여대길 40,62396,062-956-2500,Kwangju WomenS University,1997-03-03
+37,국립경국대학교,경북,국립,,https://www.gknu.ac.kr,경상북도 안동시 경동로 1375,36729,054-820-5114,Gyeongguk National University,1979-03-12
+38,국립공주대학교,충남,국립,,https://www.kongju.ac.kr,충청남도 공주시 공주대학로 56,32588,041-850-8114,Kongju National University,1948-07-31
+39,국립군산대학교,전북,국립,,https://www.kunsan.ac.kr,전북특별자치도 군산시 대학로 558,54150,063-469-4114,Kunsan National University,1979-01-18
+40,국립금오공과대학교,경북,국립,,https://www.kumoh.ac.kr,경상북도 구미시 대학로 61,39177,054-478-7114,Kumoh National Institute Of Technology,1980-03-01
+41,국립목포대학교,전남,국립,,https://www.mokpo.ac.kr,전라남도 무안군 청계면 영산로 1666,58554,061-450-2114,Mokpo National University,1946-10-31
+42,국립목포해양대학교,전남,국립,,https://www.mmu.ac.kr,전라남도 목포시 해양대학로 91,58628,061-240-7114,Mokpo National Maritime University,1993-03-01
+43,국립부경대학교,부산,국립,,https://www.pknu.ac.kr,부산광역시 남구 용소로 45,48513,051-629-4114,Pukyong National University,1996-07-06
+44,국립순천대학교,전남,국립,,https://www.scnu.ac.kr,전라남도 순천시 중앙로 255,57922,061-750-3114,Sunchon National University,1982-03-10
+45,국립창원대학교,경남,국립,,https://www.changwon.ac.kr,경상남도 창원시 의창구 창원대학로 20,51140,055-213-2114,Changwon National University,1969-03-21
+46,국립한국교통대학교,충북,국립,,https://www.ut.ac.kr,충청북도 충주시 대소원면 대학로 50,27469,043-841-5002,Korea National University Of Transportation,1914-04-01
+47,국립한국해양대학교,부산,국립,,https://www.kmou.ac.kr,부산광역시 영도구 태종로 727,49112,051-410-4114,Korea Maritime & Ocean University,1945-11-05
+48,국립한밭대학교,대전,국립,,https://www.hanbat.ac.kr,대전광역시 유성구 동서대로 125,34158,042-821-1114,Hanbat National University,2012-03-01
+49,국민대학교,서울,사립,,https://www.kookmin.ac.kr,서울특별시 성북구 정릉로 77,02707,02-910-4114,Kookmin University,1946-09-01
+50,극동대학교,충북,사립,,https://www.kdu.ac.kr,충청북도 음성군 감곡면 대학길 76-32,27601,043-879-3500,Far East University,1997-12-05
+51,금강대학교,충남,사립,,https://www.ggu.ac.kr,충청남도 논산시 상월면 상월로 522,32906,041-731-3100,Geumgang University,2002-11-16
+52,김천대학교,경북,사립,,https://www.gimcheon.ac.kr,경상북도 김천시 대학로 214,39528,054-420-4000,Gimcheon University,2010-03-01
+53,나사렛대학교,충남,사립,,https://www.kornu.ac.kr,충청남도 천안시 서북구 월봉로 48,31172,041-570-7794,Korea Nazarene University,1954-09-14
+54,남부대학교,광주,사립,,https://www.nambu.ac.kr,광주광역시 광산구 남부대길 1,62271,062-970-0001,Nambu University,1999-03-12
+55,남서울대학교,충남,사립,,https://www.nsu.ac.kr,충청남도 천안시 서북구 성환읍 대학로 91,31020,041-580-2513,Namseoul University,1994-04-14
+56,단국대학교,경기,사립,,https://www.dankook.ac.kr,경기도 용인시 수지구 죽전로 152,16890,1899-3700,Dankook University,1947-11-03
+57,대구가톨릭대학교,경북,사립,,https://www.cu.ac.kr,경상북도 경산시 하양읍 하양로 13-13,38430,053-850-3114,Daegu Catholic University,1914-10-01
+58,대구경북과학기술원,대구,국립,,https://www.dgist.ac.kr,대구광역시 달성군 현풍읍 테크노중앙대로 333,42988,053-785-0114,Daegu Gyeongbuk Institute of Science and Technology,2010-03-25
+59,대구교육대학교,대구,국립,,https://www.dnue.ac.kr,대구광역시 남구 중앙대로 219,42411,053-620-1202,Daegu National University Of Education,1950-03-25
+60,대구대학교,경북,사립,,https://www.daegu.ac.kr,경상북도 경산시 진량읍 대구대로 201,38453,053-850-5000,Daegu University,1956-05-01
+61,대구예술대학교,경북,사립,,https://www.dgau.ac.kr,경상북도 칠곡군 가산면 다부거문1길 202,39851,054-970-5311,Daegu Arts University,1996-12-11
+62,대구한의대학교,경북,사립,,https://www.dhu.ac.kr,경상북도 경산시 한의대로 1,38610,053-819-1000,Daegu Haany University,1980-12-29
+63,대신대학교,경북,사립,,https://www.daeshin.ac.kr,경상북도 경산시 경청로222길 33,38649,053-810-0701,Daeshin University,1996-12-11
+64,대전가톨릭대학교,세종,사립,,https://www.dcatholic.ac.kr,세종특별자치시 전의면 가톨릭대학로 30,30006,044-861-7101,Daejeoncatholicuniversity,1993-03-01
+65,대전대학교,대전,사립,,https://www.dju.ac.kr,대전광역시 동구 대학로 62,34520,042-280-2114,Daejeon University,1980-12-29
+66,대전신학대학교,대전,사립,,https://www.daejeon.ac.kr,대전광역시 대덕구 한남로 41,34432,042-606-0114,Daejeon Theological University,2009-03-01
+67,대진대학교,경기,사립,,https://www.daejin.ac.kr,경기도 포천시 호국로 1007,11159,031-539-1114,Daejin University,1991-11-15
+68,덕성여자대학교,서울,사립,,https://www.duksung.ac.kr,서울특별시 도봉구 삼양로144길 33,01369,02-901-8000,Duksung Womens University,1950-05-17
+69,동국대학교,서울,사립,서울캠퍼스,https://www.dongguk.edu,서울특별시 중구 필동로1길 30,04620,02-2260-3114,Dongguk University,1946-09-20
+70,동국대학교,경북,사립,WISE캠퍼스,https://wise.dongguk.ac.kr,경상북도 경주시 동대로 123,38066,054-770-2844,Dongguk University,1978-10-12
+71,동덕여자대학교,서울,사립,,https://www.dongduk.ac.kr,서울특별시 성북구 화랑로13길 60,02748,02-940-4000,Dongduk Womens University,1950-05-27
+72,동명대학교,부산,사립,,https://www.tu.ac.kr,부산광역시 남구 신선로 428,48520,051-629-1000,Tongmyong University,2006-03-01
+73,동서대학교,부산,사립,,https://www.dongseo.ac.kr,부산광역시 사상구 주례로 47,47011,051-313-2001,Dongseo University,1992-03-02
+74,동신대학교,전남,사립,,https://www.dsu.ac.kr,전라남도 나주시 동신대길 67,58245,061-330-3114,Dongshinuniversity,1986-12-31
+75,동아대학교,부산,사립,,https://www.donga.ac.kr,부산광역시 사하구 낙동대로550번길 37,49315,051-200-6114,Dong-A University,1946-11-01
+76,동양대학교,경북,사립,,https://www.dyu.ac.kr,경상북도 영주시 풍기읍 동양대로 145,36040,054-630-1114,Dongyang University,1994-03-01
+77,동의대학교,부산,사립,,https://www.deu.ac.kr,부산광역시 부산진구 엄광로 176,47340,051-890-1114,Dong-Eui University,1979-01-10
+78,루터대학교,경기,사립,,https://www.ltu.ac.kr,경기도 용인시 기흥구 금화로82번길 20,17072,031-679-2300,Luther University,1997-12-05
+79,명지대학교,경기,사립,,https://www.mju.ac.kr,경기도 용인시 처인구 명지로 116,17058,1577-0020,Myongji University Natural Science Campus,1948-09-07
+80,목원대학교,대전,사립,,https://www.mokwon.ac.kr,대전광역시 서구 도안북로 88,35349,042-829-7114,Mokwon University,1965-01-13
+81,목포가톨릭대학교,전남,사립,,https://www.mcu.ac.kr,전라남도 목포시 영산로 697,58607,061-280-5102,Mokpo Catholic University,1999-12-17
+82,배재대학교,대전,사립,,https://www.pcu.ac.kr,대전광역시 서구 배재로 155-40,35345,042-520-5114,Pai Chai University,1980-12-29
+83,백석대학교,충남,사립,,https://www.bu.ac.kr,충청남도 천안시 동남구 백석대학로 1,31065,041-550-9114,Baekseok University,1994-03-01
+84,부산가톨릭대학교,부산,사립,,https://www.cup.ac.kr,부산광역시 금정구 오륜대로 57,46252,051-515-5811,Catholic University Of Pusan,1990-12-24
+85,부산교육대학교,부산,국립,,https://www.bnue.ac.kr,부산광역시 연제구 교대로 24,47503,051-500-7141,Busan National University Of Education,1946-09-02
+86,부산외국어대학교,부산,사립,,https://www.bufs.ac.kr,부산광역시 금정구 금샘로485번길 65,46234,051-509-5000,Busan University Of Foreign Studies,1982-03-12
+87,부산장신대학교,경남,사립,,https://www.bpu.ac.kr,경상남도 김해시 김해대로 1894-68,50883,055-320-2500,Busan Presbyterian University,2000-11-29
+88,삼육대학교,서울,사립,,https://www.syu.ac.kr,서울특별시 노원구 화랑로 815,01795,02-3399-3636,Sahmyook University,1962-02-27
+89,상명대학교,서울,사립,,https://www.smu.ac.kr,서울특별시 종로구 홍지문2길 20,03016,02-2287-5114,Sangmyung University (Seoul),1965-01-13
+90,상지대학교,강원,사립,,https://www.sangji.ac.kr,강원특별자치도 원주시 상지대길 83,26339,033-730-0114,Sangji University,1955-06-10
+91,서강대학교,서울,사립,,https://www.sogang.ac.kr,서울특별시 마포구 백범로 35,04107,02-705-8114,Sogang University,1960-04-18
+92,서경대학교,서울,사립,,https://www.skuniv.ac.kr,서울특별시 성북구 서경로 124,02713,02-940-7114,Seokyeong University,1992-09-01
+93,서울과학기술대학교,서울,국립,,https://www.seoultech.ac.kr,서울특별시 노원구 공릉로 232,01811,02-970-6114,Seoul National University Of Science And Technology,2012-03-01
+94,서울교육대학교,서울,국립,,https://www.snue.ac.kr,서울특별시 서초구 서초중앙로 96,06639,02-3475-2114,Seoul National University Of Education,1946-05-22
+95,서울기독대학교,서울,사립,,https://www.scu.ac.kr,서울특별시 은평구 갈현로4길 26-2,03422,02-380-2500,Seoul Christian University,1997-12-05
+96,서울대학교,서울,국립,,https://www.snu.ac.kr,서울특별시 관악구 관악로 1,08826,02-880-5114,Seoul National University,1946-08-22
+97,서울신학대학교,경기,사립,,https://www.stu.ac.kr,경기도 부천시 소사구 호현로489번길 52,14754,032-340-9114,Seoul Theological University,1959-02-26
+98,서울여자대학교,서울,사립,,https://www.swu.ac.kr,서울특별시 노원구 화랑로 621,01797,02-970-5114,Seoul Womens University,1960-12-12
+99,서울장신대학교,경기,사립,,https://www.sjs.ac.kr,경기도 광주시 경안로 145,12749,031-799-9113,Seoul Jangsin University,1984-12-21
+100,서울한영대학교,서울,사립,,https://shyu.ac.kr,서울특별시 구로구 경인로 290-42,08274,02-2669-2200,Seoul Hanyoung University,1996-11-11
+101,서원대학교,충북,사립,,https://www.seowon.ac.kr,충청북도 청주시 서원구 무심서로 377-3,28674,043-299-8114,Seowon University,1968-03-09
+102,선문대학교,충남,사립,,https://www.sunmoon.ac.kr,충청남도 아산시 탕정면 선문로221번길 70,31460,041-530-2114,Sun Moon University,1986-03-03
+103,성결대학교,경기,사립,,https://www.sungkyul.ac.kr,경기도 안양시 만안구 성결대학로 53,14097,031-467-8114,Sungkyul University,1965-01-13
+104,성공회대학교,서울,사립,,https://www.skhu.ac.kr,서울특별시 구로구 연동로 320,08359,02-2610-4114,Sungkonghoe University,1992-12-23
+105,성균관대학교,서울,사립,,https://www.skku.edu,서울특별시 종로구 성균관로 25-2,03063,02-760-0114,Sungkyunkwan University,1946-09-25
+106,성신여자대학교,서울,사립,,https://www.sungshin.ac.kr,서울특별시 성북구 보문로34다길 2,02844,02-920-7114,Sungshin Womens University,1965-01-13
+107,세명대학교,충북,사립,,https://www.semyung.ac.kr,충청북도 제천시 세명로 65,27136,043-645-1125,Semyung University,1990-11-28
+108,세종대학교,서울,사립,,https://www.sejong.ac.kr,서울특별시 광진구 능동로 209,05006,02-3408-3114,Sejong University,1978-10-07
+109,세한대학교,전남,사립,,https://www.sehan.ac.kr,전라남도 영암군 삼호읍 녹색로 1113,58447,061-469-1114,Sehan University,1994-03-10
+110,송원대학교,광주,사립,,https://www.songwon.ac.kr,광주광역시 남구 송암로 73,61756,062-360-5700,Songwon University,2012-03-01
+111,수원가톨릭대학교,경기,사립,,https://www.suwoncatholic.ac.kr,경기도 화성시 효행구 봉담읍 왕림1길 67,18332,031-290-8800,Suwon Catholic University,1984-03-02
+112,수원대학교,경기,사립,,https://www.suwon.ac.kr,경기도 화성시 효행구 봉담읍 와우안길 17,18323,031-220-2114,The University Of Suwon,1981-12-26
+113,숙명여자대학교,서울,사립,,https://www.sookmyung.ac.kr,서울특별시 용산구 청파로47길 90,04310,02-710-9114,Sookmyung WomenS University,1938-12-21
+114,순천향대학교,충남,사립,,https://www.sch.ac.kr,충청남도 아산시 신창면 순천향로 22,31538,041-530-1114,Soonchunhyang University,1978-03-01
+115,숭실대학교,서울,사립,,https://www.ssu.ac.kr,서울특별시 동작구 상도로 369,06978,02-820-0114,Soongsil University,1897-10-10
+116,신경주대학교,경북,사립,,https://sgu.ac.kr,경상북도 경주시 태종로 188,38065,054-770-5114,SinGyeongju University,1987-12-12
+117,신라대학교,부산,사립,,https://www.silla.ac.kr,부산광역시 사상구 백양대로700번길 140,46958,051-999-5000,Silla University,1969-12-27
+118,신한대학교,경기,사립,,https://www.shinhan.ac.kr,경기도 동두천시 벌마들로40번길 30,11340,031-870-2900,Shinhan Unvirsity,2014-03-01
+119,아신대학교,경기,사립,,https://www.acts.ac.kr,경기도 양평군 옥천면 경강로 1276,12508,031-770-7700,ACTS University,1981-12-26
+120,아주대학교,경기,사립,,https://www.ajou.ac.kr,경기도 수원시 영통구 월드컵로 206,16499,031-219-2114,Ajou University,1973-03-15
+121,안양대학교,경기,사립,,https://www.anyang.ac.kr,경기도 안양시 만안구 삼덕로37번길 22,14028,031-467-0700,Anyang University,1948-09-17
+122,연세대학교,서울,사립,서울캠퍼스,https://www.yonsei.ac.kr,서울특별시 서대문구 연세로 50,03722,1599-1885,Yonsei University,1957-01-05
+123,연세대학교,강원,사립,미래캠퍼스,https://www.yonsei.ac.kr/wj,강원특별자치도 원주시 흥업면 연세대길 1,26493,033-760-2114,Yonsei University MIRAE Campus,1977-12-28
+124,영남대학교,경북,사립,,https://www.yu.ac.kr,경상북도 경산시 대학로 280,38541,053-810-2114,Yeungnam University,1967-12-22
+125,영남신학대학교,경북,사립,,https://www.ytus.ac.kr,경상북도 경산시 진량읍 봉회1길 26,38451,053-850-0500,Youngnam Theological University & Seminary,1993-12-17
+126,영산대학교,경남,사립,,https://www.ysu.ac.kr,경상남도 양산시 주남로 288,50510,055-380-9114,Youngsan University,2005-12-21
+127,영산선학대학교,전남,사립,,https://www.youngsan.ac.kr,전라남도 영광군 백수읍 성지로 1357,57026,061-350-6015,Youngsan University Of Seon Studies,1997-03-03
+128,예수대학교,전북,사립,,https://www.jesus.ac.kr,전북특별자치도 전주시 완산구 서원로 383,54989,063-230-7700,Jesus University,2003-03-01
+129,예원예술대학교,전북,사립,,https://www.yewon.ac.kr,전북특별자치도 임실군 신평면 창인로 117,55913,063-640-7114,Yewon Arts University,2000-03-02
+130,용인대학교,경기,사립,,https://www.yongin.ac.kr,경기도 용인시 처인구 용인대학로 134,17092,031-8020-3114,Yong In University,1953-06-15
+131,우석대학교,전북,사립,,https://www.woosuk.ac.kr,전북특별자치도 완주군 삼례읍 삼례로 443,55338,063-290-1114,Woosuk University,1979-05-10
+132,우송대학교,대전,사립,,https://www.wsu.ac.kr,대전광역시 동구 동대전로 171,34606,042-630-9652,Woosong University,1995-03-01
+133,울산과학기술원,울산,국립,,https://www.unist.ac.kr,울산광역시 울주군 언양읍 유니스트길 50,44919,052-217-0114,Ulsan National Institute of Science and Technology,2009-03-02
+134,울산대학교,울산,사립,,https://www.ulsan.ac.kr,울산광역시 남구 대학로 93,44610,052-277-3101,University Of Ulsan,1970-03-16
+135,원광대학교,전북,사립,,https://www.wonkwang.ac.kr,전북특별자치도 익산시 익산대로 460,54538,063-850-5114,Wonkwang University,1951-09-05
+136,위덕대학교,경북,사립,,https://www.uu.ac.kr,경상북도 경주시 강동면 동해대로 261,38004,054-760-1096,Uiduk University,1995-12-16
+137,유원대학교,충북,사립,,https://www.u1.ac.kr,충청북도 영동군 영동읍 대학로 310,29131,043-740-1114,U1 University,1993-12-17
+138,을지대학교,대전,사립,,https://www.eulji.ac.kr,대전광역시 중구 계룡로771번길 77,34824,1899-0001,Eulji University,1967-03-21
+139,이화여자대학교,서울,사립,,https://www.ewha.ac.kr,서울특별시 서대문구 이화여대길 52,03760,02-3277-2114,Ewha Womans University,1946-08-15
+140,인제대학교,경남,사립,,https://www.inje.ac.kr,경상남도 김해시 인제로 197,50834,055-334-7111,Inje University,1979-01-12
+141,인천가톨릭대학교,인천,사립,,https://www.iccu.ac.kr,인천광역시 강화군 양도면 고려왕릉로 53-1,23058,032-930-8000,Incheon Catholic University,1996-03-01
+142,인천대학교,인천,국립,,https://www.inu.ac.kr,인천광역시 연수구 아카데미로 119,22012,032-835-8114,Incheon National University,1979-03-12
+143,인하대학교,인천,사립,,https://www.inha.ac.kr,인천광역시 미추홀구 인하로 100,22212,032-860-7114,Inha University,1954-04-24
+144,장로회신학대학교,서울,사립,,https://www.puts.ac.kr,서울특별시 광진구 광장로5길 25-1,04965,02-450-0700,Presbyterian University & Theological Seminary,1961-02-02
+145,전남대학교,광주,국립,,https://www.chonnam.ac.kr,광주광역시 북구 용봉로 77,61186,062-530-5114,Chonnam National University,1951-10-06
+146,전북대학교,전북,국립,,https://www.jbnu.ac.kr,전북특별자치도 전주시 덕진구 백제대로 567,54896,063-270-2114,Jeonbuk National University,1951-10-06
+147,전주교육대학교,전북,국립,,https://www.jnue.kr,전북특별자치도 전주시 완산구 서학로 50,55101,063-281-7114,Jeonju National University Of Education,1963-03-01
+148,전주대학교,전북,사립,,https://www.jj.ac.kr,전북특별자치도 전주시 완산구 천잠로 303,55069,1577-7177,Jeonju University,1953-05-05
+149,제주국제대학교,제주,사립,,https://www.jeju.ac.kr,제주특별자치도 제주시 516로 2870,63309,064-754-0215,Jejuinternationaluniversity,2012-03-01
+150,제주대학교,제주,국립,,https://www.jejunu.ac.kr,제주특별자치도 제주시 제주대학로 102,63243,064-754-2114,Jeju National University,1952-05-27
+151,조선대학교,광주,사립,,https://www.chosun.ac.kr,광주광역시 동구 조선대길 146,61452,062-230-7114,Chosun University,1946-09-29
+152,중부대학교,충남,사립,,https://www.joongbu.ac.kr,충청남도 금산군 추부면 대학로 201,32713,041-750-6500,Joongbu University,1993-03-01
+153,중앙대학교,서울,사립,,https://www.cau.ac.kr,서울특별시 동작구 흑석로 84,06974,02-820-5114,Chung-Ang University,1916-10-17
+154,중앙승가대학교,경기,사립,,http://www.sangha.ac.kr,경기도 김포시 승가로 123,10118,031-980-7709,Joong-Ang Sangha University,1979-03-18
+155,중원대학교,충북,사립,,https://www.jwu.ac.kr,충청북도 괴산군 괴산읍 문무로 85,28024,043-830-8114,Jungwon University,2009-03-02
+156,진주교육대학교,경남,국립,,https://www.cue.ac.kr,경상남도 진주시 진양호로369번길 3,52673,055-740-1114,Chinju National Uinversity Of Education,1963-01-01
+157,차의과학대학교,경기,사립,,https://www.cha.ac.kr,경기도 포천시 해룡로 120,11160,1899-2010,CHA University,1996-12-11
+158,창신대학교,경남,사립,,https://www.cs.ac.kr,경상남도 창원시 마산회원구 팔용로 262,51352,055-250-3001,Changshin University,2013-03-04
+159,청운대학교,충남,사립,,https://www.chungwoon.ac.kr,충청남도 홍성군 홍성읍 대학길 25,32244,041-630-3114,Chungwoon University,1994-12-03
+160,청주교육대학교,충북,국립,,https://www.cje.ac.kr,충청북도 청주시 서원구 청남로 2065,28690,043-299-0632,Cheongju National University of Education,1962-02-17
+161,청주대학교,충북,사립,,https://www.cju.ac.kr,충청북도 청주시 청원구 대성로 298,28503,043-229-8114,Cheongju University,1947-06-06
+162,초당대학교,전남,사립,,https://www.cdu.ac.kr,전라남도 무안군 무안읍 무안로 380,58530,061-450-1033,Chodang University,1994-03-07
+163,총신대학교,서울,사립,,https://www.chongshin.ac.kr,서울특별시 동작구 사당로 143,06988,02-3479-0200,Chongshin University,1967-06-02
+164,추계예술대학교,서울,사립,,https://www.chugye.ac.kr,서울특별시 서대문구 북아현로11가길 7,03762,02-362-5700,Chugye University For The Arts,1996-12-11
+165,춘천교육대학교,강원,국립,,https://www.cnue.ac.kr,강원특별자치도 춘천시 공지로 126,24328,033-260-6000,Chuncheon National University Of Education,1939-04-01
+166,충남대학교,대전,국립,,https://www.cnu.ac.kr,대전광역시 유성구 대학로 99,34134,042-821-5114,Chungnam National University,1952-05-25
+167,충북대학교,충북,국립,,https://www.chungbuk.ac.kr,충청북도 청주시 서원구 충대로 1,28644,043-261-2114,Chungbuk National University,1951-09-27
+168,칼빈대학교,경기,사립,,https://www.calvin.ac.kr,경기도 용인시 기흥구 마북로 184,16911,031-284-4753,Calvin University,1997-03-03
+169,평택대학교,경기,사립,,https://www.ptu.ac.kr,경기도 평택시 서동대로 3825,17869,031-659-8114,Pyeongtaek University,1990-11-28
+170,포항공과대학교,경북,사립,,https://www.postech.ac.kr,경상북도 포항시 남구 청암로 77,37673,054-279-0114,Pohang University of Science and Technology (POSTECH),1986-12-03
+171,한경국립대학교,경기,국립,,https://www.hknu.ac.kr,경기도 안성시 중앙로 327,17579,031-670-5114,Hankyong National University,1939-04-15
+172,한국공학대학교,경기,사립,,https://www.tukorea.ac.kr,경기도 시흥시 산기대학로 237,15073,031-8041-1000,Tech University of Korea,1998-03-07
+173,한국과학기술원,대전,국립,,https://www.kaist.ac.kr,대전광역시 유성구 대학로 291,34141,042-350-2114,Korea Advanced Institute of Science and Technology(KAIST),1971-02-16
+174,한국교원대학교,충북,국립,,https://www.knue.ac.kr,충청북도 청주시 흥덕구 강내면 태성탑연로 250,28173,043-230-3114,Korea National University Of Education,1984-03-15
+175,한국기술교육대학교,충남,사립,,https://www.koreatech.ac.kr,충청남도 천안시 동남구 병천면 충절로 1600,31253,041-560-1114,Korea University of Technology and Education,1991-11-02
+176,한국성서대학교,서울,사립,,https://www.bible.ac.kr,서울특별시 노원구 동일로214길 32,01757,02-950-5424,Korean Bible University,1996-12-11
+177,한국에너지공과대학교,전남,국립,,https://www.kentech.ac.kr,전라남도 나주시 켄텍길 21,58330,061-320-9999,Korea Institute of Energy Technology,2022-03-02
+178,한국외국어대학교,서울,사립,,https://www.hufs.ac.kr,서울특별시 동대문구 이문로 107,02450,02-2173-2114,Hankuk University of Foreign Studies,1954-04-20
+179,한국전통문화대학교,충남,국립,,https://www.nuch.ac.kr,충청남도 부여군 규암면 백제문로 367,33115,041-830-7114,Korea National University Of Heritage,2000-04-19
+180,한국체육대학교,서울,국립,,https://www.knsu.ac.kr,서울특별시 송파구 양재대로 1239,05541,02-410-6700,Korea National Sport University,1976-12-30
+181,한국침례신학대학교,대전,사립,,https://www.kbtus.ac.kr,대전광역시 유성구 북유성대로 190,34098,042-828-3114,Korea Baptist Theological University/Seminary,1973-12-22
+182,한국항공대학교,경기,사립,,https://www.kau.ac.kr,경기도 고양시 덕양구 항공대학로 76,10540,02-300-0114,Korea Aerospace University,1952-06-16
+183,한남대학교,대전,사립,,https://www.hannam.ac.kr,대전광역시 대덕구 한남로 70,34430,042-629-7114,Hannam University,1956-03-13
+184,한동대학교,경북,사립,,https://www.handong.edu,경상북도 포항시 북구 흥해읍 한동로 558,37554,054-260-1111,Handong Global University,1994-12-02
+185,한라대학교,강원,사립,,https://www.halla.ac.kr,강원특별자치도 원주시 흥업면 한라대길 28,26404,033-760-1114,Halla University,1997-03-01
+186,한림대학교,강원,사립,,https://www.hallym.ac.kr,강원특별자치도 춘천시 한림대학길 1,24252,033-248-1000,Hallym University,1982-03-01
+187,한서대학교,충남,사립,,https://www.hanseo.ac.kr,충청남도 서산시 해미면 한서1로 46,31962,041-660-1144,Hanseo University,1991-11-15
+188,한성대학교,서울,사립,,https://www.hansung.ac.kr,서울특별시 성북구 삼선교로16길 116,02876,02-760-4231,Hansung University,1972-12-21
+189,한세대학교,경기,사립,,https://www.hansei.ac.kr,경기도 군포시 한세로 30,15852,031-450-5114,Hansei University,1953-05-10
+190,한신대학교,경기,사립,,https://www.hs.ac.kr,경기도 오산시 한신대길 137,18101,031-379-0114,Hanshin University,1940-04-19
+191,한양대학교,서울,사립,서울캠퍼스,https://www.hanyang.ac.kr,서울특별시 성동구 왕십리로 222,04763,02-2220-0114,Hanyang University,1948-07-01
+192,한양대학교,경기,사립,ERICA캠퍼스,https://www.hanyang.ac.kr/erica,경기도 안산시 상록구 한양대학로 55,15588,031-400-5114,Hanyang University Erica Campus,1979-01-10
+193,한일장신대학교,전북,사립,,https://www.hanil.ac.kr,전북특별자치도 완주군 상관면 왜목로 726-15,55359,063-230-5408,Haniluniv.&Presb.Theol.Sem.,1995-03-01
+194,협성대학교,경기,사립,,https://www.uhs.ac.kr,경기도 화성시 효행구 봉담읍 최루백로 72,18330,031-299-0900,HYUPSUNG UNIVERSITY,1983-03-04
+195,호남대학교,광주,사립,,https://www.honam.ac.kr,광주광역시 광산구 호남대길 120,62399,062-940-5000,Honam University,1981-07-31
+196,호남신학대학교,광주,사립,,https://www.htus.ac.kr,광주광역시 남구 제중로 77,61642,062-650-1552,Honam Theological University & Seminary,1972-02-16
+197,호서대학교,충남,사립,,https://www.hoseo.ac.kr,충청남도 아산시 배방읍 호서로79번길 20,31499,041-540-5114,Hoseo University,1980-12-29
+198,호원대학교,전북,사립,,https://www.howon.ac.kr,전북특별자치도 군산시 임피면 호원대3길 64,54058,063-450-7114,Howon University,1978-03-02
+199,홍익대학교,서울,사립,서울캠퍼스,https://www.hongik.ac.kr,서울특별시 마포구 와우산로 94,04066,02-320-1114,Hongik University,1946-04-25
+200,홍익대학교,세종,사립,세종캠퍼스,https://sejong.hongik.ac.kr,세종특별자치시 조치원읍 세종로 2639,30016,044-860-2114,Hongik University,1946-04-25
+201,화성의과학대학교,경기,사립,,https://www.hsmu.ac.kr,경기도 화성시 만세구 남양읍 남양중앙로 400-5,18274,031-369-9100,HWASUNG MEDI-SCIENCE UNIVERSITY,2004-04-07

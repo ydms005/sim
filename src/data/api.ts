@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { assetUrl } from '../config'
 import { getPreview, previewFileUrl, subscribePreview } from './preview'
-import type { TrendRow, UnivDetail, University } from './types'
+import type { IndicatorItem, TrendRow, UnivDetail, University } from './types'
 
 const cache = new Map<string, Promise<unknown>>()
 /** 이미 받아 둔 JSON (다시 방문한 화면을 로딩 없이 바로 그리기 위해) */
@@ -50,6 +50,7 @@ const peek = <T>(path: string) => resolved.get(path) as T | undefined
 
 const UNIVERSITIES = 'data/universities.json'
 const TRENDS = 'data/trends.json'
+const INDICATORS = 'data/indicators.json'
 const detailPath = (id: number) => `data/univ/${id}.json`
 
 /**
@@ -128,3 +129,11 @@ export function useAsync<T>(load: () => Promise<T>, deps: unknown[], peekFn?: ()
 
 export const useUniversities = () => useAsync(loadUniversities, [], () => peek<University[]>(UNIVERSITIES))
 export const useTrends = () => useAsync(loadTrends, [], () => peek<TrendRow[]>(TRENDS))
+
+/** 대학알리미 공시 지표(대학ID별). 파일이 없거나(엑셀 관리 화면 미리보기 등) 그 대학 값이 없으면 빈 배열. */
+export const loadIndicators = () => fetchJson<Record<string, IndicatorItem[]>>(INDICATORS).catch(() => ({}) as Record<string, IndicatorItem[]>)
+
+export function useIndicators(id: number): AsyncState<IndicatorItem[]> {
+  const state = useAsync(loadIndicators, [], () => peek<Record<string, IndicatorItem[]>>(INDICATORS))
+  return { ...state, data: state.data ? (state.data[String(id)] ?? []) : state.loading ? undefined : [] }
+}

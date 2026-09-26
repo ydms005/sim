@@ -14,13 +14,16 @@ import {
 } from '../../components/competition/stats'
 import { cx } from '../../components/common'
 import { HomepageLink } from '../../components/HomepageLink'
-import { ArrowRightIcon } from '../../components/icons'
+import { ArrowRightIcon, ExternalIcon } from '../../components/icons'
 import { useUniv } from '../../components/UnivLayout'
 import { IS_SAMPLE_DATA } from '../../config'
+import { useIndicators } from '../../data/api'
+import type { IndicatorItem, University } from '../../data/types'
 import { formatNumber, formatRatio } from '../../lib/format'
 
 export default function InfoTab() {
   const { univ, detail } = useUniv()
+  const indicators = useIndicators(univ.id)
 
   const summary = useMemo(() => {
     const records = detail?.competition ?? []
@@ -37,12 +40,22 @@ export default function InfoTab() {
     }
   }, [detail])
 
-  if (!summary) return <NoCompetitionData univ={univ} hasDetail={detail !== null} />
+  if (!summary) {
+    return (
+      <div className="space-y-5 md:space-y-6">
+        <BasicInfoCard univ={univ} />
+        <IndicatorsCard items={indicators.data} />
+        <NoCompetitionData univ={univ} hasDetail={detail !== null} />
+      </div>
+    )
+  }
 
   const { year, totals, departments, admissions, categories, byYear } = summary
 
   return (
     <div className="space-y-5 md:space-y-6">
+      <BasicInfoCard univ={univ} />
+      <IndicatorsCard items={indicators.data} />
       <section aria-labelledby="info-title" className="rounded-2xl bg-white px-5 py-6 md:px-8 md:py-8">
         <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between sm:gap-6">
           <h2 id="info-title" className="text-[20px] leading-snug font-bold tracking-tight text-gray-900 md:text-[24px]">
@@ -80,6 +93,110 @@ export default function InfoTab() {
         <CategoryShareCard rows={categories} total={totals.quota} year={year} />
       </div>
     </div>
+  )
+}
+
+/**
+ * 대학알리미 표준데이터(scripts/import-standard-univ.mjs)로 채운 기본 정보. 경쟁률 유무와 상관없이
+ * 모든 대학에서 보여 줍니다(값이 하나도 없으면 카드 자체를 그리지 않음).
+ */
+function BasicInfoCard({ univ }: { univ: University }) {
+  const hasAny = univ.address || univ.phone || univ.homepage || univ.foundedAt || univ.nameEn
+  if (!hasAny) return null
+  const mapUrl = univ.address ? `https://map.naver.com/p/search/${encodeURIComponent(univ.address)}` : undefined
+
+  return (
+    <section aria-labelledby="basic-info-title" className="rounded-2xl bg-white px-5 py-6 md:px-8 md:py-7">
+      <h2 id="basic-info-title" className="text-[17px] font-bold text-gray-900 md:text-[18px]">
+        기본 정보
+      </h2>
+      <dl className="mt-4 grid gap-x-6 gap-y-3.5 sm:grid-cols-2">
+        {univ.address && (
+          <div className="sm:col-span-2">
+            <dt className="text-[13px] text-gray-500">주소</dt>
+            <dd className="mt-0.5 flex flex-wrap items-center gap-x-2 gap-y-1 text-[14px] text-gray-800 md:text-[15px]">
+              <span>{univ.address}</span>
+              {mapUrl && (
+                <a
+                  href={mapUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex shrink-0 items-center gap-0.5 text-[13px] font-medium text-brand-600 hover:text-brand-700 hover:underline"
+                >
+                  지도 보기
+                  <ExternalIcon className="size-3" />
+                  <span className="sr-only">(새 창)</span>
+                </a>
+              )}
+            </dd>
+          </div>
+        )}
+        {univ.phone && (
+          <div>
+            <dt className="text-[13px] text-gray-500">대표전화</dt>
+            <dd className="mt-0.5 text-[14px] text-gray-800 md:text-[15px]">
+              <a href={`tel:${univ.phone}`} className="hover:text-brand-700 hover:underline">
+                {univ.phone}
+              </a>
+            </dd>
+          </div>
+        )}
+        {univ.homepage && (
+          <div>
+            <dt className="text-[13px] text-gray-500">홈페이지</dt>
+            <dd className="mt-0.5 text-[14px] md:text-[15px]">
+              <HomepageLink univ={univ} />
+            </dd>
+          </div>
+        )}
+        {univ.foundedAt && (
+          <div>
+            <dt className="text-[13px] text-gray-500">설립일자</dt>
+            <dd className="mt-0.5 text-[14px] text-gray-800 tabular-nums md:text-[15px]">{univ.foundedAt}</dd>
+          </div>
+        )}
+        {univ.nameEn && (
+          <div>
+            <dt className="text-[13px] text-gray-500">영문명</dt>
+            <dd className="mt-0.5 text-[14px] text-gray-800 md:text-[15px]">{univ.nameEn}</dd>
+          </div>
+        )}
+      </dl>
+      <p className="mt-4 text-[12px] text-gray-400">출처: 한국대학교육협의회 대학 및 전문대학 정보(공공데이터포털, 2025년 기준)</p>
+    </section>
+  )
+}
+
+/**
+ * 대학알리미 공시 지표(scripts/fetch-academyinfo.mjs 로 채운 data/indicators.csv). 값이 없으면(불러오는 중 포함)
+ * 아무것도 그리지 않습니다 — '경쟁률 자료 없음' 처럼 안내 문구를 보여 줄 만큼 확정된 데이터가 아니기 때문입니다.
+ */
+function IndicatorsCard({ items }: { items: IndicatorItem[] | undefined }) {
+  if (!items || items.length === 0) return null
+  const year = items[0].year
+
+  return (
+    <section aria-labelledby="indicators-title" className="rounded-2xl bg-white px-5 py-6 md:px-8 md:py-7">
+      <div className="flex flex-wrap items-baseline gap-x-2 gap-y-1">
+        <h2 id="indicators-title" className="text-[17px] font-bold text-gray-900 md:text-[18px]">
+          대학 주요 지표 (대학알리미 공시)
+        </h2>
+        <span className="text-[13px] text-gray-500">{year}년 공시</span>
+      </div>
+      <p className="mt-1 text-[13px] text-gray-500">대학 전체 기준(수시·정시 합산)</p>
+      <ul className="mt-4 grid gap-3 sm:grid-cols-3">
+        {items.map((it) => (
+          <li key={it.indicator} className="rounded-xl bg-gray-50 px-4 py-3.5">
+            <p className="text-[13px] text-gray-500">{it.indicator}</p>
+            <p className="mt-1 text-[20px] font-bold tracking-tight text-gray-900 tabular-nums">
+              {it.value}
+              {it.unit && <span className="ml-0.5 text-[14px] font-medium text-gray-500">{it.unit}</span>}
+            </p>
+          </li>
+        ))}
+      </ul>
+      <p className="mt-4 text-[12px] text-gray-400">출처: {items[0].source ?? '대학알리미(공공데이터포털)'}</p>
+    </section>
   )
 }
 

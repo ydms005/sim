@@ -14,6 +14,8 @@ export interface DatasetSpec {
   /** 줄바꿈을 쓸 수 있는 열 */
   multiline: readonly string[]
   optionalFile: boolean
+  /** 없어도 오류가 아닌 선택 열(예전 파일과 호환). 있으면 값을 읽습니다. universities 에만 있음 */
+  optional?: readonly string[]
 }
 
 export const DATASETS: Readonly<Record<DatasetName, DatasetSpec>>
@@ -55,6 +57,7 @@ export function tableFromCsv(dataset: DatasetName, label: string, text: string):
 export function tableFromSheet(dataset: DatasetName, label: string, rows: readonly (readonly unknown[])[]): { table: Table; issues: Issue[] }
 export function tableFromRows(dataset: DatasetName, label: string, rows: string[][]): Table
 export function siteToRows(universities: readonly University[], details: readonly UnivDetail[]): Record<DatasetName, string[][]>
+export function allColumns(dataset: DatasetName): string[]
 
 export function columnLetter(index: number): string
 export function shortHash(s: string): string

@@ -17,6 +17,16 @@ export interface University {
   campus?: string
   /** 대학 대표 홈페이지 (입학처 주소가 아님) */
   homepage?: string
+  /** 도로명주소 (대학알리미 표준데이터, scripts/import-standard-univ.mjs 로 채움) */
+  address?: string
+  /** 우편번호 (도로명) */
+  zipCode?: string
+  /** 대표전화번호 */
+  phone?: string
+  /** 학교 영문명 */
+  nameEn?: string
+  /** 설립일자 (YYYY-MM-DD) */
+  foundedAt?: string
   /** 경쟁률 데이터가 있는지 ('경쟁률 제공' 배지·추세·학과 검색 기준) */
   hasData: boolean
   /**
@@ -84,6 +94,18 @@ export interface UnivDetail {
   guidelines: Guideline[]
   resources: Resource[]
   news: NewsItem[]
+}
+
+/** public/data/indicators.json 의 대학별 지표 한 건 (대학알리미 공시, scripts/fetch-academyinfo.mjs 로 생성) */
+export interface IndicatorItem {
+  /** 공시연도 */
+  year: number
+  /** 지표 이름 (예: '신입생 충원율') */
+  indicator: string
+  /** 값(문자 그대로 표시, 단위는 unit) */
+  value: string
+  unit?: string
+  source?: string
 }
 
 /** public/data/trends.json 의 한 행: 대학별·학년도별 수시 전체 합계 */

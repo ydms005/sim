@@ -1,7 +1,7 @@
 // 관리 화면의 엑셀 읽기·쓰기 (브라우저에서만 동작, 서버 없음)
 import readExcelFile from 'read-excel-file/universal'
 import writeExcelFile, { type SheetData } from 'write-excel-file/universal'
-import { DATASET_NAMES, DATASETS, GUIDE_SHEET, type DatasetName } from '../../../scripts/lib/dataset.mjs'
+import { allColumns, DATASET_NAMES, DATASETS, GUIDE_SHEET, type DatasetName } from '../../../scripts/lib/dataset.mjs'
 import { ADMISSION_CATEGORIES, FOUND_TYPES, REGIONS, RESOURCE_CATEGORIES } from '../../data/types'
 
 /** 엑셀 파일의 시트들: [{ sheet: '경쟁률', data: [[…], …] }] */
@@ -11,7 +11,7 @@ export async function readWorkbook(file: Blob) {
 
 /** 열 너비(글자 수) */
 const WIDTHS: Record<DatasetName, number[]> = {
-  universities: [8, 22, 8, 10, 14, 34],
+  universities: [8, 22, 8, 10, 14, 34, 40, 10, 16, 30, 12],
   competition: [8, 8, 24, 30, 12, 10, 10],
   guidelines: [8, 8, 34, 40],
   resources: [8, 10, 36, 30, 40],
@@ -21,7 +21,7 @@ const WIDTHS: Record<DatasetName, number[]> = {
 const NUMBER_COLUMNS = new Set(['대학ID', '학년도', '모집인원', '지원자수'])
 
 const headerRow = (dataset: DatasetName) =>
-  DATASETS[dataset].columns.map((c) => ({ value: c, fontWeight: 'bold' as const, backgroundColor: '#E8F6EE' }))
+  allColumns(dataset).map((c) => ({ value: c, fontWeight: 'bold' as const, backgroundColor: '#E8F6EE' }))
 
 /** 각 시트 열의 설명 (안내 시트용) */
 const COLUMN_HELP: Record<DatasetName, [string, string, string][]> = {
@@ -32,6 +32,11 @@ const COLUMN_HELP: Record<DatasetName, [string, string, string][]> = {
     ['설립구분', `다음 중 하나: ${FOUND_TYPES.join(' ')}`, '사립'],
     ['캠퍼스', '같은 이름의 대학이 여러 행일 때 구분용. 없으면 비움', '서울캠퍼스'],
     ['홈페이지', '대학 대표 홈페이지(https://…). 모르면 비움', 'https://www.konkuk.ac.kr'],
+    ['주소', '(선택) 도로명주소. 대학알리미 표준데이터로 자동으로 채워집니다', '서울특별시 광진구 능동로 120'],
+    ['우편번호', '(선택) 도로명 우편번호', '05029'],
+    ['대표전화', '(선택) 대표전화번호', '02-450-3114'],
+    ['영문명', '(선택) 학교 영문명', 'Konkuk University'],
+    ['설립일자', '(선택) YYYY-MM-DD', '1946-01-01'],
   ],
   competition: [
     ['대학ID', '대학목록에 있는 대학ID', '3'],
@@ -91,7 +96,7 @@ function guideSheet(): SheetData {
 type Workbook = Parameters<typeof writeExcelFile>[0]
 
 function datasetSheet(dataset: DatasetName, rows: string[][] = []) {
-  const numberCols = DATASETS[dataset].columns.map((c) => NUMBER_COLUMNS.has(c))
+  const numberCols = allColumns(dataset).map((c) => NUMBER_COLUMNS.has(c))
   const data: SheetData = [
     headerRow(dataset),
     ...rows.map((r) =>

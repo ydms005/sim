@@ -12,7 +12,9 @@
     "typecheck": "tsc -b",
     "data": "node scripts/build-data.mjs",
     "data:sample": "node scripts/generate-sample-data.mjs",
-    "data:pdf": "node scripts/generate-sample-pdfs.mjs"
+    "data:pdf": "node scripts/generate-sample-pdfs.mjs",
+    "data:import-standard": "node scripts/import-standard-univ.mjs",
+    "data:fetch": "node scripts/fetch-academyinfo.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.117.1",
