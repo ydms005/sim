@@ -1,3 +1,4 @@
+import { cx } from '../../components/common'
 import { useMemo, useRef, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import MetricLineChart, { METRICS, type Metric, type MetricPoint } from '../../components/competition/MetricLineChart'
@@ -150,8 +151,18 @@ export default function CompetitionTab() {
     }
   }
 
+  // KESS 학과 전체(수시+정시) 자료만 있는 학과는 전형 목록이 의미 없으므로 숨기고 2단으로 보여 줍니다.
+  const wholeOnly = admissions.length <= 1 && admissions[0] === WHOLE_ADMISSION
+
   return (
-    <div className="grid gap-4 md:grid-cols-2 md:gap-5 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_minmax(0,2.25fr)] lg:gap-6">
+    <div
+      className={cx(
+        'grid gap-4 md:gap-5 lg:gap-6',
+        wholeOnly
+          ? 'md:grid-cols-[minmax(0,1fr)_minmax(0,2fr)] lg:grid-cols-[minmax(0,1fr)_minmax(0,3.25fr)]'
+          : 'md:grid-cols-2 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_minmax(0,2.25fr)]',
+      )}
+    >
       <SelectList
         title="학과 목록"
         items={index.depts}
@@ -161,16 +172,7 @@ export default function CompetitionTab() {
         emptyText="일치하는 학과가 없습니다"
         className="max-h-[360px] md:h-[420px] md:max-h-none lg:h-[720px]"
       />
-      {admissions.length <= 1 && admissions[0] === WHOLE_ADMISSION ? (
-        <section
-          aria-label="전형 목록"
-          className="hidden items-center justify-center rounded-2xl bg-gray-50 px-5 py-6 text-center text-[14px] leading-6 text-gray-500 md:flex md:h-[420px] lg:h-[720px]"
-        >
-          이 학과는 KESS 학과별 모집현황(수시+정시 합산) 기준으로만 자료가 있어
-          <br />
-          전형별 경쟁률은 제공되지 않습니다.
-        </section>
-      ) : (
+      {wholeOnly ? null : (
         <SelectList
           key={dept}
           title="전형 목록"
@@ -187,7 +189,7 @@ export default function CompetitionTab() {
         />
       )}
 
-      <div className="flex min-w-0 flex-col gap-4 md:col-span-2 md:gap-5 lg:col-span-1 lg:gap-6">
+      <div className={cx('flex min-w-0 flex-col gap-4 md:gap-5 lg:gap-6', !wholeOnly && 'md:col-span-2 lg:col-span-1')}>
         <section
           ref={chartRef}
           aria-labelledby="trend-title"
