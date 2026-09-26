@@ -34,6 +34,8 @@ const BASE = 'https://apis.data.go.kr/B340014'
 const FOUR_YEAR_KINDS = ['대학교', '교육대학', '산업대학']
 const DEBUG = process.argv.includes('--debug-xml')
 const MOCK_DIR = process.env.FETCH_MOCK_DIR
+// 설정하면 data.go.kr 대신 이 중계 주소(수파베이스 Edge Function)로 요청합니다. 이때 DATA_GO_KR_KEY 는 필요 없습니다.
+const PROXY_URL = process.env.ACADEMYINFO_PROXY_URL
 
 /** 정중한 호출 속도: 초당 5건 */
 const RATE_MS = 200
@@ -111,18 +113,34 @@ async function callApi(service, operation, params) {
     return text
   }
   if (callCount >= MAX_CALLS) throw new FatalApiError(`이번 실행의 호출 상한(${MAX_CALLS}건)에 도달해 멈춥니다(일일 한도 보호).`)
-  const key = process.env.DATA_GO_KR_KEY
-  const usp = new URLSearchParams({ serviceKey: key, numOfRows: '100', pageNo: '1', ...params })
-  const url = `${BASE}/${service}/${operation}?${usp.toString()}`
+  // 프록시 모드: 수파베이스(서울 리전) Edge Function 이 인증키를 붙여 대신 호출합니다(해외 IP 차단 우회).
+  let url
+  let init = {}
+  if (PROXY_URL) {
+    const usp = new URLSearchParams({ path: `${service}/${operation}`, numOfRows: '100', pageNo: '1', ...params })
+    url = `${PROXY_URL}?${usp.toString()}`
+    init = {
+      headers: {
+        Authorization: `Bearer ${process.env.SUPABASE_ANON_KEY ?? ''}`,
+        'x-proxy-token': process.env.PROXY_TOKEN ?? '',
+        // 요청을 서울 리전에서 실행하도록 지정
+        'x-region': 'ap-northeast-2',
+      },
+    }
+  } else {
+    const usp = new URLSearchParams({ serviceKey: process.env.DATA_GO_KR_KEY, numOfRows: '100', pageNo: '1', ...params })
+    url = `${BASE}/${service}/${operation}?${usp.toString()}`
+  }
   let lastErr
   for (let attempt = 1; attempt <= 3; attempt++) {
     callCount++
     await sleep(RATE_MS)
     try {
-      const res = await fetch(url)
+      const res = await fetch(url, { ...init, signal: AbortSignal.timeout(20000) })
       const text = await res.text()
       if (DEBUG) console.log(`[debug] ${service}.${operation} ${JSON.stringify(params)} →\n${text.slice(0, 800)}`)
-      if (!res.ok) throw new Error(`HTTP ${res.status}`)
+      if (res.status === 401 || res.status === 403) throw new FatalApiError(`중계 서버가 요청을 거절했습니다(HTTP ${res.status}): ${text.slice(0, 200)} — PROXY_TOKEN·SUPABASE_ANON_KEY 설정을 확인하세요.`)
+      if (!res.ok) throw new Error(`HTTP ${res.status} ${text.slice(0, 200)}`)
       const err = detectApiError(text)
       if (err?.fatal) throw new FatalApiError(err.message)
       if (err) {
@@ -195,7 +213,7 @@ const INDICATORS = [
 const SOURCE = '대학알리미(공공데이터포털)'
 
 async function main() {
-  if (!MOCK_DIR && !process.env.DATA_GO_KR_KEY) {
+  if (!MOCK_DIR && !PROXY_URL && !process.env.DATA_GO_KR_KEY) {
     console.error('환경 변수 DATA_GO_KR_KEY 가 없습니다. data.go.kr 에서 발급받은 인증키를 넣어 실행하세요.')
     console.error('예: DATA_GO_KR_KEY=발급받은키 npm run data:fetch')
     process.exit(1)

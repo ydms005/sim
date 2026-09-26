@@ -175,3 +175,17 @@
 | 로그인 뒤 사이트 홈(또는 엉뚱한 주소)으로 돌아옴 | D 단계 Redirect URLs 확인 |
 | '연결하지 못했어요'가 계속 | 프로젝트 일시 정지 → Restore project |
 | '계정 정보(닉네임)를 찾지 못했어요' | A 단계 SQL 을 한 번 더 실행하면 빠진 프로필을 만들어 줍니다 |
+
+## 대학알리미 중계 함수 (academyinfo-proxy)
+
+공공데이터포털은 해외 서버(GitHub Actions)의 접속을 막습니다. 그래서 수파베이스 **서울 리전**에서 도는 작은 함수가
+대신 요청하고, GitHub Actions 의 "대학알리미 지표 업데이트" 가 이 함수를 부릅니다.
+
+1. 수파베이스 → **Edge Functions → Deploy a new function → Via Editor**
+2. 함수 이름: `academyinfo-proxy`
+3. 편집기 내용을 모두 지우고 `supabase/functions/academyinfo-proxy/index.ts` 내용을 붙여넣은 뒤 **Deploy function**
+4. **Edge Functions → Secrets** 에 두 개 추가
+   - `DATA_GO_KR_KEY` : 공공데이터포털 인증키
+   - `PROXY_TOKEN` : 영문·숫자로 20자 이상 아무렇게나 만든 문자열
+5. GitHub 저장소 **Settings → Secrets and variables → Actions** 에 `PROXY_TOKEN` 을 **같은 값**으로 추가
+6. GitHub **Actions → 대학알리미 지표 업데이트 → Run workflow**

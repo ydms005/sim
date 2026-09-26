@@ -1,6 +1,6 @@
 # 대학알리미(공공데이터포털) 지표를 받아 data/indicators.csv · data/academyinfo-ids.csv 를 다시 만들고,
 # 값이 바뀌었으면 커밋해서 올립니다. 저장소 Settings → Secrets and variables → Actions 에
-# DATA_GO_KR_KEY(data.go.kr 에서 발급받은 인증키)를 등록해 두어야 합니다.
+# PROXY_TOKEN 을 등록해 두어야 합니다(인증키 DATA_GO_KR_KEY 는 수파베이스 Edge Function Secret 에 둡니다).
 #
 # 이 워크플로가 올리는 커밋은 GITHUB_TOKEN 으로 push 되어 deploy.yml 의 push 트리거를 스스로 일으키지
 # 못합니다. 그래서 deploy.yml 에 이 워크플로를 바라보는 workflow_run 트리거를 따로 추가해 뒀습니다
@@ -41,8 +41,12 @@ jobs:
         run: npm ci
 
       - name: 대학알리미 지표 가져오기
+        # 공공데이터포털이 해외 서버를 막으므로, 수파베이스(서울) 중계 함수를 거쳐 받습니다.
+        # (supabase/functions/academyinfo-proxy — 설치 방법은 supabase/README.md)
         env:
-          DATA_GO_KR_KEY: ${{ secrets.DATA_GO_KR_KEY }}
+          ACADEMYINFO_PROXY_URL: https://pjxvsloaujvqmbccwtjf.supabase.co/functions/v1/academyinfo-proxy
+          PROXY_TOKEN: ${{ secrets.PROXY_TOKEN }}
+          SUPABASE_ANON_KEY: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBqeHZzbG9hdWp2cW1iY2N3dGpmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTAyNzM2NTUsImV4cCI6MjEwNTg0OTY1NX0.0nSoXdVlb8rRpwg18Hk5bhA1s4z958c2wXXJJlNA7Q0
         run: node scripts/fetch-academyinfo.mjs
 
       # 받은 CSV 가 사이트 빌드에 올바르게 들어가는지 확인(오류가 있으면 커밋하지 않고 여기서 멈춤).
