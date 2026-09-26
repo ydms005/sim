@@ -155,7 +155,11 @@ async function main() {
       const schoolName = (get(r, '학교명') ?? '').toString().trim()
       const branch = (get(r, '본분교') ?? '').toString().trim()
       if (branch) distinctBranchValues.add(branch)
-      const department = (get(r, '학과명') ?? '').toString().trim()
+      // 2024·2025 원본 파일은 가운뎃점(·)이 '?' 로 깨져 있어 한글 사이의 '?' 를 '·' 로 되돌립니다.
+      const department = (get(r, '학과명') ?? '')
+        .toString()
+        .trim()
+        .replace(/(?<=[가-힣A-Za-z0-9)])\s*\?\s*(?=[가-힣A-Za-z0-9(])/g, '·')
       if (!schoolName || !department) continue
       const quota = num(get(r, '모집인원_학부_계'))
       const applicants = num(get(r, '지원자_전체_계'))
