@@ -253,12 +253,23 @@ async function main() {
   }
   const fourYearCodes = codes.filter((c) => FOUR_YEAR_KINDS.includes(c.schlKndNm))
   console.log(`학교 코드 ${codes.length}건 중 4년제 ${fourYearCodes.length}건.`)
+  if (DEBUG) {
+    const kinds = {}
+    for (const c of codes) kinds[`${c.schlKndNm}/${c.schlDivNm}`] = (kinds[`${c.schlKndNm}/${c.schlDivNm}`] ?? 0) + 1
+    console.log('[debug] 학교종류/본분교 분포:', JSON.stringify(kinds))
+    console.log('[debug] 코드 목록 예시:', JSON.stringify(codes.slice(0, 12)))
+  }
 
   const { matches, unmatchedOurIds } = matchUniversities(ourUnivs, fourYearCodes, (row) => ({
     name: row.schlKrnNm,
     branchKind: row.schlDivNm,
   }))
   console.log(`대학ID 매칭: ${matches.size}곳 (우리 목록 ${ourUnivs.length}곳 중 ${unmatchedOurIds.length}곳 매칭 안 됨)`)
+  if (DEBUG) {
+    const names = new Set(ourUnivs.filter((u) => unmatchedOurIds.includes(u.id)).map((u) => u.name))
+    console.log('[debug] 매칭 안 된 우리 대학 예시:', JSON.stringify([...names].slice(0, 15)))
+    console.log('[debug] 같은 이름의 코드 행:', JSON.stringify(codes.filter((c) => [...names].slice(0, 5).some((n) => String(c.schlKrnNm).includes(n.replace('대학교', '')))).slice(0, 10)))
+  }
 
   // data/academyinfo-ids.csv
   const idsRows = [...matches]
@@ -290,6 +301,7 @@ async function main() {
         if (DEBUG) console.log(`[debug] 대학ID ${univId} ${ind.label}: 값 없음`)
         continue
       }
+      if (DEBUG && univIndex <= 2) console.log(`[debug] 대학ID ${univId} ${ind.label} 응답 항목:`, JSON.stringify(items))
       const value = items[0][ind.valueField]
       if (value === undefined || value === '') continue
       indicatorRows.push([String(univId), String(svyYr), ind.label, value, ind.unit, SOURCE])
