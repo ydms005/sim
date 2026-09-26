@@ -1,11 +1,15 @@
 import { useMemo } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { cx } from '../../components/common'
+import { ExternalFileCard } from '../../components/ExternalFileCard'
 import PdfViewer from '../../components/PdfViewer'
 import { UnivEmptyState } from '../../components/UnivEmptyState'
 import { useUniv } from '../../components/UnivLayout'
 import { fileUrl } from '../../data/api'
 import type { Guideline } from '../../data/types'
+
+/** guidelines.csv 의 '파일' 값이 http(s):// 외부 주소인지 (public/ 파일은 상대 경로) */
+const isExternalUrl = (v: string) => /^https?:\/\//i.test(v)
 
 /** 모집요강 탭: 학년도 선택 칩 + PDF 뷰어. 선택한 학년도는 ?year= 에 남깁니다. */
 export default function GuidelineTab() {
@@ -65,7 +69,17 @@ export default function GuidelineTab() {
         })}
       </div>
 
-      <PdfViewer file={fileUrl(selected.file)} title={selected.title} />
+      {isExternalUrl(selected.file) ? (
+        <ExternalFileCard
+          url={selected.file}
+          title={selected.title}
+          buttonLabel="모집요강 PDF 열기 (새 창)"
+          note="대입정보포털 어디가(한국대학교육협의회)에서 제공하는 공식 파일입니다. 파일이 바로 내려받아질 수 있어요."
+          source="링크 목록 출처: github.com/KyunghwanP/ynhs"
+        />
+      ) : (
+        <PdfViewer file={fileUrl(selected.file)} title={selected.title} />
+      )}
     </div>
   )
 }

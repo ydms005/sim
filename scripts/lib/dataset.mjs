@@ -496,7 +496,10 @@ export function buildSite(tables, options) {
     return found.path
   }
 
-  /** 외부 PDF 주소: https:// 만 허용하고, 주소가 .pdf 로 끝나지 않으면 경고합니다. */
+  /**
+   * 외부 PDF 주소: https:// 만 허용합니다. 로컬 파일(requireFile)과 달리 주소가 .pdf 로 끝나야 하는 건 아닙니다 —
+   * 대입정보포털 어디가(fileDown.do?...)처럼 다운로드 주소가 확장자로 끝나지 않는 공식 링크가 흔하기 때문입니다.
+   */
   function requireExternalPdf(r, col, v) {
     if (/^http:\/\//i.test(v)) {
       fail(r.label, r.line, `'${col}' 에는 https:// 주소만 사용할 수 있습니다(사이트가 HTTPS라서 http:// PDF는 브라우저가 막습니다): ${v}`)
@@ -511,9 +514,6 @@ export function buildSite(tables, options) {
     if (!url) {
       fail(r.label, r.line, `'${col}' 값 '${v}' 은(는) public/ 기준 경로나 올바른 https:// 주소가 아닙니다.`)
       return null
-    }
-    if (!/\.pdf$/i.test(url.pathname)) {
-      warn(r.label, r.line, `'${col}' 주소가 .pdf 로 끝나지 않습니다. PDF 파일을 바로 내려주는 주소인지 확인하세요: ${v}`)
     }
     return url.href // 'HTTPS://' 처럼 대문자로 적어도 사이트가 외부 주소로 알아보도록 정규화합니다.
   }

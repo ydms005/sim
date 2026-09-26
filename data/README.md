@@ -4,8 +4,9 @@
 `npm run dev`·`npm run build` 를 실행하면 `scripts/build-data.mjs` 가 먼저 돌면서 CSV와 엑셀을 검사·합치고
 `public/data/*.json` 을 새로 만듭니다. `public/data/` 는 자동 생성물이라 Git에 올리지 않습니다.
 
-> 대학 목록은 실제 대학 기준이지만, 지금 CSV에 든 경쟁률·모집요강·자료실·소식은 모두 **개발용 샘플**입니다.
-> **2단계(엑셀 업로드)** 부터는 선생님이 **엑셀**로 실제 자료를 정리해 올리면, 엑셀에 적은 대학의 샘플이 그 엑셀 내용으로 바뀝니다.
+> 대학 목록은 실제 대학 기준입니다. `guidelines.csv`(모집요강)는 대입정보포털 어디가가 대학별로 공개한 공식 다운로드 링크로 채워져 있고
+> (아래 [어디가 모집요강 링크 가져오기](#어디가-모집요강-링크-가져오기-guidelinescsv) 참고), `competition.csv`(경쟁률)·`resources.csv`(자료실)·`news.csv`(소식)는
+> 아직 비어 있습니다(머리글만 있음) — 선생님이 **엑셀**로 실제 자료를 정리해 올리면 채워집니다.
 > 가장 쉬운 방법은 사이트의 **데이터 관리 화면**(<https://ydms005.github.io/sim/admin>, 바닥글의 '데이터 관리' 링크)을 쓰는 것입니다 — 아래 [엑셀로 관리하기](#엑셀로-관리하기-2단계).
 
 ```
@@ -84,16 +85,16 @@ public/files/univ/{대학ID}/*.pdf  ← 모집요강·자료실이 가리키는 
 **토큰 없이 올리기** — GitHub 웹에서 `data/` 폴더를 열고 **Add file → Upload files** 로 엑셀을 올린 뒤 **Commit changes**.
 PDF 는 `public/files/univ/{대학ID}/` 에 같은 방법으로 올립니다. 올리기 전에 관리 화면의 '파일 검사' 로 먼저 확인하세요.
 
-**주의** — 저장소에 이미 있는 엑셀과 **같은 이름**으로 올리면 그 파일이 바뀝니다. 예전 파일에만 있던 대학의 행은 사라지고, 그 대학은 다시 CSV(샘플) 자료로 돌아갑니다.
-관리 화면의 검사·미리보기는 '지금 배포된 결과'에 새 엑셀을 더하는 방식이라 이 경우를 그대로 반영하지 못합니다. 헷갈리면 파일마다 다른 이름을 쓰세요.
+**주의** — 저장소에 이미 있는 엑셀과 **같은 이름**으로 올리면 그 파일이 바뀝니다. 예전 파일에만 있던 대학의 행은 사라지고, 그 대학은
+다시 CSV(비어 있으면 '자료 없음' 화면)로 돌아갑니다. 관리 화면의 검사·미리보기는 '지금 배포된 결과'에 새 엑셀을 더하는 방식이라
+이 경우를 그대로 반영하지 못합니다. 헷갈리면 파일마다 다른 이름을 쓰세요.
 
-### 샘플 데이터 없애기
+### 실제 경쟁률 자료 올리기
 
-1. 엑셀로 실제 자료를 올린 대학은 그 종류의 샘플이 **자동으로** 빠집니다(위 합치기 규칙).
-2. 남은 샘플을 모두 없애려면 `competition.csv`·`guidelines.csv`·`resources.csv`·`news.csv` 에서 머리글(1행)만 남기고 행을 지웁니다
-   (`universities.csv` 는 실제 대학 목록이므로 지우지 않습니다). 필요 없어진 샘플 PDF(`public/files/univ/{대학ID}/`)도 지워도 됩니다 —
-   검사에서 가리키는 PDF 가 없으면 오류로 알려 주므로, CSV 행을 먼저 지우세요.
-3. 사이트의 모든 경쟁률·자료가 실제 자료가 되면 `src/config.ts` 의 `IS_SAMPLE_DATA` 를 `false` 로, `NOTICE` 문구도 알맞게 바꿉니다.
+`competition.csv`(경쟁률)·`resources.csv`(자료실)·`news.csv`(소식)는 아직 머리글만 있고 대학별 자료는 비어 있습니다. 대학마다
+자료가 생기는 대로 위 [데이터 관리 화면(/admin)](#데이터-관리-화면-admin)에서 엑셀 양식을 내려받아 채운 뒤 '파일 검사 → 미리보기 →
+GitHub에 올리기'로 추가하세요. 엑셀 없이 저장소에서 바로 고치려면 `data/*.csv` 에 [CSV와 열](#파일과-열)에 적힌 형식대로 행을
+붙이고 `npm run data` 로 검사한 뒤 커밋해도 됩니다. 올린 대학부터 그 탭의 '아직 자료가 없습니다' 안내가 실제 자료로 바뀝니다.
 
 ## 파일과 열
 
@@ -215,8 +216,9 @@ npm run data:import-standard
 경쟁률이 아직 없는 대학이어도 됩니다. 모집요강·자료실·소식 중 하나라도 있으면 그 대학의 상세 파일이 만들어져 해당 탭에 바로 보입니다(`hasDetail`).
 외부에 있는 PDF는 `https://` 주소를 그대로 적어도 됩니다. 다만
 - `http://` 주소는 오류입니다. 사이트가 HTTPS(GitHub Pages)라서 브라우저가 혼합 콘텐츠로 막아 뷰어에서 열 수 없습니다.
-- 주소가 `.pdf` 로 끝나지 않으면(예: `download.do?id=…`) 경고만 합니다. PDF 파일을 바로 내려주는 주소인지 확인하세요.
-- 그 서버가 CORS를 허용하지 않으면 사이트의 PDF 뷰어에서 열리지 않을 수 있습니다.
+- 주소가 `.pdf` 로 끝나지 않아도 됩니다(예: 대입정보포털 어디가의 `fileDown.do?fileId=…`). 로컬 PDF와 달리 확장자를 요구하지 않습니다.
+- 그 서버가 CORS·다운로드 헤더 때문에 사이트의 PDF 뷰어에서 열리지 않을 수 있습니다. 이 경우 모집요강·자료실 탭은 뷰어 대신
+  '새 창에서 열기' 버튼이 있는 카드를 보여 줍니다(로컬 PDF는 그대로 뷰어로 보입니다).
 
 **확인** — `npm run data` 를 실행합니다(엑셀도 함께 검사합니다). 문제가 있으면 `[data/competition.csv 12행] '모집인원' 값 '다섯' 은(는) 정수가 아닙니다.` 처럼
 파일·줄 번호와 함께 모든 오류를 보여 주고, `public/data` 는 건드리지 않은 채 끝납니다(종료 코드 1 → 배포도 중단됨).
@@ -281,44 +283,37 @@ npm run data:import-standard
 모집요강 PDF는 경쟁률 발표보다 몇 달 먼저 나오므로, 모집요강만 올린 대학은 `hasData: false` · `hasDetail: true` 가 됩니다.
 이 대학의 모집요강·자료실·소식 탭은 정상적으로 보이고, 대학정보·지난 경쟁률 탭은 '경쟁률 자료가 없다'고 안내합니다.
 
-## 샘플 데이터 다시 만들기 (개발용)
+## 어디가 모집요강 링크 가져오기 (guidelines.csv)
+
+`data/guidelines.csv` 는 대입정보포털 **어디가**(대한민국 대학교육협의회, <https://www.adiga.kr>)가 대학별로 공개하는 모집요강
+다운로드 링크로 채워져 있습니다. 우리가 직접 만든 자료가 아니라 [github.com/KyunghwanP/ynhs](https://github.com/KyunghwanP/ynhs)
+저장소가 학년도마다 모아 두는 `appguide.csv`를 그대로 가져온 것이며, `파일` 열의 값은 `https://www.adiga.kr/…/fileDown.do?...`
+형태의 외부 주소입니다(우리 서버에 PDF 를 두지 않음). 사이트는 이런 외부 주소를 뷰어 대신 '새 창에서 열기' 카드로 보여 줍니다
+([`GuidelineTab`](../src/pages/univ/GuidelineTab.tsx) 참고).
 
 ```bash
-npm run data:sample   # scripts/generate-sample-data.mjs → competition/guidelines/resources/news.csv
-npm run data:pdf      # scripts/generate-sample-pdfs.mjs → public/files/univ/{id}/*.pdf
-npm run data          # 검사 후 public/data/*.json 생성
+# 1) 원본 CSV 를 새로 받습니다 (학년도가 바뀌면 저장소의 최신 파일 이름으로 바뀔 수 있으니 링크를 확인하세요)
+curl -L https://raw.githubusercontent.com/KyunghwanP/ynhs/main/appguide.csv -o data/raw/adiga-appguide-2027.csv
+
+# 2) guidelines.csv 를 다시 만듭니다
+npm run data:import-guidelines
+
+# 3) 검사
+npm run data
 ```
 
-- `data:sample` 은 시드 고정 난수를 쓰므로 몇 번 실행해도 같은 CSV가 나옵니다. 모집단위·전형 설정은 `scripts/sample-profiles.mjs` 에 있습니다.
-  샘플 대상이 아닌 대학의 행이 CSV에 있으면(실제 데이터를 넣기 시작했다면) 덮어쓰지 않고 멈춥니다. 강제로 덮어쓰려면 `npm run data:sample -- --force`.
-- `data:pdf` 는 **Playwright(Chromium)** 가 필요합니다. 프로젝트 의존성에는 넣지 않았으므로 전역 설치를 사용합니다.
-  ```bash
-  npm i -g playwright && npx playwright install chromium   # 처음 한 번
-  npm run data:pdf                   # guidelines.csv·resources.csv 에 적힌 PDF를 모두 다시 생성
-  npm run data:pdf -- --missing      # 없는 파일만 생성(직접 넣은 실제 PDF는 건드리지 않음)
-  npm run data:pdf -- --only=3,5     # 특정 대학ID만
-  ```
-  전역 모듈을 찾지 못하면 `NODE_PATH=$(npm root -g) npm run data:pdf` 로 실행하세요.
-  글꼴은 Gothic A1(OFL, google/fonts 저장소의 정적 TTF)을 내려받아 쓰고, 실패하면 Noto Sans KR(Google Fonts) → Pretendard(jsDelivr) → 시스템 한글 글꼴 순서로 대신합니다.
-  모든 쪽에 "샘플 · 실제 대학 자료가 아님" 표시가 들어가며, 파일당 300KB를 넘으면 경고합니다.
-- GitHub Actions 배포에서는 `data:sample`·`data:pdf` 를 실행하지 않습니다. 커밋된 CSV·엑셀·PDF로 `npm run build`(→ `prebuild` 로 `build-data`)만 실행됩니다. 엑셀을 읽는 `read-excel-file` 은 `npm ci`/`npm install` 로 함께 설치됩니다.
-
-### 샘플 데이터가 들어 있는 대학 (12곳)
-
-| 대학ID | 대학 | 구분 |
-|---|---|---|
-| 3 | 건국대학교 서울캠퍼스 | 서울 · 사립 |
-| 153 | 중앙대학교 | 서울 · 사립 |
-| 24 | 경희대학교 | 서울 · 사립 |
-| 4 | 서울시립대학교 | 서울 · 공립 |
-| 1 | 가천대학교 | 경기 · 사립 |
-| 143 | 인하대학교 | 인천 · 사립 |
-| 5 | 부산대학교 | 부산 · 국립 |
-| 18 | 경북대학교 | 대구 · 국립 |
-| 2 | 강원대학교 | 강원 · 국립 |
-| 151 | 조선대학교 | 광주 · 사립 |
-| 135 | 원광대학교 | 전북 · 사립 |
-| 114 | 순천향대학교 | 충남 · 사립 |
+- `scripts/import-adiga-guidelines.mjs` 가 하는 일: 원본에서 `문서종류` 가 `수시 모집요강` 인 행만 골라, `대학코드`(대학알리미
+  학교ID, 7자리)로 `data/academyinfo-ids.csv` 에서 우리 `대학ID` 를 찾습니다. 코드로 못 찾은 행만 대학명(`[본교]`·`[분교]`·
+  `[제2캠퍼스]` 같은 대괄호 구분 + 괄호 캠퍼스 표기)으로 `data/universities.csv` 와 다시 맞춰 봅니다(`scripts/lib/univ-match.mjs`).
+- 실행하면 매칭 수와 매칭하지 못한 대학 목록(우리 목록에 없는 대학·아직 링크가 없는 대학)을 콘솔에 보여 줍니다. 과학기술원
+  (KAIST·GIST·DGIST·UNIST 등)처럼 수시 모집을 별도로 진행하는 대학은 이 CSV 에 '수시 모집요강'이 없어 자연히 빠집니다 —
+  해당 대학은 홈페이지에서 직접 확인하도록 모집요강 탭에 안내 화면이 보입니다.
+- **새 학년도가 되면**: 저장소의 새 CSV 로 `data/raw/adiga-appguide-2027.csv` 를 덮어쓴 뒤(파일 이름은 자유입니다) 다시
+  `npm run data:import-guidelines` 를 실행하고 결과를 확인해 커밋하세요. 이 스크립트는 매번 `guidelines.csv` 를 **통째로** 다시
+  씁니다(대학마다 학년도 1행이라는 원칙을 그대로 지킵니다).
+- 어디가가 아닌 대학 자체 모집요강 PDF(예: 입학처에서 받은 최신본)를 쓰고 싶으면, 그 대학ID 의 행만 손으로 고쳐 로컬 PDF
+  경로(`files/univ/{대학ID}/….pdf`, 실제 파일을 `public/` 에 올림)로 바꾸면 됩니다 — `npm run data:import-guidelines` 를
+  다시 돌리면 그 행도 어디가 링크로 되돌아가니, 그 전에 이 사실을 기억해 두세요.
 
 2024~2026학년도 경쟁률(학년도마다 모집단위 신설·폐지 포함), 2026·2027학년도 모집요강 PDF, 자료실 PDF 4~6개(2026학년도 수시 전형 결과 포함), 소식 3~5건이 있습니다.
 2027학년도 모집요강의 모집인원은 2026학년도 샘플 수치를 조금 바꾼 예시입니다.

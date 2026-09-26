@@ -1,25 +1,196 @@
 대학ID,학년도,제목,파일
-1,2027,2027학년도 수시모집요강 (샘플),files/univ/1/guideline-2027.pdf
-1,2026,2026학년도 수시모집요강 (샘플),files/univ/1/guideline-2026.pdf
-2,2027,2027학년도 수시모집요강 (샘플),files/univ/2/guideline-2027.pdf
-2,2026,2026학년도 수시모집요강 (샘플),files/univ/2/guideline-2026.pdf
-3,2027,2027학년도 수시모집요강 (샘플),files/univ/3/guideline-2027.pdf
-3,2026,2026학년도 수시모집요강 (샘플),files/univ/3/guideline-2026.pdf
-4,2027,2027학년도 수시모집요강 (샘플),files/univ/4/guideline-2027.pdf
-4,2026,2026학년도 수시모집요강 (샘플),files/univ/4/guideline-2026.pdf
-5,2027,2027학년도 수시모집요강 (샘플),files/univ/5/guideline-2027.pdf
-5,2026,2026학년도 수시모집요강 (샘플),files/univ/5/guideline-2026.pdf
-18,2027,2027학년도 수시모집요강 (샘플),files/univ/18/guideline-2027.pdf
-18,2026,2026학년도 수시모집요강 (샘플),files/univ/18/guideline-2026.pdf
-24,2027,2027학년도 수시모집요강 (샘플),files/univ/24/guideline-2027.pdf
-24,2026,2026학년도 수시모집요강 (샘플),files/univ/24/guideline-2026.pdf
-114,2027,2027학년도 수시모집요강 (샘플),files/univ/114/guideline-2027.pdf
-114,2026,2026학년도 수시모집요강 (샘플),files/univ/114/guideline-2026.pdf
-135,2027,2027학년도 수시모집요강 (샘플),files/univ/135/guideline-2027.pdf
-135,2026,2026학년도 수시모집요강 (샘플),files/univ/135/guideline-2026.pdf
-143,2027,2027학년도 수시모집요강 (샘플),files/univ/143/guideline-2027.pdf
-143,2026,2026학년도 수시모집요강 (샘플),files/univ/143/guideline-2026.pdf
-151,2027,2027학년도 수시모집요강 (샘플),files/univ/151/guideline-2027.pdf
-151,2026,2026학년도 수시모집요강 (샘플),files/univ/151/guideline-2026.pdf
-153,2027,2027학년도 수시모집요강 (샘플),files/univ/153/guideline-2027.pdf
-153,2026,2026학년도 수시모집요강 (샘플),files/univ/153/guideline-2026.pdf
+1,2027,2027학년도 수시모집요강,https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000242952&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0000063&searchSyr=2027
+2,2027,2027학년도 수시모집요강,https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000243390&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0000003&searchSyr=2027
+3,2027,2027학년도 수시모집요강,https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000243061&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0000052&searchSyr=2027
+4,2027,2027학년도 수시모집요강,https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000243005&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0000040&searchSyr=2027
+5,2027,2027학년도 수시모집요강,https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000257099&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0000014&searchSyr=2027
+6,2027,2027학년도 수시모집요강,https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000255224&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0002748&searchSyr=2027
+7,2027,2027학년도 수시모집요강,https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000245719&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0000072&searchSyr=2027
+8,2027,2027학년도 수시모집요강,https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000257911&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0000215&searchSyr=2027
+9,2027,2027학년도 수시모집요강,https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000245155&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0000046&searchSyr=2027
+10,2027,2027학년도 수시모집요강,https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000256496&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0000050&searchSyr=2027
+11,2027,2027학년도 수시모집요강,https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000242900&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0000051&searchSyr=2027
+12,2027,2027학년도 수시모집요강,https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000255087&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0000079&searchSyr=2027
+13,2027,2027학년도 수시모집요강,https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000247758&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0000053&searchSyr=2027
+14,2027,2027학년도 수시모집요강,https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000257542&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0000054&searchSyr=2027
+15,2027,2027학년도 수시모집요강,https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000255005&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0000056&searchSyr=2027
+16,2027,2027학년도 수시모집요강,https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000257833&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0000059&searchSyr=2027
+17,2027,2027학년도 수시모집요강,https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000244951&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0000060&searchSyr=2027
+18,2027,2027학년도 수시모집요강,https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000242989&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0000005&searchSyr=2027
+19,2027,2027학년도 수시모집요강,https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000243097&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0000007&searchSyr=2027
+20,2027,2027학년도 수시모집요강,https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000257303&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0000062&searchSyr=2027
+21,2027,2027학년도 수시모집요강,https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000245581&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0000244&searchSyr=2027
+22,2027,2027학년도 수시모집요강,https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000257264&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0000256&searchSyr=2027
+23,2027,2027학년도 수시모집요강,https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000255226&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0000064&searchSyr=2027
+24,2027,2027학년도 수시모집요강,https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000245976&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0000066&searchSyr=2027
+25,2027,2027학년도 수시모집요강,https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000243040&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0000068&searchSyr=2027
+26,2027,2027학년도 수시모집요강,https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000256509&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0000069&searchSyr=2027
+27,2027,2027학년도 수시모집요강,https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000257700&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0000070&searchSyr=2027
+28,2027,2027학년도 수시모집요강,https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000243095&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0000071&searchSyr=2027
+29,2027,2027학년도 수시모집요강,https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000256830&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0000251&searchSyr=2027
+30,2027,2027학년도 수시모집요강,https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000237435&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0000073&searchSyr=2027
+31,2027,2027학년도 수시모집요강,https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000246873&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0000074&searchSyr=2027
+32,2027,2027학년도 수시모집요강,https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000256258&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0000075&searchSyr=2027
+34,2027,2027학년도 수시모집요강,https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000257182&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0000252&searchSyr=2027
+35,2027,2027학년도 수시모집요강,https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000247025&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0000231&searchSyr=2027
+36,2027,2027학년도 수시모집요강,https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000247286&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0000076&searchSyr=2027
+37,2027,2027학년도 수시모집요강,https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000257807&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0000021&searchSyr=2027
+38,2027,2027학년도 수시모집요강,https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000256748&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0000008&searchSyr=2027
+39,2027,2027학년도 수시모집요강,https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000242949&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0000009&searchSyr=2027
+40,2027,2027학년도 수시모집요강,https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000256927&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0000010&searchSyr=2027
+41,2027,2027학년도 수시모집요강,https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000244173&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0000011&searchSyr=2027
+42,2027,2027학년도 수시모집요강,https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000242838&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0000012&searchSyr=2027
+43,2027,2027학년도 수시모집요강,https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000243308&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0000013&searchSyr=2027
+44,2027,2027학년도 수시모집요강,https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000243016&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0000020&searchSyr=2027
+45,2027,2027학년도 수시모집요강,https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000244252&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0000028&searchSyr=2027
+46,2027,2027학년도 수시모집요강,https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000243055&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0000034&searchSyr=2027
+47,2027,2027학년도 수시모집요강,https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000255136&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0000033&searchSyr=2027
+48,2027,2027학년도 수시모집요강,https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000257177&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0000039&searchSyr=2027
+49,2027,2027학년도 수시모집요강,https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000243009&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0000078&searchSyr=2027
+50,2027,2027학년도 수시모집요강,https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000252398&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0000080&searchSyr=2027
+51,2027,2027학년도 수시모집요강,https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000257878&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0000224&searchSyr=2027
+52,2027,2027학년도 수시모집요강,https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000255155&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0000241&searchSyr=2027
+53,2027,2027학년도 수시모집요강,https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000254716&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0000081&searchSyr=2027
+54,2027,2027학년도 수시모집요강,https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000257179&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0000216&searchSyr=2027
+55,2027,2027학년도 수시모집요강,https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000257687&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0000245&searchSyr=2027
+56,2027,2027학년도 수시모집요강,https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000242997&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0000082&searchSyr=2027
+57,2027,2027학년도 수시모집요강,https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000243207&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0000088&searchSyr=2027
+59,2027,2027학년도 수시모집요강,https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000257979&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0000253&searchSyr=2027
+60,2027,2027학년도 수시모집요강,https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000242852&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0000084&searchSyr=2027
+61,2027,2027학년도 수시모집요강,https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000256702&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0000087&searchSyr=2027
+62,2027,2027학년도 수시모집요강,https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000257996&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0000061&searchSyr=2027
+63,2027,2027학년도 수시모집요강,https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000243052&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0000093&searchSyr=2027
+64,2027,2027학년도 수시모집요강,https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000256547&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0000094&searchSyr=2027
+65,2027,2027학년도 수시모집요강,https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000257691&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0000095&searchSyr=2027
+66,2027,2027학년도 수시모집요강,https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000256612&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0000238&searchSyr=2027
+67,2027,2027학년도 수시모집요강,https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000242970&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0000097&searchSyr=2027
+68,2027,2027학년도 수시모집요강,https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000256783&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0000099&searchSyr=2027
+69,2027,2027학년도 수시모집요강,https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000243064&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0000100&searchSyr=2027
+70,2027,2027학년도 수시모집요강,https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000242986&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0000101&searchSyr=2027
+71,2027,2027학년도 수시모집요강,https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000256526&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0000102&searchSyr=2027
+72,2027,2027학년도 수시모집요강,https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000255198&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0000235&searchSyr=2027
+73,2027,2027학년도 수시모집요강,https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000244507&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0000103&searchSyr=2027
+74,2027,2027학년도 수시모집요강,https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000257694&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0000104&searchSyr=2027
+75,2027,2027학년도 수시모집요강,https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000242892&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0000105&searchSyr=2027
+76,2027,2027학년도 수시모집요강,https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000244728&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0000106&searchSyr=2027
+77,2027,2027학년도 수시모집요강,https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000252168&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0000107&searchSyr=2027
+78,2027,2027학년도 수시모집요강,https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000251956&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0000108&searchSyr=2027
+79,2027,2027학년도 수시모집요강,https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000243027&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0000109&searchSyr=2027
+80,2027,2027학년도 수시모집요강,https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000239967&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0000112&searchSyr=2027
+81,2027,2027학년도 수시모집요강,https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000256894&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0000221&searchSyr=2027
+82,2027,2027학년도 수시모집요강,https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000243046&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0000113&searchSyr=2027
+83,2027,2027학년도 수시모집요강,https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000244401&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0000178&searchSyr=2027
+84,2027,2027학년도 수시모집요강,https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000245025&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0000114&searchSyr=2027
+85,2027,2027학년도 수시모집요강,https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000256843&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0000254&searchSyr=2027
+86,2027,2027학년도 수시모집요강,https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000253081&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0000115&searchSyr=2027
+87,2027,2027학년도 수시모집요강,https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000243067&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0000222&searchSyr=2027
+88,2027,2027학년도 수시모집요강,https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000255051&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0000116&searchSyr=2027
+89,2027,2027학년도 수시모집요강,https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000255108&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0000117&searchSyr=2027
+90,2027,2027학년도 수시모집요강,https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000256680&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0000119&searchSyr=2027
+91,2027,2027학년도 수시모집요강,https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000255100&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0000120&searchSyr=2027
+92,2027,2027학년도 수시모집요강,https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000242903&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0000121&searchSyr=2027
+93,2027,2027학년도 수시모집요강,https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000243124&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0000036&searchSyr=2027
+94,2027,2027학년도 수시모집요강,https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000256817&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0000255&searchSyr=2027
+95,2027,2027학년도 수시모집요강,https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000242984&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0000098&searchSyr=2027
+96,2027,2027학년도 수시모집요강,https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000243332&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0000019&searchSyr=2027
+97,2027,2027학년도 수시모집요강,https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000243049&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0000125&searchSyr=2027
+98,2027,2027학년도 수시모집요강,https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000255229&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0000126&searchSyr=2027
+99,2027,2027학년도 수시모집요강,https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000255016&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0000127&searchSyr=2027
+100,2027,2027학년도 수시모집요강,https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000256911&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0000205&searchSyr=2027
+101,2027,2027학년도 수시모집요강,https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000242932&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0000128&searchSyr=2027
+102,2027,2027학년도 수시모집요강,https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000255105&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0000129&searchSyr=2027
+103,2027,2027학년도 수시모집요강,https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000257611&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0000131&searchSyr=2027
+104,2027,2027학년도 수시모집요강,https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000257627&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0000132&searchSyr=2027
+105,2027,2027학년도 수시모집요강,https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000256732&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0000133&searchSyr=2027
+106,2027,2027학년도 수시모집요강,https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000242955&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0000136&searchSyr=2027
+107,2027,2027학년도 수시모집요강,https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000251737&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0000137&searchSyr=2027
+108,2027,2027학년도 수시모집요강,https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000257391&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0000138&searchSyr=2027
+109,2027,2027학년도 수시모집요강,https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000242922&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0000092&searchSyr=2027
+110,2027,2027학년도 수시모집요강,https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000257444&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0000243&searchSyr=2027
+111,2027,2027학년도 수시모집요강,https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000256354&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0000139&searchSyr=2027
+112,2027,2027학년도 수시모집요강,https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000243043&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0000140&searchSyr=2027
+113,2027,2027학년도 수시모집요강,https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000257529&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0000141&searchSyr=2027
+114,2027,2027학년도 수시모집요강,https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000256618&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0000142&searchSyr=2027
+115,2027,2027학년도 수시모집요강,https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000257930&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0000143&searchSyr=2027
+116,2027,2027학년도 수시모집요강,https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000242935&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0000065&searchSyr=2027
+117,2027,2027학년도 수시모집요강,https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000257624&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0000144&searchSyr=2027
+118,2027,2027학년도 수시모집요강,https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000257410&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0002712&searchSyr=2027
+119,2027,2027학년도 수시모집요강,https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000242967&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0000145&searchSyr=2027
+120,2027,2027학년도 수시모집요강,https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000257290&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0000146&searchSyr=2027
+121,2027,2027학년도 수시모집요강,https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000257836&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0000147&searchSyr=2027
+122,2027,2027학년도 수시모집요강,https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000242991&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0000149&searchSyr=2027
+123,2027,2027학년도 수시모집요강,https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000242927&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0000150&searchSyr=2027
+124,2027,2027학년도 수시모집요강,https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000243058&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0000151&searchSyr=2027
+125,2027,2027학년도 수시모집요강,https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000257933&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0000153&searchSyr=2027
+126,2027,2027학년도 수시모집요강,https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000257062&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0003193&searchSyr=2027
+127,2027,2027학년도 수시모집요강,https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000256222&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0000155&searchSyr=2027
+128,2027,2027학년도 수시모집요강,https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000256761&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0000228&searchSyr=2027
+129,2027,2027학년도 수시모집요강,https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000255202&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0000218&searchSyr=2027
+130,2027,2027학년도 수시모집요강,https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000252293&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0000156&searchSyr=2027
+131,2027,2027학년도 수시모집요강,https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000255210&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0000157&searchSyr=2027
+132,2027,2027학년도 수시모집요강,https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000256801&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0000240&searchSyr=2027
+134,2027,2027학년도 수시모집요강,https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000242895&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0000158&searchSyr=2027
+135,2027,2027학년도 수시모집요강,https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000256240&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0000159&searchSyr=2027
+136,2027,2027학년도 수시모집요강,https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000256764&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0000160&searchSyr=2027
+137,2027,2027학년도 수시모집요강,https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000256846&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0000154&searchSyr=2027
+138,2027,2027학년도 수시모집요강,https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000242939&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0000161&searchSyr=2027
+139,2027,2027학년도 수시모집요강,https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000256914&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0000163&searchSyr=2027
+140,2027,2027학년도 수시모집요강,https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000242958&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0000164&searchSyr=2027
+141,2027,2027학년도 수시모집요강,https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000256512&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0000168&searchSyr=2027
+142,2027,2027학년도 수시모집요강,https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000255133&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0002660&searchSyr=2027
+143,2027,2027학년도 수시모집요강,https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000242994&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0000169&searchSyr=2027
+144,2027,2027학년도 수시모집요강,https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000243089&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0000170&searchSyr=2027
+145,2027,2027학년도 수시모집요강,https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000257031&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0000023&searchSyr=2027
+146,2027,2027학년도 수시모집요강,https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000257039&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0000025&searchSyr=2027
+147,2027,2027학년도 수시모집요강,https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000257927&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0000258&searchSyr=2027
+148,2027,2027학년도 수시모집요강,https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000257344&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0000171&searchSyr=2027
+149,2027,2027학년도 수시모집요강,https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000256480&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0000248&searchSyr=2027
+150,2027,2027학년도 수시모집요강,https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000243121&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0000027&searchSyr=2027
+151,2027,2027학년도 수시모집요강,https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000258244&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0000172&searchSyr=2027
+152,2027,2027학년도 수시모집요강,https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000257248&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0000173&searchSyr=2027
+153,2027,2027학년도 수시모집요강,https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000257306&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0000175&searchSyr=2027
+154,2027,2027학년도 수시모집요강,https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000256218&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0000177&searchSyr=2027
+155,2027,2027학년도 수시모집요강,https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000258148&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0000239&searchSyr=2027
+156,2027,2027학년도 수시모집요강,https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000257865&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0000260&searchSyr=2027
+157,2027,2027학년도 수시모집요강,https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000256833&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0000187&searchSyr=2027
+158,2027,2027학년도 수시모집요강,https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000254999&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0000249&searchSyr=2027
+159,2027,2027학년도 수시모집요강,https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000255177&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0000284&searchSyr=2027
+160,2027,2027학년도 수시모집요강,https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000256420&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0000261&searchSyr=2027
+161,2027,2027학년도 수시모집요강,https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000256989&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0000179&searchSyr=2027
+162,2027,2027학년도 수시모집요강,https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000256656&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0000246&searchSyr=2027
+163,2027,2027학년도 수시모집요강,https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000256593&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0000180&searchSyr=2027
+164,2027,2027학년도 수시모집요강,https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000251907&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0000181&searchSyr=2027
+165,2027,2027학년도 수시모집요강,https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000256908&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0000262&searchSyr=2027
+166,2027,2027학년도 수시모집요강,https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000237615&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0000029&searchSyr=2027
+167,2027,2027학년도 수시모집요강,https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000242855&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0000030&searchSyr=2027
+168,2027,2027학년도 수시모집요강,https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000257515&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0000184&searchSyr=2027
+169,2027,2027학년도 수시모집요강,https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000257983&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0000186&searchSyr=2027
+170,2027,2027학년도 수시모집요강,https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000256199&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0000188&searchSyr=2027
+171,2027,2027학년도 수시모집요강,https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000257388&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0000037&searchSyr=2027
+172,2027,2027학년도 수시모집요강,https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000242981&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0000247&searchSyr=2027
+174,2027,2027학년도 수시모집요강,https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000252047&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0000031&searchSyr=2027
+175,2027,2027학년도 수시모집요강,https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000255080&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0000189&searchSyr=2027
+176,2027,2027학년도 수시모집요강,https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000257440&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0000191&searchSyr=2027
+178,2027,2027학년도 수시모집요강,https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000257112&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0000192&searchSyr=2027
+180,2027,2027학년도 수시모집요강,https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000257310&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0000032&searchSyr=2027
+181,2027,2027학년도 수시모집요강,https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000256838&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0000182&searchSyr=2027
+182,2027,2027학년도 수시모집요강,https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000257160&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0000194&searchSyr=2027
+183,2027,2027학년도 수시모집요강,https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000256580&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0000195&searchSyr=2027
+184,2027,2027학년도 수시모집요강,https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000256115&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0000196&searchSyr=2027
+185,2027,2027학년도 수시모집요강,https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000252027&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0000197&searchSyr=2027
+186,2027,2027학년도 수시모집요강,https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000256533&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0000198&searchSyr=2027
+187,2027,2027학년도 수시모집요강,https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000257261&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0000199&searchSyr=2027
+188,2027,2027학년도 수시모집요강,https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000256853&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0000200&searchSyr=2027
+189,2027,2027학년도 수시모집요강,https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000242919&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0000201&searchSyr=2027
+190,2027,2027학년도 수시모집요강,https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000256624&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0000202&searchSyr=2027
+191,2027,2027학년도 수시모집요강,https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000257097&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0000203&searchSyr=2027
+192,2027,2027학년도 수시모집요강,https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000257781&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0000204&searchSyr=2027
+193,2027,2027학년도 수시모집요강,https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000258020&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0000206&searchSyr=2027
+194,2027,2027학년도 수시모집요강,https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000252867&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0000207&searchSyr=2027
+195,2027,2027학년도 수시모집요강,https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000256621&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0000208&searchSyr=2027
+196,2027,2027학년도 수시모집요강,https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000245186&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0000209&searchSyr=2027
+197,2027,2027학년도 수시모집요강,https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000256550&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0000211&searchSyr=2027
+198,2027,2027학년도 수시모집요강,https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000256723&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0000282&searchSyr=2027
+199,2027,2027학년도 수시모집요강,https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000257509&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0000212&searchSyr=2027
+200,2027,2027학년도 수시모집요강,https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000257512&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0002949&searchSyr=2027
+201,2027,2027학년도 수시모집요강,https://www.adiga.kr/cmm/com/file/fileDown.do?fileId=00000000000000257746&fileSn=1&menuId=PCUVTINF2000&downLogYn=Y&unvCd=0000233&searchSyr=2027

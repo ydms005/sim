@@ -206,8 +206,8 @@ function Trends({ universities, rows }: { universities: University[]; rows: Tren
       <PageShell>
         <div className="rounded-2xl bg-white">
           <EmptyState
-            title="아직 경쟁률 데이터가 없습니다"
-            description="경쟁률 자료가 준비되면 대학별 추세를 비교할 수 있어요."
+            title="아직 등록된 경쟁률 자료가 없습니다"
+            description="선생님이 데이터 관리(/admin) 화면에서 경쟁률 엑셀을 올리면 대학별 추세를 비교할 수 있어요."
             action={<Link to="/" className="font-semibold text-brand-600">대학 목록으로 →</Link>}
           />
         </div>

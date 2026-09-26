@@ -3,12 +3,16 @@ import { useSearchParams } from 'react-router-dom'
 import { cx, SearchIcon } from '../../components/common'
 import { Highlight } from '../../components/Highlight'
 import { CloseIcon } from '../../components/icons'
+import { ExternalFileCard } from '../../components/ExternalFileCard'
 import { BOX_QUERY, stickyHeaderBottom } from '../../components/pdf/layout'
 import PdfViewer from '../../components/PdfViewer'
 import { UnivEmptyState } from '../../components/UnivEmptyState'
 import { useUniv } from '../../components/UnivLayout'
 import { fileUrl } from '../../data/api'
 import { RESOURCE_CATEGORIES, type Resource, type ResourceCategory } from '../../data/types'
+
+/** resources.csv 의 '파일' 값이 http(s):// 외부 주소인지 (public/ 파일은 상대 경로) */
+const isExternalUrl = (v: string) => /^https?:\/\//i.test(v)
 import { matchesSearch } from '../../lib/hangul'
 import { scrollBehavior } from '../../lib/motion'
 
@@ -219,7 +223,16 @@ export default function ContentTab() {
 
       {/* PDF 뷰어 */}
       <div ref={viewerRef} className="min-w-0 lg:col-start-1 lg:row-start-1">
-        <PdfViewer file={fileUrl(selected.file)} title={selected.title} />
+        {isExternalUrl(selected.file) ? (
+          <ExternalFileCard
+            url={selected.file}
+            title={selected.title}
+            buttonLabel="파일 열기 (새 창)"
+            note="외부 사이트가 제공하는 파일입니다. 파일이 바로 내려받아질 수 있어요."
+          />
+        ) : (
+          <PdfViewer file={fileUrl(selected.file)} title={selected.title} />
+        )}
       </div>
     </div>
   )
