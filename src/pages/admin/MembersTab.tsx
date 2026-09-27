@@ -341,7 +341,7 @@ export default function MembersTab() {
                       <TypeSelect row={r} onChange={changeType} />
                     </td>
                     <td className="px-3 py-2.5 text-gray-600">
-                      {memberDetail(r) ?? "—"}
+                      {memberDetail(r) ?? <span className="text-gray-400">미입력</span>}
                       {r.user_type === "teacher" && r.teacher_status && (
                         <TeacherApproval
                           row={r}
