@@ -62,3 +62,12 @@ export function adigaPdfUrl(url: string, name: string): string | null {
   if (!url.startsWith('https://www.adiga.kr/cmm/com/file/fileDown.do?')) return null
   return `${SUPABASE_URL}/functions/v1/adiga-pdf?${new URLSearchParams({ url, name })}`
 }
+
+/**
+ * 활동정리(/activities)의 AI 요약·채팅을 처리하는 수파베이스 함수(supabase/functions/activity-ai).
+ * 이 함수만 학생의 (가림 처리된) 활동 글을 Anthropic Claude API로 보냅니다. API 키는 서버(함수)에만 있습니다.
+ */
+export const ACTIVITY_AI_URL = `${SUPABASE_URL}/functions/v1/activity-ai`
+
+/** 학생 PDF 원본(생기부 등)의 최대 크기. 이 파일은 서버로 올리지 않고 이 브라우저(IndexedDB)에만 저장합니다. */
+export const ACTIVITY_PDF_MAX_BYTES = 20 * 1024 * 1024

@@ -223,3 +223,67 @@ Claude(claude.ai 커스텀 커넥터, Claude Desktop, Claude Code)와 ChatGPT(�
    (브라우저가 인증 없이 바로 부르기 때문. 어디가 파일 주소만 중계하도록 막혀 있습니다.)
 
 무료 요금제의 Edge Function 호출·전송량 한도 안에서 동작합니다. 사용량은 수파베이스 **Usage** 에서 확인하세요.
+
+## 활동정리 AI 요약·상담 함수 (activity-ai)
+
+**활동정리**(`/activities`) 화면에서 학생이 활동 카드를 AI 로 요약하거나 AI 와 채팅으로 상담할 때 쓰는 함수입니다.
+학생의 생기부 등 PDF 원본은 **학생 브라우저 안에만** 저장되고 이 서버·함수에는 전혀 올라오지 않습니다.
+함수로 전달되는 것은 학생이 미리 이름·학번·생년월일·전화번호 등을 가려 낸("마스킹 처리한") 텍스트와,
+학생이 직접 쓴 활동 카드(수파베이스에 저장됨)뿐입니다. AI 응답은 [Anthropic](https://www.anthropic.com)(Claude) API 를 씁니다.
+
+### A. SQL 실행
+
+1. Supabase **SQL Editor** 에 [`supabase/migrations/0002_activities.sql`](migrations/0002_activities.sql) 전체를 붙여 넣고 **Run**
+   (`0001_stage3.sql` 을 먼저 실행해 두어야 합니다). 여러 번 실행해도 안전합니다.
+2. 확인: **Table Editor** 에 `activities`, `ai_usage` 두 표가 보이고, `profiles` 표에 `ai_consent_at` 열이 추가되어 있으면 성공입니다.
+
+이 SQL 이 만드는 것:
+
+| 표·함수 | 내용 |
+|---|---|
+| `activities` | 학생이 쓰는 활동 카드(동아리·봉사·진로·교과세특·독서·수상·자율·기타). **본인만** 읽고 쓸 수 있고, **관리자(선생님)도 볼 수 없습니다** — 학생 개인 기록이라 일부러 예외를 두지 않았습니다 |
+| `profiles.ai_consent_at` | '개인정보 국외 이전(미국 Anthropic 서버로 전송)' 에 학생이 동의한 시각. `give_ai_consent()`/`revoke_ai_consent()` 함수로만 바뀌고, 학생이 표를 직접 고쳐서 만들 수 없습니다 |
+| `ai_usage` | 학생별 하루 AI 요청 수·글자 수 기록(도배·비용 폭주 방지용). 읽기는 본인 것만, 쓰기는 `activity-ai` 함수만(service_role) 합니다 |
+
+### B. Anthropic API 키 만들기
+
+1. <https://console.anthropic.com> 에 가입/로그인하고 결제 수단을 등록합니다(사용한 만큼만 청구되는 종량제입니다).
+2. 왼쪽 메뉴 **API Keys** → **Create Key** 로 키를 만들고 복사해 둡니다(다시 볼 수 없으니 안전한 곳에 잠깐 저장).
+   **이 키는 GitHub·채팅 등 어디에도 붙여 넣지 말고, 아래 C 단계의 Supabase Secret 에만 넣으세요.**
+
+### C. Edge Function Secrets 설정
+
+Supabase 대시보드 → **Edge Functions → Secrets** 에서 추가합니다.
+
+| Secret 이름 | 값 | 필수 |
+|---|---|---|
+| `ANTHROPIC_API_KEY` | B 단계에서 만든 키(`sk-ant-...`) | 예 |
+| `ACTIVITY_AI_MODEL` | (선택) Claude 모델 이름. 비워 두면 `claude-opus-5` | 아니요 |
+
+`SUPABASE_URL`·`SUPABASE_ANON_KEY`·`SUPABASE_SERVICE_ROLE_KEY` 는 모든 Edge Function 에 수파베이스가 자동으로 넣어 주므로 따로 설정하지 않아도 됩니다.
+
+### D. 함수 배포
+
+1. 수파베이스 → **Edge Functions → Deploy a new function → Via Editor**
+2. 함수 이름: `activity-ai`
+3. 편집기 내용을 모두 지우고 `supabase/functions/activity-ai/index.ts` 내용을 통째로 붙여넣은 뒤 **Deploy function**
+4. 배포된 함수 → **Details(설정)** 에서 **Verify JWT(JWT 검증)** 이 **켜져** 있는지 확인합니다(기본값이 켜짐입니다. adiga-pdf·mcp 와 반대로 **꺼면 안 됩니다** —
+   로그인한 학생만 써야 하는 개인 기능이기 때문입니다).
+
+### 비용 안내
+
+- Anthropic API 는 **쓴 만큼만** 청구되는 종량제입니다(월 구독료 없음). 기본 모델(`claude-opus-5`) 기준 100만 토큰(대략 원고지 수백 장 분량)당
+  입력 5달러·출력 25달러 수준입니다. 활동 카드 요약 한 번은 보통 수백~수천 토큰이라 실제 비용은 요청당 몇 원~수십 원 수준입니다.
+- 비용을 더 낮추고 싶으면 `ACTIVITY_AI_MODEL` Secret 을 `claude-sonnet-5`(균형) 또는 `claude-haiku-4-5`(가장 저렴·빠름)로 바꾸세요.
+  값을 바꾼 뒤 함수를 다시 배포할 필요는 없고, 다음 요청부터 바로 적용됩니다.
+- 남용·요금 폭주를 막기 위해 학생 1명당 **하루 최대 30회 요청, 최대 40만 자**로 제한되어 있습니다(함수 코드 위쪽 상수로 조절 가능).
+  학생 약 30명이 한꺼번에 써도 감당할 수 있는 수준입니다. 실제 사용량은 Anthropic 콘솔의 **Usage** 와 수파베이스 **Table Editor → ai_usage** 에서 확인할 수 있습니다.
+- Anthropic 콘솔의 **Usage limits(사용 한도)** 에서 한 달 최대 사용 금액을 미리 정해 두면 예상치 못한 과금을 막을 수 있습니다.
+
+### 개인정보(국외 이전) 동의
+
+AI 기능은 학생 텍스트(마스킹 처리됨)를 미국의 Anthropic 서버로 보내므로, 이용 규칙과는 별도로 **AI 기능을 처음 쓸 때 한 번 더 동의**를 받습니다
+(사이트 화면에서 이전 항목·국가·수령자·목적·보유 기간·거부 방법을 안내하고 체크박스로 동의를 받은 뒤 `give_ai_consent()` 를 호출합니다).
+동의하지 않아도 활동 카드 작성·PDF 보기 등 AI 가 아닌 기능은 그대로 쓸 수 있고, AI 요약·채팅만 막힙니다.
+Anthropic 은 API 로 받은 내용을 모델 학습에 쓰지 않으며, 기본적으로 30일 이내(남용 감지 목적)에 삭제합니다(Anthropic 정책은 바뀔 수 있으니
+최신 내용은 <https://www.anthropic.com/legal/commercial-terms> 에서 확인하세요).

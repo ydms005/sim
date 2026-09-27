@@ -45,7 +45,8 @@
 | 대학소식 | `/sim/univ/3/news` | 입시 일정·공지 소식(최신순, 월별 묶음) |
 | 커뮤니티 | `/sim/univ/3/community` | 대학별 질문 게시판(Q&A). 누구나 읽기, 로그인하면 질문·답변 쓰기. 제목 검색·더보기 |
 | 질문 상세 | `/sim/univ/3/community/12` | 질문 본문과 답변, 내 글 수정·삭제, 관리자 숨기기·삭제 |
-| 내 정보 | `/sim/me` | 닉네임 변경, 찜한 대학, 내가 쓴 질문·답변, 회원 탈퇴 |
+| 활동정리 | `/sim/activities` | 로그인 전용 개인 공간. 생기부 등 PDF 올려서 보기(원본은 이 기기에만 저장), 활동 카드 쓰기(계정 저장), AI로 활동 요약·채팅(별도 국외 이전 동의 필요) |
+| 내 정보 | `/sim/me` | 닉네임 변경, 찜한 대학, 내가 쓴 질문·답변, 활동정리 AI 동의 상태, 회원 탈퇴 |
 | 이용 규칙 · 개인정보 처리방침 | `/sim/terms` · `/sim/privacy` | 바닥글에 링크 |
 | 데이터 관리 | `/sim/admin` | 선생님용. 엑셀 양식 내려받기 · 파일 검사 · 미리보기 · GitHub에 올리기 (바닥글의 '데이터 관리' 링크) |
 
@@ -63,6 +64,7 @@
 | **2단계** | 엑셀 업로드로 데이터 입력 — `data/` 의 엑셀을 빌드에 합치기, 데이터 관리 화면(`/admin`)에서 양식 내려받기·검사·미리보기·GitHub에 올리기 | **완료** |
 | **3단계** | 구글 로그인 · 찜(계정에 저장) · 대학별 커뮤니티(Q&A) · 내 정보 · 이용 규칙/개인정보 처리방침 | **코드 완료 — Supabase 설정 필요** |
 | 이후 | AI 연동 (`/ai`) — Claude·ChatGPT 에서 대학 정보 조회(MCP 서버) | **완료 — Supabase 함수 배포 필요** |
+| 이후 | 활동정리 (`/activities`) — 생기부 PDF 정리(원본은 기기에만 저장) · 활동 카드 · Claude AI 활동 요약·상담 채팅 | **코드 완료 — Supabase 설정·함수 배포 필요** |
 
 데이터는 `data/` 폴더의 CSV와 **엑셀(.xlsx)** 로 관리합니다. 엑셀의 시트·열 이름은 CSV와 같고 검사 규칙도 같습니다.
 
@@ -107,6 +109,21 @@ Supabase 무료 프로젝트는 **1주일 동안 쓰지 않으면 일시 정지*
 
 보안 설계: 모든 표에 RLS(행 수준 보안), 구글 이메일은 공개되지 않고 닉네임만 보임, 작성자·숨김 여부는 글쓴이가 못 바꿈,
 관리자만 숨기기, 도배 방지(질문 10분 5개·답변 10분 20개), 글은 HTML 로 해석하지 않고 글자 그대로 표시.
+
+### 활동정리(`/activities`) 켜기 (요약)
+
+생기부 PDF 정리·활동 카드·AI 요약은 아래 두 가지가 준비돼야 열립니다. 준비되지 않으면 화면에 '관리자 설정이 필요합니다' 안내가 보입니다.
+
+1. Supabase **SQL Editor** 에 [`supabase/migrations/0002_activities.sql`](supabase/migrations/0002_activities.sql) 전체를 붙여 넣고 **Run**
+   (활동 카드 표, AI 동의 시각·사용량 제한을 만듭니다. 0001 과 마찬가지로 여러 번 실행해도 안전합니다).
+2. Supabase **Edge Functions** 에 [`supabase/functions/activity-ai/index.ts`](supabase/functions/activity-ai/index.ts) 를 `activity-ai` 라는 이름으로 배포하고,
+   **Secrets** 에 `ANTHROPIC_API_KEY`(Anthropic 콘솔에서 발급)를 등록합니다. 자세한 순서는 [`supabase/README.md`](supabase/README.md) 를 참고하세요.
+
+핵심 개인정보 설계: 생기부 등 **PDF 원본은 서버에 올리지 않고 학생의 브라우저(IndexedDB)에만** 저장됩니다. 활동 카드는 계정(Supabase)에
+저장되며 본인만 읽고 쓸 수 있습니다(관리자도 못 봄). AI 요약·채팅에 보내기 전 이름·학번·생년월일·주민등록번호·전화번호·이메일·주소·학교명을
+자동으로 가리고, 학생이 보내기 전 화면에서 다시 확인·수정할 수 있습니다. 국외(미국) AI 서비스로 자료를 보내는 것이라 처음 쓸 때 별도 동의를
+받으며, 동의하지 않아도 AI 기능만 못 쓸 뿐 나머지는 그대로 씁니다. 자세한 내용은 [`/privacy`](https://ydms005.github.io/sim/privacy) 의
+'개인정보의 국외 이전' 항목을 확인하세요.
 
 ## 3. 인터넷에 올리기 — GitHub Pages 자동 배포
 
@@ -217,7 +234,7 @@ sim/
 ├─ .github/workflows/
 │  └─ deploy.yml              ← GitHub Pages 자동 배포 설정
 ├─ data/                      ← ★ 데이터 원본(CSV·엑셀) + 작성 안내(data/README.md)
-├─ supabase/                  ← 3단계 데이터베이스 SQL(migrations/0001_stage3.sql) + 설정 안내(supabase/README.md)
+├─ supabase/                  ← 데이터베이스 SQL(migrations/0001_stage3.sql·0002_activities.sql) + Edge Functions + 설정 안내(supabase/README.md)
 ├─ scripts/                   ← 데이터 검사·변환(build-data.mjs), 샘플 데이터·PDF 생성 스크립트
 │  └─ lib/dataset.mjs         ← 검사·합치기 규칙(빌드와 데이터 관리 화면이 함께 씀)
 ├─ public/
@@ -229,14 +246,16 @@ sim/
    ├─ router.tsx              ← 주소(URL)와 화면 연결
    ├─ index.css               ← 색상(초록 브랜드 색)·글꼴
    ├─ components/             ← 머리글·바닥글, 대학 카드, 그래프 등 공용 부품
+   │  └─ activity/            ← 활동정리 부품(파일 목록, 활동 카드 편집기, AI 요약·채팅 패널, 동의·가리기 확인 창)
    ├─ auth/                   ← 로그인 상태(구글 로그인·프로필·동의)
    ├─ community/              ← 커뮤니티(Q&A) 서버 요청
-   ├─ pages/                  ← 홈·검색·경쟁률 추세·내 정보·이용 규칙·개인정보 처리방침 화면
+   ├─ pages/                  ← 홈·검색·경쟁률 추세·활동정리·내 정보·이용 규칙·개인정보 처리방침 화면
    │  ├─ admin/               ← 데이터 관리 화면(/admin: 엑셀 양식·검사·미리보기·GitHub에 올리기)
    │  └─ univ/                ← 대학 상세 탭(대학정보·모집요강·지난 경쟁률·자료실·대학소식·커뮤니티)
    ├─ data/                   ← 데이터 형식 정의(types.ts)와 불러오기(api.ts)
    ├─ hooks/                  ← 찜 기능 등
-   └─ lib/                    ← 숫자·경쟁률 표기, 한글 초성 검색, 배포 후 화면 파일 새로고침 처리
+   └─ lib/                    ← 숫자·경쟁률 표기, 한글 초성 검색, 배포 후 화면 파일 새로고침 처리,
+                                 활동정리의 PDF 글자 추출(pdfText.ts)·개인정보 가리기(mask.ts)·기기 저장(localDocs.ts)·AI 호출(activityApi.ts)
 ```
 
 ★ 표시가 보통 손대게 되는 곳입니다.

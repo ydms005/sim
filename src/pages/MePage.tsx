@@ -17,8 +17,9 @@ import { forgetAuthor, myAnswers, myQuestions, type MyAnswer, type Question } fr
 import { useUniversities } from '../data/api'
 import { useDocumentTitle } from '../hooks/useDocumentTitle'
 import { useFavorites, useFavoritesSynced } from '../hooks/useFavorites'
+import { getAiConsentAt, revokeAiConsent } from '../lib/activityApi'
 import { toAppError, type AppError } from '../lib/dbErrors'
-import { relativeTime, univFullName } from '../lib/format'
+import { fullDateTime, relativeTime, univFullName } from '../lib/format'
 import { showToast } from '../lib/toast'
 import { ConfirmDialog, HiddenTag, INPUT } from './univ/community/parts'
 
@@ -80,6 +81,7 @@ export default function MePage() {
           <>
             <ProfileCard />
             <FavoritesCard />
+            <AiConsentCard userId={auth.profile.id} />
             <PostsCard userId={auth.profile.id} />
             <DeleteAccountCard />
           </>
@@ -238,6 +240,72 @@ function FavoritesCard() {
             </li>
           ))}
         </ul>
+      )}
+    </Card>
+  )
+}
+
+/** 활동정리 AI(요약·채팅)의 국외 이전 동의 상태. 동의는 활동정리 화면에서 하고, 철회는 여기서도 할 수 있습니다. */
+function AiConsentCard({ userId }: { userId: string }) {
+  const [state, setState] = useState<'loading' | 'ready' | 'not_ready' | 'error'>('loading')
+  const [consentAt, setConsentAt] = useState<string | null>(null)
+  const [busy, setBusy] = useState(false)
+
+  useEffect(() => {
+    let alive = true
+    setState('loading')
+    getAiConsentAt(userId).then(
+      (at) => {
+        if (!alive) return
+        setConsentAt(at)
+        setState('ready')
+      },
+      (err: unknown) => alive && setState(toAppError(err).kind === 'not_ready' ? 'not_ready' : 'error'),
+    )
+    return () => {
+      alive = false
+    }
+  }, [userId])
+
+  const revoke = async () => {
+    setBusy(true)
+    try {
+      await revokeAiConsent()
+      setConsentAt(null)
+      showToast('AI 국외 이전 동의를 철회했어요.')
+    } catch (err) {
+      showToast(toAppError(err).message, 'error')
+    } finally {
+      setBusy(false)
+    }
+  }
+
+  return (
+    <Card title="활동정리 AI 국외 이전 동의">
+      {state === 'loading' ? (
+        <Loading label="불러오는 중…" />
+      ) : state === 'not_ready' ? (
+        <p className="text-[15px] text-gray-500">관리자 설정이 필요합니다. 선생님이 설정을 마치면 이용할 수 있어요.</p>
+      ) : state === 'error' ? (
+        <p className="text-[15px] text-gray-500">불러오지 못했어요. 잠시 뒤 다시 열어 주세요.</p>
+      ) : consentAt ? (
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <p className="text-[15px] leading-6 text-gray-700">
+            {fullDateTime(consentAt)}에 동의했어요. 가림 처리(마스킹)한 활동 글을 Anthropic(미국) 서버로 보내 AI 요약·채팅을 만드는 데 동의한
+            상태예요.
+          </p>
+          <button type="button" onClick={revoke} disabled={busy} className={cx(BTN_SECONDARY, 'text-red-700')}>
+            {busy ? '처리하는 중…' : '동의 철회'}
+          </button>
+        </div>
+      ) : (
+        <p className="text-[15px] leading-6 text-gray-600">
+          아직 동의하지 않았어요.{' '}
+          <Link to="/activities" className="font-semibold text-brand-600 underline underline-offset-2">
+            활동정리
+          </Link>
+          에서 AI 요약·채팅을 처음 쓸 때 동의할 수 있어요.
+        </p>
       )}
     </Card>
   )

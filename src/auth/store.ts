@@ -245,7 +245,25 @@ export async function signInWithGoogle() {
   }
 }
 
+/**
+ * 로그아웃(또는 회원 탈퇴)할 때, 설정이 켜져 있으면 이 기기(IndexedDB)에 저장된 활동정리 PDF를 지웁니다.
+ * 화면(ActivityPage)이 떠 있지 않아도(다른 페이지에서 로그아웃해도) 항상 실행되도록 signOut()/deleteAccount() 안에
+ * 직접 둡니다 — 학교 공용 컴퓨터에서 학생이 /activities 가 아닌 다른 화면에서 로그아웃하는 게 보통의 경우라서입니다.
+ * localDocs 는 순수 IndexedDB 래퍼라 무겁지 않지만, 활동정리를 한 번도 안 쓴 사람의 초기 번들에는 안 실리도록
+ * (다른 pdf 관련 지연 로딩과 같은 방식으로) 여기서만 동적으로 불러옵니다.
+ */
+async function clearLocalActivityDocsIfEnabled(uid: string | null) {
+  if (!uid) return
+  try {
+    const { clearAllForUser, getAutoClearOnLogout } = await import('../lib/localDocs')
+    if (getAutoClearOnLogout()) await clearAllForUser(uid)
+  } catch {
+    /* 이 기기가 IndexedDB 를 못 쓰거나 실패해도 로그아웃 자체는 이미 끝난 뒤라 무시합니다. */
+  }
+}
+
 export async function signOut() {
+  const uid = state.userId
   try {
     const client = await getSupabase()
     // 이 브라우저에서만 로그아웃합니다. (학교 공용 컴퓨터에서도 기록이 남지 않도록 저장된 로그인 정보를 지움)
@@ -259,6 +277,7 @@ export async function signOut() {
   }
   applySession(null)
   showToast('로그아웃했어요.')
+  void clearLocalActivityDocsIfEnabled(uid)
 }
 
 /** 이용 규칙·개인정보 처리방침 동의 (동의 시각은 서버 시각으로 기록됩니다) */
@@ -289,6 +308,7 @@ export async function updateNickname(nickname: string) {
 
 /** 회원 탈퇴: 계정과 작성한 글·찜을 모두 지웁니다. */
 export async function deleteAccount() {
+  const uid = state.userId
   const client = await getSupabase()
   unwrap(await client.rpc('delete_my_account'))
   try {
@@ -297,4 +317,5 @@ export async function deleteAccount() {
     /* 서버의 계정은 이미 지워졌으므로 무시 */
   }
   applySession(null)
+  void clearLocalActivityDocsIfEnabled(uid)
 }

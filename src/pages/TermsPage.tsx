@@ -46,16 +46,42 @@ export default function TermsPage() {
           커뮤니티의 글은 이용자 개인의 의견이며 사이트가 정확성을 보증하지 않습니다. 사이트의 경쟁률·모집요강 등도 참고용입니다. 실제 입시 정보는 반드시 각 대학 입학처 공고와
           대입정보포털 어디가(adiga.kr)에서 확인하세요.
         </p>
+        <p>
+          <Link to="/activities" className="font-semibold text-brand-600 underline underline-offset-2">
+            활동정리
+          </Link>
+          의 AI 요약·채팅 답변도 <strong>참고용</strong>입니다. AI는 학생이 올린 자료를 바탕으로만 답하며 사실을 지어내지 않으려 하지만 실수할 수
+          있으므로, 최종 판단은 반드시 담임 선생님·진로 선생님과 상의하세요.
+        </p>
       </PolicySection>
 
-      <PolicySection n={5} title="글의 권리와 삭제">
+      <PolicySection n={5} title="활동정리(생기부 정리·AI 활동 요약)">
         <ul>
-          <li>글의 권리는 쓴 사람에게 있습니다. 다만 사이트에 올린 글은 다른 이용자가 볼 수 있도록 사이트에 게시됩니다.</li>
-          <li>내가 쓴 글은 언제든 수정·삭제할 수 있고, 탈퇴하면 모두 삭제됩니다.</li>
+          <li>활동정리는 로그인한 본인만 쓸 수 있는 개인 공간이며, 활동 카드는 다른 학생·이용자에게 공개되지 않습니다.</li>
+          <li>
+            생기부 등 PDF 원본은 사이트 서버에 올리지 않고 학생의 기기(브라우저)에만 저장됩니다. 공용 컴퓨터에서 쓴 뒤에는 &lsquo;내 자료 모두
+            지우기&rsquo;를 눌러 주세요.
+          </li>
+          <li>
+            AI 요약·채팅 기능은 개인정보를 가린(마스킹한) 글만 국외(미국)의 AI 서비스로 보내며, 이 기능을 쓰려면 별도의 국외 이전 동의가
+            필요합니다. 자세한 내용은{' '}
+            <Link to="/privacy" className="font-semibold text-brand-600 underline underline-offset-2">
+              개인정보 처리방침
+            </Link>
+            을 확인하세요.
+          </li>
+          <li>AI에게 다른 사람의 개인정보를 묻거나, 부적절하거나 학습 목적에 어긋나는 질문을 하지 마세요.</li>
         </ul>
       </PolicySection>
 
-      <PolicySection n={6} title="서비스의 변경·중단">
+      <PolicySection n={6} title="글의 권리와 삭제">
+        <ul>
+          <li>글의 권리는 쓴 사람에게 있습니다. 다만 사이트에 올린 글은 다른 이용자가 볼 수 있도록 사이트에 게시됩니다.</li>
+          <li>내가 쓴 글·활동 카드는 언제든 수정·삭제할 수 있고, 탈퇴하면 모두 삭제됩니다.</li>
+        </ul>
+      </PolicySection>
+
+      <PolicySection n={7} title="서비스의 변경·중단">
         <p>비상업적 교육용 사이트라 사전 안내 없이 기능이 바뀌거나 잠시 멈출 수 있습니다(예: 무료 서버 사용량 제한, 점검).</p>
       </PolicySection>
 
