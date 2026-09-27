@@ -29,6 +29,8 @@ export interface LocalDoc extends LocalDocMeta {
   maskedText: string
   /** 이 문서에서 가리기 미리보기를 한 번이라도 확인했는지 (첫 AI 사용 전에 한 번은 보여 줘야 함) */
   maskReviewed: boolean
+  /** 가리기 규칙 버전. 규칙이 바뀌면(MASK_VERSION 증가) 다시 확인을 받습니다. */
+  maskVersion?: number
   summary: string
   chat: ChatMessage[]
   memo: string

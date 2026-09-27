@@ -6,6 +6,7 @@ import { cx, EmptyState } from '../common'
 import { BTN_PRIMARY, BTN_SECONDARY } from '../Dialog'
 import { toCardInput, type ActivityCard } from './cardsApi'
 import { Markdown } from './Markdown'
+import { MASK_VERSION } from '../../lib/mask'
 import MaskReviewDialog from './MaskReviewDialog'
 
 type PendingAction = { kind: 'summary' } | { kind: 'chat'; message: string } | null
@@ -163,7 +164,7 @@ export default function RightPanel({
 
   const onSummarizeClick = () => {
     if (!aiReady) return onNeedConsent()
-    if (doc.text.trim() && !doc.maskReviewed) {
+    if (doc.text.trim() && (!doc.maskReviewed || doc.maskVersion !== MASK_VERSION)) {
       setPendingAction({ kind: 'summary' })
       setMaskReviewOpen(true)
       return
@@ -217,7 +218,7 @@ export default function RightPanel({
     const message = chatInput.trim()
     if (!message || chatAbort.current) return
     if (!aiReady) return onNeedConsent()
-    if (doc.text.trim() && !doc.maskReviewed) {
+    if (doc.text.trim() && (!doc.maskReviewed || doc.maskVersion !== MASK_VERSION)) {
       setPendingAction({ kind: 'chat', message })
       setMaskReviewOpen(true)
       return
@@ -227,7 +228,7 @@ export default function RightPanel({
 
   const onMaskConfirm = async (maskedText: string) => {
     setMaskReviewOpen(false)
-    const updated: LocalDoc = { ...doc, maskedText, maskReviewed: true, updatedAt: Date.now() }
+    const updated: LocalDoc = { ...doc, maskedText, maskReviewed: true, maskVersion: MASK_VERSION, updatedAt: Date.now() }
     await putDoc(updated)
     onDocChange(updated)
     const action = pendingAction
@@ -430,11 +431,11 @@ function ChatBubble({ message }: { message: ChatMessage }) {
     <li className={cx('flex', mine ? 'justify-end' : 'justify-start')}>
       <div
         className={cx(
-          'max-w-[85%] rounded-2xl px-3.5 py-2.5 text-[14px] leading-6 whitespace-pre-wrap',
-          mine ? 'bg-brand-400 text-white' : 'bg-gray-100 text-gray-800',
+          'max-w-[85%] rounded-2xl px-3.5 py-2.5 text-[14px] leading-6',
+          mine ? 'bg-brand-400 whitespace-pre-wrap text-white' : 'bg-gray-100 text-gray-800',
         )}
       >
-        {message.content}
+        {mine ? message.content : <Markdown text={message.content} />}
       </div>
     </li>
   )

@@ -4,6 +4,9 @@
  * 이 파일은 부작용이 없는 순수 함수만 모아 두어 브라우저·Node 어디서나 그대로 테스트할 수 있습니다.
  */
 
+/** 가리기 규칙이 바뀔 때마다 올립니다. 예전 규칙으로 확인한 문서는 다시 확인을 받습니다. */
+export const MASK_VERSION = 2
+
 export type MaskType = 'rrn' | 'birthdate' | 'phone' | 'email' | 'studentId' | 'address' | 'school' | 'name'
 
 export interface MaskMatch {
@@ -65,7 +68,7 @@ const WHOLE_PATTERNS: { type: MaskType; re: RegExp }[] = [
 ]
 
 /** '성명 홍길동' / '이름: 홍길동' 처럼 라벨 뒤의 이름만 찾습니다 (라벨 글자는 남겨 둠). */
-const NAME_LABEL_RE = /(?:성명|이름)\s*[:：]?\s*([가-힣]{2,4})(?=[\s,)\n]|$)/g
+const NAME_LABEL_RE = /(?:성명|이름|담임(?:교사)?)[ \t]*[:：]?[ \t]*([가-힣]{2,4})(?=[\s,)\n]|$)/g
 
 /**
  * 문서 전체에서 같은 이름을 다시 찾을 때 씁니다. 이름 앞은 한글이 아니어야 하지만(다른 이름의 일부가 아니도록),
@@ -123,6 +126,36 @@ function findRowPairedNames(input: string): { start: number; end: number; name: 
 }
 
 /**
+ * 생기부 첫머리의 '학년 · 반 · 번호 · 담임성명' 표 대응: '담임성명' 라벨 줄 다음 몇 줄 안에 '1 4 22 홍길동' 처럼
+ * 숫자와 이름만 있는 줄이 오면, 그 줄의 마지막 한글 낱말(2~4글자)을 담임 선생님 이름으로 보고 가립니다.
+ * 담임 이름이 그대로 남으면 AI 가 학생 이름으로 착각해 부르는 일이 생깁니다.
+ */
+function findTeacherRowNames(input: string): { start: number; end: number; name: string }[] {
+  const found: { start: number; end: number; name: string }[] = []
+  const lines = input.split('\n')
+  const lineStart: number[] = []
+  let offset = 0
+  for (const l of lines) {
+    lineStart.push(offset)
+    offset += l.length + 1
+  }
+  for (let i = 0; i < lines.length; i++) {
+    if (!/담임\s*(?:교사)?\s*(?:성명|이름)?/.test(lines[i])) continue
+    for (let j = i + 1; j < Math.min(lines.length, i + 5); j++) {
+      const tokens = lines[j].trim().split(/\s+/).filter(Boolean)
+      if (tokens.length === 0) continue
+      if (!tokens.every((t) => /^\d{1,3}$/.test(t) || /^[가-힣]{2,4}$/.test(t))) continue
+      if (!tokens.some((t) => /^\d{1,3}$/.test(t))) continue // 숫자(학년·반·번호)가 함께 있는 값 줄만
+      const name = [...tokens].reverse().find((t) => /^[가-힣]{2,4}$/.test(t))
+      if (!name) continue
+      const idx = lines[j].lastIndexOf(name)
+      found.push({ start: lineStart[j] + idx, end: lineStart[j] + idx + name.length, name })
+    }
+  }
+  return found
+}
+
+/**
  * 학생이 '가리기 확인' 화면에서 직접 입력한 실명을 문서 전체에서 찾아 가립니다. 라벨 유무와 관계없이
  * 문자 그대로 일치하는 곳을 모두 가리는 마지막 안전장치입니다(자동 인식이 못 찾은 이름 대비).
  */
@@ -171,13 +204,14 @@ export function maskText(input: string): MaskResult {
   let nm: RegExpExecArray | null
   while ((nm = NAME_LABEL_RE.exec(input))) {
     const name = nm[1]
+    if (HEADER_ROW_WORDS.has(name) || name === '선생님' || name === '교사') continue // '담임성명' 같은 라벨 낱말
     names.add(name)
     const start = nm.index + nm[0].length - name.length
     tryClaim('name', start, start + name.length)
   }
 
   // 표 형태(라벨 줄 다음 줄에 값이 오는 나이스·생기부 양식)라 라벨 바로 뒤에 이름이 붙어 있지 않은 경우
-  for (const { start, end, name } of findRowPairedNames(input)) {
+  for (const { start, end, name } of [...findRowPairedNames(input), ...findTeacherRowNames(input)]) {
     names.add(name)
     tryClaim('name', start, end)
   }
