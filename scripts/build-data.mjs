@@ -131,6 +131,69 @@ function loadIndicators(universityIds) {
   return out
 }
 
+// ───────────────────────── timeline.csv (선택, 접수 기간 시점별 경쟁률) ─────────────────────────
+/**
+ * data/timeline.csv(대학ID,전형유형,전형명,모집단위,모집인원27,학년도,시점,경쟁률, scripts/import-susi-timeline.mjs
+ * 로 생성) → public/data/timeline/{대학ID}.json + public/data/timeline/index.json(자료가 있는 대학ID 목록).
+ * indicators.csv 처럼 자동 생성 파일이라 필수 CSV 만큼 엄격하게 검사하지 않고, 파일이 없으면 조용히 빈 자료로 둡니다.
+ * @param {Set<number>} universityIds
+ */
+function loadTimeline(universityIds) {
+  const file = path.join(DATA_DIR, 'timeline.csv')
+  if (!fs.existsSync(file)) return new Map()
+  const label = rel(file)
+  const { text } = readTextFile(file)
+  let parsed
+  try {
+    parsed = parseCsv(text)
+  } catch (e) {
+    console.warn(`경고 [${label}] 읽지 못했습니다(${e.message}). 무시합니다.`)
+    return new Map()
+  }
+  const need = ['대학ID', '전형유형', '전형명', '모집단위', '모집인원27', '학년도', '시점', '경쟁률']
+  const idx = Object.fromEntries(parsed.header.map((h, i) => [h, i]))
+  if (need.some((h) => !(h in idx))) {
+    console.warn(`경고 [${label}] 필수 열(${need.join(', ')})이 없어 무시합니다.`)
+    return new Map()
+  }
+  /** 대학ID → Map(전형유형\u0001전형명\u0001모집단위 → { category, admission, department, quota27, series: { [year]: (number|null)[] } }) */
+  const byUniv = new Map()
+  let skipped = 0
+  for (const r of parsed.records) {
+    const id = Number(r.fields[idx['대학ID']])
+    if (!Number.isInteger(id) || !universityIds.has(id)) {
+      skipped++
+      continue
+    }
+    const cat = r.fields[idx['전형유형']]?.trim()
+    const type = r.fields[idx['전형명']]?.trim()
+    const unit = r.fields[idx['모집단위']]?.trim()
+    const year = Number(r.fields[idx['학년도']])
+    const checkpoint = r.fields[idx['시점']]?.trim()
+    const cpIdx = CHECKPOINTS.indexOf(checkpoint)
+    const ratioValue = Number(r.fields[idx['경쟁률']])
+    if (!cat || !type || !unit || !Number.isFinite(year) || cpIdx < 0 || !Number.isFinite(ratioValue)) {
+      skipped++
+      continue
+    }
+    const quotaRaw = r.fields[idx['모집인원27']]?.trim()
+    const quota27 = quotaRaw ? Number(quotaRaw) : undefined
+
+    let units = byUniv.get(id)
+    if (!units) byUniv.set(id, (units = new Map()))
+    const key = [cat, type, unit].join('\u0001')
+    let u = units.get(key)
+    if (!u) units.set(key, (u = { category: cat, admission: type, department: unit, quota27, series: {} }))
+    if (quota27 !== undefined) u.quota27 = quota27
+    ;(u.series[year] ??= Array(CHECKPOINTS.length).fill(null))[cpIdx] = ratioValue
+  }
+  if (skipped) console.warn(`경고 [${label}] 대학ID가 없거나 값이 이상한 ${skipped}행을 무시했습니다.`)
+  return byUniv
+}
+
+/** timeline.csv 의 시점 열(대학ID,전형유형,전형명,모집단위,학년도,시점,경쟁률 순서). src/data/types.ts 의 TIMELINE_CHECKPOINTS 와 같아야 합니다. */
+const CHECKPOINTS = readConstArray(typesSource, 'TIMELINE_CHECKPOINTS')
+
 // ───────────────────────── 엑셀 읽기 ─────────────────────────
 /** data/ 아래(하위 폴더 포함)의 .xlsx 파일. Excel 이 열려 있을 때 생기는 '~$' 임시 파일과 숨김 파일은 뺍니다. */
 function findExcelFiles(dir) {
@@ -273,6 +336,13 @@ async function main() {
   for (const d of details) writeJson(`univ/${d.id}.json`, d)
   const indicators = loadIndicators(new Set(universities.map((u) => u.id)))
   writeJson('indicators.json', indicators)
+
+  const timelineByUniv = loadTimeline(new Set(universities.map((u) => u.id)))
+  fs.mkdirSync(path.join(OUT_DIR, 'timeline'), { recursive: true })
+  for (const [id, units] of timelineByUniv) {
+    writeJson(`timeline/${id}.json`, { univId: id, units: [...units.values()] })
+  }
+  writeJson('timeline/index.json', [...timelineByUniv.keys()].sort((a, b) => a - b))
 
   const s = result.stats
   console.log(

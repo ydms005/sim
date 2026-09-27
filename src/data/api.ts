@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { assetUrl } from '../config'
 import { getPreview, previewFileUrl, subscribePreview } from './preview'
-import type { IndicatorItem, TrendRow, UnivDetail, University } from './types'
+import type { IndicatorItem, TimelineDetail, TrendRow, UnivDetail, University } from './types'
 
 const cache = new Map<string, Promise<unknown>>()
 /** 이미 받아 둔 JSON (다시 방문한 화면을 로딩 없이 바로 그리기 위해) */
@@ -53,7 +53,9 @@ const UNIVERSITIES = 'data/universities.json'
 const TRENDS = 'data/trends.json'
 const DEPT_TRENDS = 'data/dept-trends.json'
 const INDICATORS = 'data/indicators.json'
+const TIMELINE_INDEX = 'data/timeline/index.json'
 const detailPath = (id: number) => `data/univ/${id}.json`
+const timelinePath = (id: number) => `data/timeline/${id}.json`
 
 /**
  * 모집요강·자료실 PDF 주소. 미리보기 중 관리 화면에서 함께 올린 PDF 면 그 임시 주소를, 아니면 assetUrl() 을 씁니다.
@@ -141,4 +143,23 @@ export const loadIndicators = () => fetchJson<Record<string, IndicatorItem[]>>(I
 export function useIndicators(id: number): AsyncState<IndicatorItem[]> {
   const state = useAsync(loadIndicators, [], () => peek<Record<string, IndicatorItem[]>>(INDICATORS))
   return { ...state, data: state.data ? (state.data[String(id)] ?? []) : state.loading ? undefined : [] }
+}
+
+/** 접수 기간 시점별 경쟁률 자료가 있는 대학ID 목록 (public/data/timeline/index.json). 없으면(파일 자체가 없던 예전 데이터) 빈 배열 */
+export const loadTimelineUnivIds = () => fetchJson<number[]>(TIMELINE_INDEX).catch(() => [] as number[])
+export const useTimelineUnivIds = () => useAsync(loadTimelineUnivIds, [], () => peek<number[]>(TIMELINE_INDEX))
+
+/** 한 대학의 접수 기간 시점별 경쟁률 상세 (없는 대학이면 null) */
+export async function loadTimelineDetail(id: number): Promise<TimelineDetail | null> {
+  const ids = await loadTimelineUnivIds()
+  if (!ids.includes(id)) return null
+  return fetchJson<TimelineDetail>(timelinePath(id))
+}
+
+export function useTimelineDetail(id: number | null): AsyncState<TimelineDetail | null> {
+  return useAsync(
+    () => (id === null ? Promise.resolve(null) : loadTimelineDetail(id)),
+    [id],
+    () => (id === null ? null : peek<number[]>(TIMELINE_INDEX)?.includes(id) === false ? null : peek<TimelineDetail>(timelinePath(id))),
+  )
 }

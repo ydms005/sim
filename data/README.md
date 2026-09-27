@@ -8,6 +8,8 @@
 > (아래 [어디가 모집요강 링크 가져오기](#어디가-모집요강-링크-가져오기-guidelinescsv) 참고), `competition.csv`(수시 전형별 경쟁률)는
 > GitHub 저장소 [esteacher2026/susi-ratio](https://github.com/esteacher2026/susi-ratio)(작성자 허락 받음)가 진학어플라이·유웨이어플라이
 > 경쟁률 페이지에서 모은 자료로 채워져 있습니다(아래 [수시 전형별 경쟁률 가져오기](#수시-전형별-경쟁률-가져오기-competitioncsv) 참고).
+> `timeline.csv`(원서접수 기간 시점별 경쟁률, 경쟁률 추세의 '접수 기간 추세' 탭)도 같은 저장소 자료로 채워져 있습니다(선택 파일, 아래
+> [접수 기간 시점별 경쟁률 가져오기](#접수-기간-시점별-경쟁률-가져오기-timelinecsv) 참고).
 > `resources.csv`(자료실)·`news.csv`(소식)는 아직 비어 있습니다(머리글만 있음) — 선생님이 **엑셀**로 실제 자료를 정리해 올리면 채워집니다.
 > 가장 쉬운 방법은 사이트의 **데이터 관리 화면**(<https://ydms005.github.io/sim/admin>, 바닥글의 '데이터 관리' 링크)을 쓰는 것입니다 — 아래 [엑셀로 관리하기](#엑셀로-관리하기-2단계).
 
@@ -193,6 +195,49 @@ npm run data:import-standard
   둡니다(억지로 나누지 않음). 실행하면 전형유형 분포와 `기타`로 남은 전형명 상위 목록을 보여 줍니다.
 - **새 학년도가 되면**: `data/raw/susi-ratio/README.md`의 안내대로 원본 JSON을 새로 받은 뒤 `npm run data:import-susi`를
   다시 실행하고(매 실행마다 `competition.csv`를 통째로 다시 씀), `npm run data`로 검사·빌드를 확인해 커밋하세요.
+
+### timeline.csv — 접수 기간 시점별 경쟁률 (선택, 경쟁률 추세 '접수 기간 추세' 탭)
+
+| 열 | 설명 | 예 |
+|---|---|---|
+| 대학ID | universities.csv 에 있는 ID | `96` |
+| 전형유형 | competition.csv 와 같음 | `학생부종합` |
+| 전형명 | | `지역균형` |
+| 모집단위 | | `간호대학` |
+| 모집인원27 | 2027학년도 모집인원(모르면 비움) | `10` |
+| 학년도 | 4자리 | `2026` |
+| 시점 | `D-3`·`D-2`·`D-1`·`마감일 오전`·`마감일 오후`·`최종` 중 하나(`src/data/types.ts` 의 `TIMELINE_CHECKPOINTS`) | `D-1` |
+| 경쟁률 | 그 시점의 경쟁률(소수 가능) | `2.4` |
+
+- `competition.csv` 와 달리 **손으로 채우거나 엑셀로 관리하는 파일이 아닙니다.** 아래 [접수 기간 시점별 경쟁률 가져오기](#접수-기간-시점별-경쟁률-가져오기-timelinecsv)
+  로만 만듭니다. 파일이 없어도 오류가 아니고(경쟁률 추세의 '접수 기간 추세' 탭에 그 대학이 안 보일 뿐), `indicators.csv` 처럼 느슨하게
+  검사합니다(필수 열이 없으면 경고만 남기고 무시, 알 수 없는 대학ID·시점·숫자가 아닌 값이 있는 행만 건너뜀).
+- 빌드는 대학ID 별로 묶어 `public/data/timeline/{대학ID}.json`(그 대학의 전형×모집단위별 6개 시점 경쟁률)과, 그런 대학ID 목록인
+  `public/data/timeline/index.json` 을 만듭니다. 전체를 한 파일로 묶지 않고 **대학별로 나눠 필요할 때만** 내려받습니다(수만 행이라
+  전체를 한 번에 보낼 필요가 없음).
+- 2024학년도는 다른 시점 자료가 없어 `시점=최종` 한 행만 있습니다(원본의 `fin[2]`).
+
+### 접수 기간 시점별 경쟁률 가져오기 (timeline.csv)
+
+`timeline.csv`도 competition.csv 처럼 GitHub 저장소 [esteacher2026/susi-ratio](https://github.com/esteacher2026/susi-ratio)
+(작성자·원 제공자 모두 이 사이트에서 재사용하도록 허락)의 자료로 `scripts/import-susi-timeline.mjs`(`npm run data:import-timeline`)가 만듭니다.
+원본은 **「2027 대입을 위한 실시간 경쟁률」** 자료로, 원서접수 기간 동안 여섯 시점(D-3·D-2·D-1·마감일 오전·마감일 오후·최종)마다
+경쟁률을 받아 둔 것입니다(2025·2026학년도).
+
+- 원본 `data/raw/susi-ratio/prior_timeline.json`(원본 커밋 SHA·수집일은 그 폴더의 `README.md` 참고)을 읽고, `대학 매칭`은
+  susi-ratio 가 쓰는 줄인 학교명(`서울대`·`한국외대(글로벌)` 등)을 이 스크립트의 `nameCandidates()`(교대→교육대학교, 여대→여자대학교,
+  과기대/공대→과학기술대학교/공과대학교, 외대→외국어대학교, 2023년 이후 '국립' 접두 등 흔한 줄임 규칙)로 후보 정식 명칭을 만든 뒤
+  `scripts/lib/univ-match.mjs`의 `findOurUniversity()`로 맞춥니다. 괄호 캠퍼스 표기는 `import-susi-ratio.mjs`와 같은 규칙으로 처리합니다
+  (건국대·고려대·동국대·연세대·한양대·홍익대의 GLOCAL/세종/WISE/미래/ERICA 만 별도 캠퍼스 행, 그 밖의 괄호는 본교로 합침).
+- 실행하면 매칭 결과(대학·행 수)와 매칭하지 못한 학교 목록을 콘솔에 보여 줍니다. 새 줄임 이름이 매칭되지 않으면
+  `nameCandidates()`에 규칙을 추가하세요.
+- **2027학년도(선택)**: 선생님이 원서접수 기간에 직접 받아 두는 `data/raw/susi-ratio/timeline2027.csv`(긴 형식:
+  `대학,전형,모집단위,시각,모집,지원,경쟁률`, 시각은 `2026-09-11 10:00` 또는 ISO)가 있으면 함께 읽습니다. 시각은
+  `data/raw/susi-ratio/universities.json` 의 대학별 원서접수 마감 시각(`deadline`)으로 '마감까지 남은 시간'을 계산해 가장 가까운
+  시점(D-3~최종)에 반올림해 넣습니다. 파일이 없으면 안내만 남기고 조용히 건너뜁니다 — **아직 없어도 정상**입니다.
+- **새 학년도가 되면**: `data/raw/susi-ratio/README.md`의 안내대로 `prior_timeline.json`을 새로 받은 뒤
+  `npm run data:import-timeline`을 다시 실행하고(매 실행마다 `timeline.csv`를 통째로 다시 씀), `npm run data`로 검사·빌드를
+  확인해 커밋하세요.
 
 ### guidelines.csv — 모집요강 PDF
 

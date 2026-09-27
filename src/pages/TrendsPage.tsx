@@ -13,6 +13,9 @@ import { useDocumentTitle } from '../hooks/useDocumentTitle'
 import { useFavorites } from '../hooks/useFavorites'
 import { useMediaQuery } from '../hooks/useMediaQuery'
 import { formatNumber, formatRatio, koCompare, ratio, univFullName } from '../lib/format'
+import TimelineView from './trends/TimelineView'
+
+type View = 'compare' | 'timeline'
 
 interface UnivTrend {
   univ: University
@@ -61,24 +64,37 @@ function serializePicks(picks: Pick[]): string {
 
 export default function TrendsPage() {
   useDocumentTitle('경쟁률 추세')
+  const [params, setParams] = useSearchParams()
+  const view: View = params.get('view') === 'timeline' ? 'timeline' : 'compare'
+  const setView = (v: View) =>
+    setParams(
+      (prev) => {
+        const p = new URLSearchParams(prev)
+        if (v === 'timeline') p.set('view', 'timeline')
+        else {
+          // '대학별 비교' 탭 주소는 그대로(?view= 없이) 두어 예전 링크와 같게 유지
+          p.delete('view')
+        }
+        return p
+      },
+      { replace: true },
+    )
+
   const univs = useUniversities()
   const trends = useTrends()
   const deptTrends = useDeptTrends()
 
-  if (univs.loading || trends.loading || deptTrends.loading) return <Loading />
-  if (univs.error || trends.error || !univs.data || !trends.data)
+  if (univs.loading) return <Loading />
+  if (univs.error || !univs.data)
     return (
       <EmptyState
         as="h1"
-        title="경쟁률 자료를 불러오지 못했습니다"
+        title="대학 목록을 불러오지 못했습니다"
         description="네트워크 상태를 확인한 뒤 다시 시도해 주세요."
         action={
           <button
             type="button"
-            onClick={() => {
-              if (univs.error) univs.retry()
-              if (trends.error) trends.retry()
-            }}
+            onClick={() => univs.retry()}
             className="inline-flex h-11 items-center rounded-full bg-gray-100 px-5 text-[15px] font-semibold text-gray-800 hover:bg-gray-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-500"
           >
             다시 시도
@@ -86,10 +102,35 @@ export default function TrendsPage() {
         }
       />
     )
-  return <Trends universities={univs.data} rows={trends.data} deptRows={deptTrends.data ?? []} />
+
+  return (
+    <PageShell view={view} onViewChange={setView}>
+      {view === 'timeline' ? (
+        <TimelineView universities={univs.data} />
+      ) : trends.loading || deptTrends.loading ? (
+        <Loading />
+      ) : trends.error || !trends.data ? (
+        <EmptyState
+          title="경쟁률 자료를 불러오지 못했습니다"
+          description="네트워크 상태를 확인한 뒤 다시 시도해 주세요."
+          action={
+            <button
+              type="button"
+              onClick={() => trends.retry()}
+              className="inline-flex h-11 items-center rounded-full bg-gray-100 px-5 text-[15px] font-semibold text-gray-800 hover:bg-gray-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-500"
+            >
+              다시 시도
+            </button>
+          }
+        />
+      ) : (
+        <CompareView universities={univs.data} rows={trends.data} deptRows={deptTrends.data ?? []} />
+      )}
+    </PageShell>
+  )
 }
 
-function Trends({ universities, rows, deptRows }: { universities: University[]; rows: TrendRow[]; deptRows: TrendRow[] }) {
+function CompareView({ universities, rows, deptRows }: { universities: University[]; rows: TrendRow[]; deptRows: TrendRow[] }) {
   const [params, setParams] = useSearchParams()
   const { ids: favIds } = useFavorites()
 
@@ -209,19 +250,17 @@ function Trends({ universities, rows, deptRows }: { universities: University[]; 
 
   if (trends.length === 0 || latestYear === undefined)
     return (
-      <PageShell>
-        <div className="rounded-2xl bg-white">
-          <EmptyState
-            title="아직 등록된 경쟁률 자료가 없습니다"
-            description="선생님이 데이터 관리(/admin) 화면에서 경쟁률 엑셀을 올리면 대학별 추세를 비교할 수 있어요."
-            action={<Link to="/" className="font-semibold text-brand-600">대학 목록으로 →</Link>}
-          />
-        </div>
-      </PageShell>
+      <div className="rounded-2xl bg-white">
+        <EmptyState
+          title="아직 등록된 경쟁률 자료가 없습니다"
+          description="선생님이 데이터 관리(/admin) 화면에서 경쟁률 엑셀을 올리면 대학별 추세를 비교할 수 있어요."
+          action={<Link to="/" className="font-semibold text-brand-600">대학 목록으로 →</Link>}
+        />
+      </div>
     )
 
   return (
-    <PageShell>
+    <>
       <section aria-labelledby="compare-title" className="rounded-2xl bg-white px-4 py-6 md:px-8 md:py-8">
         <div className="flex flex-col gap-1 md:flex-row md:items-end md:justify-between md:gap-6">
           <div>
@@ -306,18 +345,25 @@ function Trends({ universities, rows, deptRows }: { universities: University[]; 
         onToggle={toggle}
         deptOnlyIds={deptOnlyIds}
       />
-    </PageShell>
+    </>
   )
 }
 
-function PageShell({ children }: { children: ReactNode }) {
+const VIEW_TABS: { key: View; label: string }[] = [
+  { key: 'compare', label: '대학별 비교' },
+  { key: 'timeline', label: '접수 기간 추세' },
+]
+
+function PageShell({ view, onViewChange, children }: { view: View; onViewChange: (v: View) => void; children: ReactNode }) {
   return (
     <div className="min-h-full bg-canvas">
       <div className="mx-auto max-w-[1440px] space-y-5 px-4 py-7 md:space-y-6 md:px-10 md:py-10">
         <header>
           <h1 className="text-[26px] font-extrabold tracking-tight text-gray-900 md:text-[32px]">경쟁률 추세</h1>
           <p className="mt-1.5 text-[15px] text-gray-600 md:text-[16px]">
-            대학별 수시 경쟁률이 해마다 어떻게 달라졌는지 비교해 보세요.
+            {view === 'timeline'
+              ? '원서접수 기간 동안 경쟁률이 시간대별로 어떻게 올라갔는지 살펴보세요.'
+              : '대학별 수시 경쟁률이 해마다 어떻게 달라졌는지 비교해 보세요.'}
             {IS_SAMPLE_DATA && (
               <span className="ml-2 inline-block rounded-md bg-yellow-50 px-1.5 py-0.5 align-middle text-[12px] font-semibold text-yellow-700 ring-1 ring-yellow-200">
                 샘플 데이터
@@ -325,6 +371,15 @@ function PageShell({ children }: { children: ReactNode }) {
             )}
           </p>
         </header>
+
+        <div role="tablist" aria-label="경쟁률 추세 보기" className="flex gap-2">
+          {VIEW_TABS.map((t) => (
+            <Chip key={t.key} role="tab" aria-selected={view === t.key} active={view === t.key} onClick={() => onViewChange(t.key)}>
+              {t.label}
+            </Chip>
+          ))}
+        </div>
+
         {children}
       </div>
     </div>

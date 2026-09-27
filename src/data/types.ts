@@ -137,3 +137,33 @@ export interface TrendRow {
   quota: number
   applicants: number
 }
+
+/**
+ * 원서접수 기간 시점별 경쟁률(esteacher2026/susi-ratio 정리 자료, scripts/import-susi-timeline.mjs 로
+ * data/timeline.csv → public/data/timeline/{대학ID}.json 을 만듭니다)의 6개 시점.
+ * 2027학년도 시각별 관측치(data/raw/susi-ratio/timeline2027.csv)도 마감까지 남은 시간으로 이 중 하나에 반올림됩니다.
+ */
+export const TIMELINE_CHECKPOINTS = ['D-3', 'D-2', 'D-1', '마감일 오전', '마감일 오후', '최종'] as const
+export type TimelineCheckpoint = (typeof TIMELINE_CHECKPOINTS)[number]
+
+/** public/data/timeline/{대학ID}.json 의 한 모집단위×전형 */
+export interface TimelineUnit {
+  category: AdmissionCategory
+  /** 전형명 */
+  admission: string
+  /** 모집단위(학과/학부) */
+  department: string
+  /** 2027학년도 모집인원 (모르면 생략) */
+  quota27?: number
+  /**
+   * 학년도 → 6개 시점(TIMELINE_CHECKPOINTS 순서)의 경쟁률. 자료가 없는 시점은 null.
+   * 2024학년도는 다른 시점 자료가 없어 '최종'(마지막 자리)만 값이 있습니다.
+   */
+  series: Partial<Record<number, (number | null)[]>>
+}
+
+/** public/data/timeline/{대학ID}.json */
+export interface TimelineDetail {
+  univId: number
+  units: TimelineUnit[]
+}
