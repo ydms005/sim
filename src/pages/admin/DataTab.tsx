@@ -66,7 +66,7 @@ export default function DataTab() {
 
       <div className="mt-4">
         <Callout tone="info">
-          이 화면은 누구나 열 수 있지만, 여기서 할 수 있는 일은 <strong>내 컴퓨터에서의 검사와 미리보기</strong>뿐입니다. 실제 사이트는 저장소 권한이 있는 GitHub 토큰으로
+          여기서 할 수 있는 일은 <strong>내 컴퓨터에서의 검사와 미리보기</strong>뿐입니다. 실제 사이트는 저장소 권한이 있는 GitHub 토큰으로
           &lsquo;GitHub에 올리기&rsquo;를 해야만 바뀝니다.
         </Callout>
       </div>
