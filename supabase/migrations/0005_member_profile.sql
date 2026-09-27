@@ -289,7 +289,10 @@ grant execute on function public.admin_list_users() to authenticated;
 -- 4. 작성자 배지: 학생/학부모는 그대로, 교사는 '승인됨'일 때만 '선생님' 배지가 보이게
 --    (이름·학교 등은 절대 다른 사람에게 나가지 않습니다)
 -- ---------------------------------------------------------------------
-create or replace function public.get_authors(ids uuid[])
+-- 0004 를 아직 실행하지 않은 DB 에서는 돌려주는 열 개수가 달라 create or replace 가 실패하므로 먼저 지웁니다.
+drop function if exists public.get_authors(uuid[]);
+
+create function public.get_authors(ids uuid[])
 returns table (id uuid, nickname text, is_admin boolean, user_type text)
 language sql
 stable
