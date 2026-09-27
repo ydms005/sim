@@ -19,6 +19,8 @@ export interface Profile {
   /** 이용 규칙·개인정보 처리방침 동의 시각. 없으면 아직 동의 전(글쓰기·찜 저장 불가) */
   agreed_at: string | null
   created_at: string
+  /** 학생/교사 구분. 기존 가입자는 아직 고르지 않아 null 일 수 있음 */
+  user_type: 'student' | 'teacher' | null
 }
 
 export type ProfileState = 'idle' | 'loading' | 'ready' | 'not_ready' | 'missing' | 'error'
@@ -178,7 +180,7 @@ function applySession(session: Session | null) {
   void loadProfile()
 }
 
-const PROFILE_COLS = 'id,nickname,role,agreed_at,created_at'
+const PROFILE_COLS = 'id,nickname,role,agreed_at,created_at,user_type'
 
 /** 내 프로필(닉네임·역할·동의 시각)을 다시 읽습니다. */
 export async function loadProfile() {
@@ -280,15 +282,33 @@ export async function signOut() {
   void clearLocalActivityDocsIfEnabled(uid)
 }
 
-/** 이용 규칙·개인정보 처리방침 동의 (동의 시각은 서버 시각으로 기록됩니다) */
-export async function agreeToTerms() {
+/**
+ * 이용 규칙·개인정보 처리방침 동의 (동의 시각은 서버 시각으로 기록됩니다)
+ * @param userType 처음 가입할 때 함께 고르는 학생/교사 구분 (필수 선택 항목)
+ */
+export async function agreeToTerms(userType: 'student' | 'teacher') {
   const uid = state.userId
   if (!uid) throw new AppError('auth', '로그인이 필요해요.')
   const client = await getSupabase()
   const profile = unwrap(
-    await client.from('profiles').update({ agreed_at: new Date().toISOString() }).eq('id', uid).select(PROFILE_COLS).single<Profile>(),
+    await client
+      .from('profiles')
+      .update({ agreed_at: new Date().toISOString(), user_type: userType })
+      .eq('id', uid)
+      .select(PROFILE_COLS)
+      .single<Profile>(),
   )
   set({ profile, profileState: 'ready' })
+}
+
+/** 학생/교사 구분을 고르거나 바꿉니다. (내 정보 화면) */
+export async function updateUserType(userType: 'student' | 'teacher') {
+  const uid = state.userId
+  if (!uid) throw new AppError('auth', '로그인이 필요해요.')
+  const client = await getSupabase()
+  const profile = unwrap(await client.from('profiles').update({ user_type: userType }).eq('id', uid).select(PROFILE_COLS).single<Profile>())
+  set({ profile })
+  return profile
 }
 
 export const dismissAgreement = () => set({ agreementDismissed: true })

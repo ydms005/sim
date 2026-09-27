@@ -8,6 +8,7 @@ import {
   openLogin,
   startAuth,
   updateNickname,
+  updateUserType,
   useAuth,
 } from '../auth/store'
 import { NicknameAvatar, TeacherBadge } from '../components/auth/AccountButton'
@@ -168,6 +169,8 @@ function ProfileCard() {
         </div>
       )}
 
+      <UserTypeField />
+
       <form onSubmit={submit} className="mt-6" noValidate>
         <label htmlFor="nickname" className="text-[15px] font-semibold text-gray-800">
           닉네임 변경
@@ -199,6 +202,58 @@ function ProfileCard() {
         </p>
       </form>
     </Card>
+  )
+}
+
+/** 학생/교사 구분 선택·변경. 기존 가입자로 아직 안 고른 경우 안내를 함께 보여 줍니다. */
+function UserTypeField() {
+  const auth = useAuth()
+  const profile = auth.profile!
+  const [busy, setBusy] = useState(false)
+  const [error, setError] = useState('')
+
+  const choose = async (v: 'student' | 'teacher') => {
+    if (v === profile.user_type || busy) return
+    setBusy(true)
+    setError('')
+    try {
+      await updateUserType(v)
+      showToast('구분을 저장했어요.')
+    } catch (err) {
+      setError(toAppError(err).message)
+    } finally {
+      setBusy(false)
+    }
+  }
+
+  return (
+    <div
+      className={cx(
+        'mt-5 rounded-xl px-4 py-3',
+        profile.user_type ? 'bg-gray-50' : 'border border-amber-200 bg-amber-50',
+      )}
+    >
+      <p className={cx('text-[15px] font-semibold', profile.user_type ? 'text-gray-800' : 'text-amber-950')}>
+        {profile.user_type ? '구분' : '학생인가요, 교사인가요? 알려 주시면 더 잘 맞는 안내를 드릴 수 있어요.'}
+      </p>
+      <div className="mt-2 flex gap-2">
+        {(['student', 'teacher'] as const).map((v) => (
+          <button
+            key={v}
+            type="button"
+            disabled={busy}
+            onClick={() => void choose(v)}
+            className={cx(
+              'flex-1 rounded-xl border px-4 py-2.5 text-[15px] font-semibold sm:flex-none sm:px-6',
+              profile.user_type === v ? 'border-brand-400 bg-brand-50 text-brand-800' : 'border-gray-200 bg-white text-gray-700 hover:bg-gray-100',
+            )}
+          >
+            {v === 'student' ? '학생' : '교사'}
+          </button>
+        ))}
+      </div>
+      {error && <p className="mt-2 text-[14px] text-red-700">{error}</p>}
+    </div>
   )
 }
 

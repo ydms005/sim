@@ -69,5 +69,8 @@ export function adigaPdfUrl(url: string, name: string): string | null {
  */
 export const ACTIVITY_AI_URL = `${SUPABASE_URL}/functions/v1/activity-ai`
 
+/** 관리자 페이지(/admin, '회원' 탭)의 회원 탈퇴(계정 삭제)를 처리하는 수파베이스 함수(supabase/functions/admin-users). */
+export const ADMIN_USERS_URL = `${SUPABASE_URL}/functions/v1/admin-users`
+
 /** 학생 PDF 원본(생기부 등)의 최대 크기. 이 파일은 서버로 올리지 않고 이 브라우저(IndexedDB)에만 저장합니다. */
 export const ACTIVITY_PDF_MAX_BYTES = 20 * 1024 * 1024

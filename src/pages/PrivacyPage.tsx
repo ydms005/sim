@@ -61,6 +61,16 @@ export default function PrivacyPage() {
                 <td className="py-2 pr-3">활동정리의 AI 요약·채팅을 처음 쓸 때</td>
                 <td className="py-2">비공개</td>
               </tr>
+              <tr>
+                <td className="py-2 pr-3">이용자 구분(학생 · 교사)</td>
+                <td className="py-2 pr-3">이용 동의할 때 선택, 내 정보에서 변경 가능</td>
+                <td className="py-2">비공개 (관리자만 열람)</td>
+              </tr>
+              <tr>
+                <td className="py-2 pr-3">AI 사용량(요청 수 · 토큰 수)</td>
+                <td className="py-2 pr-3">활동정리의 AI 요약·채팅을 쓸 때 자동 기록</td>
+                <td className="py-2">비공개 (관리자만 열람, 비용·오남용 관리 목적)</td>
+              </tr>
             </tbody>
           </table>
         </div>
@@ -77,6 +87,7 @@ export default function PrivacyPage() {
           <li>대학별 질문 게시판(커뮤니티) 운영: 글쓴이 닉네임 표시, 규칙 위반 글 관리</li>
           <li>찜한 대학 목록을 여러 기기에서 볼 수 있게 저장</li>
           <li>활동정리: 학생이 쓴 활동 카드를 여러 기기에서 볼 수 있게 저장, AI 활동 요약·진학 상담 답변 생성</li>
+          <li>서비스 운영: 이용자 구분(학생/교사)에 맞춘 안내, AI 사용량 기록을 통한 비용·오남용 관리</li>
         </ul>
       </PolicySection>
 
@@ -186,6 +197,10 @@ export default function PrivacyPage() {
           <li>데이터베이스의 행 수준 보안(RLS) 규칙으로 본인 정보는 본인만, 숨긴 글은 관리자와 글쓴이만 볼 수 있게 제한합니다.</li>
           <li>활동 카드는 본인만 읽고 쓸 수 있으며, 관리자(선생님)도 다른 학생의 활동 카드를 볼 수 없습니다.</li>
           <li>관리자 권한은 운영 교사 계정에만 줍니다.</li>
+          <li>
+            관리자는 회원 관리(가입 정지·탈퇴 처리 등) 운영 목적으로 회원 목록(이메일·닉네임·가입일·이용자 구분·최근 로그인 시각)을 관리자
+            페이지에서 볼 수 있습니다. 작성한 글의 내용이나 활동 카드처럼 그 목적에 필요하지 않은 정보는 보지 않습니다.
+          </li>
         </ul>
       </PolicySection>
 

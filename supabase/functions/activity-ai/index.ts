@@ -377,6 +377,22 @@ Deno.serve(async (req) => {
         } else {
           send({ type: 'done' })
         }
+
+        // 관리자 페이지의 'AI 사용량' 집계용 토큰 기록. 캐시를 새로 만든 토큰(cache_creation_input_tokens)은
+        // 입력 토큰과 같은 단가로 청구되므로 입력 토큰에 합산합니다. 실패해도 학생 응답과는 무관하므로 로그만 남깁니다.
+        const usage = final.usage
+        const cacheCreation = (usage as { cache_creation_input_tokens?: number }).cache_creation_input_tokens ?? 0
+        admin
+          .rpc('record_ai_tokens', {
+            p_user_id: user.id,
+            p_model: MODEL,
+            p_input: (usage.input_tokens ?? 0) + cacheCreation,
+            p_output: usage.output_tokens ?? 0,
+            p_cache_read: usage.cache_read_input_tokens ?? 0,
+          })
+          .then(({ error }) => {
+            if (error) console.error('activity-ai: record_ai_tokens 실패', error.message)
+          })
       } catch (e) {
         // 학생 문서 내용이나 API 키가 오류 메시지에 섞여 나가지 않도록 에러 종류만 남깁니다.
         const kind = e instanceof Anthropic.APIError ? `APIError ${e.status}` : e instanceof Error ? e.constructor.name : 'unknown'

@@ -9,6 +9,7 @@ import {
   useAuth,
 } from '../../auth/store'
 import { errorMessage } from '../../lib/dbErrors'
+import { cx } from '../common'
 import { BTN_PRIMARY, BTN_SECONDARY, Dialog } from '../Dialog'
 
 /** 화면 전체에 한 번만 두는 로그인 안내 창과 첫 로그인 동의 창 (Layout) */
@@ -91,13 +92,18 @@ function LoginDialog({ open, reason }: { open: boolean; reason: string }) {
 function AgreementDialog({ open }: { open: boolean }) {
   const [age, setAge] = useState(false)
   const [terms, setTerms] = useState(false)
+  const [userType, setUserType] = useState<'student' | 'teacher' | ''>('')
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState('')
   const submit = async () => {
+    if (!userType) {
+      setError('학생인지 교사인지 골라 주세요.')
+      return
+    }
     setBusy(true)
     setError('')
     try {
-      await agreeToTerms()
+      await agreeToTerms(userType)
     } catch (err) {
       setError(errorMessage(err))
     } finally {
@@ -138,7 +144,31 @@ function AgreementDialog({ open }: { open: boolean }) {
           (새 탭)
         </p>
       </div>
-      <fieldset className="mt-5 space-y-3">
+      <fieldset className="mt-5 space-y-2">
+        <legend className="text-[15px] font-semibold text-gray-800">학생인가요, 교사인가요? (필수)</legend>
+        <div className="flex gap-2">
+          {(['student', 'teacher'] as const).map((v) => (
+            <label
+              key={v}
+              className={cx(
+                'flex flex-1 cursor-pointer items-center justify-center gap-2 rounded-xl border px-4 py-3 text-[15px] font-semibold',
+                userType === v ? 'border-brand-400 bg-brand-50 text-brand-800' : 'border-gray-200 text-gray-700 hover:bg-gray-50',
+              )}
+            >
+              <input
+                type="radio"
+                name="user-type"
+                value={v}
+                checked={userType === v}
+                onChange={() => setUserType(v)}
+                className="accent-brand-500"
+              />
+              {v === 'student' ? '학생' : '교사'}
+            </label>
+          ))}
+        </div>
+      </fieldset>
+      <fieldset className="mt-4 space-y-3">
         <legend className="sr-only">동의 항목</legend>
         <label className="flex cursor-pointer items-start gap-3 text-[15px] font-medium text-gray-800">
           <input type="checkbox" checked={age} onChange={(e) => setAge(e.target.checked)} className="mt-1 size-5 shrink-0 accent-brand-500" />
@@ -155,7 +185,7 @@ function AgreementDialog({ open }: { open: boolean }) {
         </p>
       )}
       <div className="mt-6 flex flex-col gap-2 sm:flex-row-reverse">
-        <button type="button" onClick={submit} disabled={!age || !terms || busy} className={BTN_PRIMARY}>
+        <button type="button" onClick={submit} disabled={!age || !terms || !userType || busy} className={BTN_PRIMARY}>
           {busy ? '저장하는 중…' : '동의하고 시작하기'}
         </button>
         <button type="button" onClick={dismissAgreement} className={BTN_SECONDARY}>

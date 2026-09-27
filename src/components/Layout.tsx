@@ -1,6 +1,6 @@
 import { Suspense, useEffect, useId, useRef, useState, type FormEvent } from 'react'
 import { Link, Outlet, ScrollRestoration, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
-import { useAuth } from '../auth/store'
+import { isAdmin, useAuth } from '../auth/store'
 import { IS_SAMPLE_DATA, SITE_NAME } from '../config'
 import { lazyWithReload as lazy } from '../lib/chunkReload'
 import AccountButton from './auth/AccountButton'
@@ -21,6 +21,9 @@ const NAV: NavItem[] = [
   { to: '/ai', label: 'AI 연동' },
   { to: '/trends', label: '경쟁률 추세' },
 ]
+
+/** 관리자에게만 보이는 메뉴 ('경쟁률 추세' 오른쪽) */
+const ADMIN_NAV: NavItem = { to: '/admin', label: '관리자' }
 
 // 로그인 안내·이용 동의 창은 필요할 때만 받습니다(첫 화면을 가볍게).
 const AuthDialogs = lazy(() => import('./auth/AuthDialogs'))
@@ -134,8 +137,10 @@ export default function Layout() {
     setSearchOpen(true)
   }
 
+  const navItems = isAdmin(auth) ? [...NAV, ADMIN_NAV] : NAV
+
   const menu = (variant: 'desktop' | 'mobile') =>
-    NAV.map((n) => {
+    navItems.map((n) => {
       const current = navCurrent(n, path)
       return (
         <Link
@@ -246,7 +251,7 @@ export default function Layout() {
           </p>
           <p className="mt-2">
             <Link
-              to="/admin"
+              to="/admin?tab=data"
               className="rounded font-medium text-gray-600 underline decoration-gray-300 underline-offset-4 hover:text-gray-900 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-500"
             >
               데이터 관리

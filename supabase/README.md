@@ -280,6 +280,13 @@ Supabase 대시보드 → **Edge Functions → Secrets** 에서 추가합니다.
   학생 약 30명이 한꺼번에 써도 감당할 수 있는 수준입니다. 실제 사용량은 Anthropic 콘솔의 **Usage** 와 수파베이스 **Table Editor → ai_usage** 에서 확인할 수 있습니다.
 - Anthropic 콘솔의 **Usage limits(사용 한도)** 에서 한 달 최대 사용 금액을 미리 정해 두면 예상치 못한 과금을 막을 수 있습니다.
 
+### E. 관리자 페이지에 토큰(비용) 기록하기
+
+관리자 페이지(`/admin` → 'AI 사용량' 탭)에서 요청 수·토큰 수·예상 비용을 보려면, 아래 '관리자 페이지' 항목의 **0003_admin.sql** 을 먼저
+실행하고 이 함수(`activity-ai`)를 **다시 배포**해야 합니다(토큰을 기록하는 코드가 이 SQL 이 만드는 `record_ai_tokens()` 함수를 부르기
+때문입니다). 순서: 0003_admin.sql 실행 → `activity-ai` 함수 다시 배포(같은 이름으로 Deploy function). 기록은 다시 배포한 뒤 요청부터
+쌓이고, 그전 사용량은 소급되지 않습니다.
+
 ### 개인정보(국외 이전) 동의
 
 AI 기능은 학생 텍스트(마스킹 처리됨)를 미국의 Anthropic 서버로 보내므로, 이용 규칙과는 별도로 **AI 기능을 처음 쓸 때 한 번 더 동의**를 받습니다
@@ -287,3 +294,53 @@ AI 기능은 학생 텍스트(마스킹 처리됨)를 미국의 Anthropic 서버
 동의하지 않아도 활동 카드 작성·PDF 보기 등 AI 가 아닌 기능은 그대로 쓸 수 있고, AI 요약·채팅만 막힙니다.
 Anthropic 은 API 로 받은 내용을 모델 학습에 쓰지 않으며, 기본적으로 30일 이내(남용 감지 목적)에 삭제합니다(Anthropic 정책은 바뀔 수 있으니
 최신 내용은 <https://www.anthropic.com/legal/commercial-terms> 에서 확인하세요).
+
+## 관리자 페이지 (/admin) — 회원 · 저장 공간 · AI 사용량
+
+로그인 메뉴에 '관리자' 항목이 보이고 `/admin` 화면에 '회원 · 저장 공간 · AI 사용량 · 데이터 관리' 탭이 생깁니다(관리자 계정으로 로그인해야
+보입니다. 관리자 지정 방법은 맨 위 "E. 선생님 계정을 관리자로 지정" 항목 참고). '데이터 관리' 탭은 기존 엑셀 업로드 화면과 같습니다.
+
+### A. SQL 실행
+
+1. Supabase **SQL Editor** 에 [`supabase/migrations/0003_admin.sql`](migrations/0003_admin.sql) 전체를 붙여 넣고 **Run**
+   (`0001_stage3.sql`, `0002_activities.sql` 을 먼저 실행해 두어야 합니다). 여러 번 실행해도 안전합니다.
+2. 확인: **Table Editor** 의 `profiles` 표에 `user_type` 열이, `ai_usage` 표에 `input_tokens`·`output_tokens`·`cache_read_tokens`
+   열이 추가되어 있고, `ai_usage_model` 표가 새로 보이면 성공입니다.
+
+이 SQL 이 만드는 것:
+
+| 표·함수 | 내용 |
+|---|---|
+| `profiles.user_type` | 학생/교사 구분. 이용 동의할 때 고르고, 내 정보 화면에서 바꿀 수 있음 |
+| `admin_list_users()` | 회원 목록(이메일·닉네임·역할·구분·가입일·최근 로그인·글/활동 수)을 돌려줌. **관리자만** 실행 가능 |
+| `admin_set_user_type()` | 관리자가 대신 학생/교사 구분을 바꿈 |
+| `admin_storage_stats()` | 데이터베이스·표별 크기, 파일 저장소(Storage) 사용량을 돌려줌. **관리자만** |
+| `ai_usage_model`, `record_ai_tokens()` | 모델별 하루 토큰 사용량 기록(activity-ai 함수가 service_role 로만 기록) |
+| `admin_ai_usage()` | 최근 며칠간 모델별 사용량과 사용량 상위 회원을 돌려줌. **관리자만** |
+
+토큰 기록을 실제로 쌓으려면 위 '활동정리 AI 요약·상담 함수' 항목의 **E. 관리자 페이지에 토큰(비용) 기록하기**대로 `activity-ai` 함수를
+**다시 배포**해야 합니다.
+
+### B. 회원 탈퇴(계정 삭제) 함수 배포 — admin-users
+
+관리자 페이지에서 다른 사람의 계정을 탈퇴시키려면(글·활동 카드까지 완전히 삭제) Supabase Auth 관리자 API 가 필요해, 별도의 Edge
+Function 을 하나 더 배포해야 합니다.
+
+1. 수파베이스 → **Edge Functions → Deploy a new function → Via Editor**
+2. 함수 이름: `admin-users`
+3. 편집기 내용을 모두 지우고 `supabase/functions/admin-users/index.ts` 내용을 통째로 붙여넣은 뒤 **Deploy function**
+4. 배포된 함수 → **Details(설정)** 에서 **Verify JWT(JWT 검증)** 이 **켜져** 있는지 확인합니다(기본값 켜짐 — 로그인한 사람만 호출해야
+   하고, 함수 안에서 다시 한번 그 사람이 관리자인지 확인합니다).
+5. 별도 Secret 설정은 필요 없습니다. `SUPABASE_URL`·`SUPABASE_ANON_KEY`·`SUPABASE_SERVICE_ROLE_KEY` 는 모든 Edge Function 에
+   Supabase 가 자동으로 넣어 줍니다(Edge Functions → Secrets 목록에서 이 셋이 이미 있는지 확인만 하면 됩니다. 안 보이면 Supabase
+   버전에 따라 이름이 다를 수 있으니 공식 문서의 "Default Secrets"를 확인하세요).
+
+### 주의할 점
+
+- 관리자 페이지의 '탈퇴' 버튼은 되돌릴 수 없습니다. 계정과 그 사람이 쓴 질문·답변·활동 카드·찜 목록이 모두 함께 지워집니다.
+- 관리자 계정끼리는 이 화면에서 서로 탈퇴시킬 수 없습니다(실수 방지). 관리자 권한을 먼저 `update public.profiles set role = 'user' ...`
+  로 내린 뒤 탈퇴시키세요.
+- '저장 공간' 탭의 트래픽(월 5GB 무료)·함수 호출 수는 Supabase 가 이 화면에 값을 내려주지 않아, 대시보드의 **Settings → Billing →
+  Usage** 화면 링크로 안내합니다.
+- 'AI 사용량' 탭의 비용은 요금표(코드 안 `src/pages/admin/pricing.ts`)를 기준으로 한 **추정치**입니다. 정확한 청구 금액은 Anthropic
+  콘솔에서 확인하세요. 모델을 추가하거나 요금이 바뀌면 그 파일의 `MODEL_PRICING` 을 고치면 됩니다.
