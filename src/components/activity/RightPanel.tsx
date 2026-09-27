@@ -23,6 +23,20 @@ function isTextLikelyBroken(text: string, pageCount: number): boolean {
   return hangul.length / letters.length < 0.12
 }
 
+const CHAT_EXAMPLES = [
+  '내 활동 중에서 희망 전공과 가장 잘 이어지는 건 뭐야?',
+  '세특 내용을 보고 내 강점 3가지를 알려 줘.',
+  '면접에서 나올 만한 질문을 5개 뽑아 줘.',
+  '2학년 때 보완하면 좋을 활동을 추천해 줘.',
+]
+
+const MEMO_PLACEHOLDER = `이 문서를 보면서 떠오른 생각을 적어 두세요. 이 기기에만 저장돼요.
+
+예)
+- 과학탐구실험 기체 발생 실험 → 화학공학과 연계 가능
+- 2학기에는 독서 활동(전공 관련 책 2권) 보충하기
+- 담임 선생님께 물어볼 것: 동아리 세특 추가 기록`
+
 export default function RightPanel({
   doc,
   cards,
@@ -198,8 +212,8 @@ export default function RightPanel({
     }
   }
 
-  const onChatSubmit = () => {
-    const message = chatInput.trim()
+  const onChatSubmit = (preset?: string) => {
+    const message = (preset ?? chatInput).trim()
     if (!message || chatAbort.current) return
     if (!aiReady) return onNeedConsent()
     if (doc.text.trim() && !doc.maskReviewed) {
@@ -305,9 +319,23 @@ export default function RightPanel({
           {rightTab === 'chat' ? (
             <div className="flex flex-col gap-3">
               {chat.length === 0 && !streamingReply ? (
-                <p className="rounded-xl bg-gray-50 px-4 py-6 text-center text-[14px] text-gray-500">
-                  이 문서 내용에 대해 궁금한 점을 물어보세요.
-                </p>
+                <div className="rounded-xl bg-gray-50 px-4 py-4">
+                  <p className="text-center text-[14px] text-gray-500">이 문서 내용에 대해 궁금한 점을 물어보세요.</p>
+                  <p className="mt-3 text-[12.5px] font-semibold text-gray-500">이런 질문을 해 보세요</p>
+                  <ul className="mt-1.5 flex flex-col gap-1.5">
+                    {CHAT_EXAMPLES.map((q) => (
+                      <li key={q}>
+                        <button
+                          type="button"
+                          onClick={() => onChatSubmit(q)}
+                          className="w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-left text-[13.5px] leading-5 text-gray-700 hover:border-brand-300 hover:bg-brand-50"
+                        >
+                          {q}
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
               ) : (
                 <ul className="space-y-2">
                   {chat.map((m, i) => (
@@ -334,7 +362,7 @@ export default function RightPanel({
                   }}
                   rows={2}
                   maxLength={4000}
-                  placeholder="질문을 입력하세요"
+                  placeholder="예: 내 활동 중에서 희망 전공과 가장 잘 이어지는 건 뭐야?"
                   className="min-h-11 flex-1 resize-y rounded-xl border border-gray-200 px-3 py-2.5 text-[14px] leading-5 focus:border-brand-400 focus:ring-2 focus:ring-brand-200 focus:outline-none"
                 />
                 {streamingReply !== null ? (
@@ -355,7 +383,7 @@ export default function RightPanel({
                 value={memo}
                 onChange={(e) => onMemoChange(e.target.value)}
                 rows={10}
-                placeholder="이 문서를 보면서 떠오른 생각을 적어 두세요. 이 기기에만 저장돼요."
+                placeholder={MEMO_PLACEHOLDER}
                 className="w-full resize-y rounded-xl border border-gray-200 px-4 py-3 text-[14px] leading-6 focus:border-brand-400 focus:ring-2 focus:ring-brand-200 focus:outline-none"
               />
               <p className="mt-1.5 text-[12.5px] text-gray-400">자동으로 저장돼요 (이 기기에만).</p>
