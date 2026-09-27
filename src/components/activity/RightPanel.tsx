@@ -64,6 +64,7 @@ export default function RightPanel({
   const [chatInput, setChatInput] = useState('')
   const [streamingReply, setStreamingReply] = useState<string | null>(null)
   const chatAbort = useRef<AbortController | null>(null)
+  const chatInputRef = useRef<HTMLTextAreaElement>(null)
 
   const [memo, setMemo] = useState(doc?.memo ?? '')
   const memoTimer = useRef<number | undefined>(undefined)
@@ -212,8 +213,8 @@ export default function RightPanel({
     }
   }
 
-  const onChatSubmit = (preset?: string) => {
-    const message = (preset ?? chatInput).trim()
+  const onChatSubmit = () => {
+    const message = chatInput.trim()
     if (!message || chatAbort.current) return
     if (!aiReady) return onNeedConsent()
     if (doc.text.trim() && !doc.maskReviewed) {
@@ -327,7 +328,10 @@ export default function RightPanel({
                       <li key={q}>
                         <button
                           type="button"
-                          onClick={() => onChatSubmit(q)}
+                          onClick={() => {
+                            setChatInput(q)
+                            chatInputRef.current?.focus()
+                          }}
                           className="w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-left text-[13.5px] leading-5 text-gray-700 hover:border-brand-300 hover:bg-brand-50"
                         >
                           {q}
@@ -352,6 +356,7 @@ export default function RightPanel({
                 className="flex items-end gap-2"
               >
                 <textarea
+                  ref={chatInputRef}
                   value={chatInput}
                   onChange={(e) => setChatInput(e.target.value)}
                   onKeyDown={(e) => {
