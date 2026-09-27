@@ -9,12 +9,31 @@ import { ConfirmDialog } from "../univ/community/parts";
 import {
   adminDeleteUser,
   fetchAdminUsers,
+  setAdminTeacherStatus,
   setAdminUserType,
   type AdminUserRow,
 } from "./adminApi";
 import { Callout, LINK } from "./parts";
 
-const TYPE_LABEL: Record<string, string> = { student: "학생", teacher: "교사" };
+const TYPE_LABEL: Record<string, string> = {
+  student: "학생",
+  parent: "학부모",
+  teacher: "교사",
+};
+
+const TEACHER_ROLE_LABEL: Record<string, string> = {
+  homeroom: "담임",
+  subject: "교과",
+  homeroom_subject: "담임·교과",
+};
+
+const TEACHER_STATUS_LABEL: Record<string, { label: string; cls: string }> = {
+  pending: { label: "승인 대기", cls: "bg-amber-100 text-amber-900" },
+  approved: { label: "승인됨", cls: "bg-emerald-100 text-emerald-900" },
+  rejected: { label: "반려됨", cls: "bg-red-100 text-red-800" },
+};
+
+type Filter = "all" | "student" | "parent" | "teacher" | "pending" | "unset";
 
 function isThisMonth(iso: string) {
   const d = new Date(iso);
@@ -24,14 +43,36 @@ function isThisMonth(iso: string) {
   );
 }
 
+/** 회원 카드·표에 보여 줄 실명/학교/학년반번호(학생) 또는 담당/학년반(교사) 요약 */
+function memberDetail(r: AdminUserRow): string | null {
+  const parts: string[] = [];
+  if (r.real_name) parts.push(r.real_name);
+  if (r.school) parts.push(r.school);
+  if (r.user_type === "student" && r.grade) {
+    parts.push(`${r.grade}학년 ${r.class_no}반 ${r.student_no}번`);
+  }
+  if (r.user_type === "teacher" && r.teacher_role) {
+    const role = TEACHER_ROLE_LABEL[r.teacher_role] ?? r.teacher_role;
+    parts.push(
+      r.teacher_grade
+        ? `${role}(${r.teacher_grade}학년 ${r.teacher_class}반)`
+        : role,
+    );
+  }
+  return parts.length ? parts.join(" · ") : null;
+}
+
 export default function MembersTab() {
   const [rows, setRows] = useState<AdminUserRow[] | null>(null);
   const [error, setError] = useState<AppError | null>(null);
   const [attempt, setAttempt] = useState(0);
   const [q, setQ] = useState("");
+  const [filter, setFilter] = useState<Filter>("all");
   const [target, setTarget] = useState<AdminUserRow | null>(null);
   const [checked, setChecked] = useState(false);
   const [dialogError, setDialogError] = useState("");
+  const [rejectTarget, setRejectTarget] = useState<AdminUserRow | null>(null);
+  const [rejectError, setRejectError] = useState("");
 
   useEffect(() => {
     let alive = true;
@@ -45,40 +86,96 @@ export default function MembersTab() {
     };
   }, [attempt]);
 
-  const filtered = useMemo(() => {
-    if (!rows) return [];
-    const needle = q.trim().toLowerCase();
-    if (!needle) return rows;
-    return rows.filter(
-      (r) =>
-        r.email?.toLowerCase().includes(needle) ||
-        r.nickname.toLowerCase().includes(needle),
-    );
-  }, [rows, q]);
-
   const summary = useMemo(() => {
     if (!rows) return null;
     return {
       total: rows.length,
       student: rows.filter((r) => r.user_type === "student").length,
+      parent: rows.filter((r) => r.user_type === "parent").length,
       teacher: rows.filter((r) => r.user_type === "teacher").length,
+      pending: rows.filter(
+        (r) => r.user_type === "teacher" && r.teacher_status === "pending",
+      ).length,
       unset: rows.filter((r) => !r.user_type).length,
       thisMonth: rows.filter((r) => isThisMonth(r.created_at)).length,
     };
   }, [rows]);
 
+  const filtered = useMemo(() => {
+    if (!rows) return [];
+    let list = rows;
+    if (filter === "pending") {
+      list = list.filter(
+        (r) => r.user_type === "teacher" && r.teacher_status === "pending",
+      );
+    } else if (filter === "unset") {
+      list = list.filter((r) => !r.user_type);
+    } else if (filter !== "all") {
+      list = list.filter((r) => r.user_type === filter);
+    }
+    const needle = q.trim().toLowerCase();
+    if (needle) {
+      list = list.filter(
+        (r) =>
+          r.email?.toLowerCase().includes(needle) ||
+          r.nickname.toLowerCase().includes(needle) ||
+          r.real_name?.toLowerCase().includes(needle) ||
+          r.school?.toLowerCase().includes(needle),
+      );
+    }
+    return list;
+  }, [rows, q, filter]);
+
   const changeType = async (
     row: AdminUserRow,
-    userType: "student" | "teacher",
+    userType: "student" | "parent" | "teacher",
   ) => {
     const prev = rows;
     setRows(
       (r) =>
-        r?.map((x) => (x.id === row.id ? { ...x, user_type: userType } : x)) ??
-        r,
+        r?.map((x) =>
+          x.id === row.id
+            ? {
+                ...x,
+                user_type: userType,
+                teacher_status:
+                  userType === "teacher"
+                    ? x.role === "admin"
+                      ? "approved"
+                      : "pending"
+                    : null,
+              }
+            : x,
+        ) ?? r,
     );
     try {
       await setAdminUserType(row.id, userType);
+    } catch (err) {
+      setRows(prev ?? null);
+      showToast(toAppError(err).message, "error");
+    }
+  };
+
+  const setTeacherStatus = async (
+    row: AdminUserRow,
+    status: "approved" | "rejected" | "pending",
+  ) => {
+    const prev = rows;
+    setRows(
+      (r) =>
+        r?.map((x) =>
+          x.id === row.id ? { ...x, teacher_status: status } : x,
+        ) ?? r,
+    );
+    try {
+      await setAdminTeacherStatus(row.id, status);
+      showToast(
+        status === "approved"
+          ? `${row.nickname} 님을 선생님으로 승인했어요.`
+          : status === "rejected"
+            ? `${row.nickname} 님의 선생님 신청을 반려했어요.`
+            : `${row.nickname} 님을 승인 대기로 되돌렸어요.`,
+      );
     } catch (err) {
       setRows(prev ?? null);
       showToast(toAppError(err).message, "error");
@@ -117,15 +214,25 @@ export default function MembersTab() {
   }
   if (!rows || !summary) return <Loading label="회원 목록을 불러오는 중…" />;
 
+  const TABS: { key: Filter; label: string; n: number }[] = [
+    { key: "all", label: "전체", n: summary.total },
+    { key: "student", label: "학생", n: summary.student },
+    { key: "parent", label: "학부모", n: summary.parent },
+    { key: "teacher", label: "교사", n: summary.teacher },
+    { key: "pending", label: "승인 대기", n: summary.pending },
+    { key: "unset", label: "미선택", n: summary.unset },
+  ];
+
   return (
     <div>
-      <div className="grid grid-cols-2 gap-2 sm:grid-cols-5">
+      <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
         {[
           ["전체", summary.total],
           ["학생", summary.student],
+          ["학부모", summary.parent],
           ["교사", summary.teacher],
-          ["미선택", summary.unset],
           ["이번 달 가입", summary.thisMonth],
+          ["미선택", summary.unset],
         ].map(([label, n]) => (
           <div
             key={label}
@@ -137,6 +244,42 @@ export default function MembersTab() {
             </p>
           </div>
         ))}
+        {summary.pending > 0 && (
+          <button
+            type="button"
+            onClick={() => setFilter("pending")}
+            className="rounded-xl bg-amber-50 px-4 py-3 text-left ring-1 ring-amber-200 hover:bg-amber-100"
+          >
+            <p className="text-[13px] text-amber-800">승인 대기 교사</p>
+            <p className="mt-0.5 text-[22px] font-extrabold tabular-nums text-amber-900">
+              {summary.pending}
+            </p>
+          </button>
+        )}
+      </div>
+
+      <div
+        role="tablist"
+        aria-label="회원 구분 필터"
+        className="mt-4 flex flex-wrap gap-2"
+      >
+        {TABS.map((t) => (
+          <button
+            key={t.key}
+            type="button"
+            role="tab"
+            aria-selected={filter === t.key}
+            onClick={() => setFilter(t.key)}
+            className={cx(
+              "rounded-full px-3.5 py-1.5 text-[14px] font-semibold",
+              filter === t.key
+                ? "bg-brand-400 text-white"
+                : "bg-gray-100 text-gray-700 hover:bg-gray-200",
+            )}
+          >
+            {t.label} {t.n}
+          </button>
+        ))}
       </div>
 
       <div className="mt-4">
@@ -147,7 +290,7 @@ export default function MembersTab() {
           id="member-search"
           value={q}
           onChange={(e) => setQ(e.target.value)}
-          placeholder="이메일 또는 닉네임으로 검색"
+          placeholder="이메일·닉네임·이름·학교로 검색"
           className="h-11 w-full max-w-sm rounded-xl border border-gray-200 bg-white px-4 text-[15px] focus:ring-2 focus:ring-brand-400 focus:outline-none sm:w-full"
         />
       </div>
@@ -160,15 +303,15 @@ export default function MembersTab() {
         <>
           {/* 데스크톱: 표 */}
           <div className="mt-4 hidden overflow-x-auto rounded-xl border border-gray-200 md:block">
-            <table className="w-full min-w-[860px] text-left text-[14px]">
+            <table className="w-full min-w-[980px] text-left text-[14px]">
               <thead className="bg-gray-50 text-gray-600">
                 <tr>
                   <th className="px-3 py-2.5 font-semibold">닉네임</th>
                   <th className="px-3 py-2.5 font-semibold">이메일</th>
                   <th className="px-3 py-2.5 font-semibold">구분</th>
+                  <th className="px-3 py-2.5 font-semibold">회원 정보</th>
                   <th className="px-3 py-2.5 font-semibold">가입일</th>
                   <th className="px-3 py-2.5 font-semibold">최근 로그인</th>
-                  <th className="px-3 py-2.5 font-semibold">활동</th>
                   <th className="px-3 py-2.5 font-semibold" />
                 </tr>
               </thead>
@@ -187,6 +330,7 @@ export default function MembersTab() {
                         <RoleBadge
                           admin={r.role === "admin"}
                           userType={r.user_type}
+                          teacherStatus={r.teacher_status}
                         />
                       </span>
                     </td>
@@ -196,6 +340,19 @@ export default function MembersTab() {
                     <td className="px-3 py-2.5">
                       <TypeSelect row={r} onChange={changeType} />
                     </td>
+                    <td className="px-3 py-2.5 text-gray-600">
+                      {memberDetail(r) ?? "—"}
+                      {r.user_type === "teacher" && r.teacher_status && (
+                        <TeacherApproval
+                          row={r}
+                          onChange={setTeacherStatus}
+                          onRejectClick={() => {
+                            setRejectTarget(r);
+                            setRejectError("");
+                          }}
+                        />
+                      )}
+                    </td>
                     <td className="px-3 py-2.5 text-gray-500">
                       {fullDateTime(r.created_at)}
                     </td>
@@ -203,10 +360,6 @@ export default function MembersTab() {
                       {r.last_sign_in_at
                         ? relativeTime(r.last_sign_in_at)
                         : "기록 없음"}
-                    </td>
-                    <td className="px-3 py-2.5 text-gray-500 tabular-nums">
-                      질문 {r.question_count} · 답변 {r.answer_count} · 활동{" "}
-                      {r.activity_count}
                     </td>
                     <td className="px-3 py-2.5 text-right">
                       {r.role !== "admin" && (
@@ -247,6 +400,7 @@ export default function MembersTab() {
                       <RoleBadge
                         admin={r.role === "admin"}
                         userType={r.user_type}
+                        teacherStatus={r.teacher_status}
                       />
                     </p>
                     <p className="truncate text-[13px] text-gray-500">
@@ -254,6 +408,11 @@ export default function MembersTab() {
                     </p>
                   </div>
                 </div>
+                {memberDetail(r) && (
+                  <p className="mt-2 text-[13px] text-gray-600">
+                    {memberDetail(r)}
+                  </p>
+                )}
                 <dl className="mt-3 grid grid-cols-2 gap-y-1 text-[13px] text-gray-600">
                   <dt className="text-gray-400">가입일</dt>
                   <dd>{fullDateTime(r.created_at)}</dd>
@@ -269,6 +428,18 @@ export default function MembersTab() {
                     {r.activity_count}
                   </dd>
                 </dl>
+                {r.user_type === "teacher" && r.teacher_status && (
+                  <div className="mt-2">
+                    <TeacherApproval
+                      row={r}
+                      onChange={setTeacherStatus}
+                      onRejectClick={() => {
+                        setRejectTarget(r);
+                        setRejectError("");
+                      }}
+                    />
+                  </div>
+                )}
                 <div className="mt-3 flex items-center justify-between gap-2">
                   <TypeSelect row={r} onChange={changeType} />
                   {r.role !== "admin" && (
@@ -328,7 +499,79 @@ export default function MembersTab() {
           </p>
         )}
       </ConfirmDialog>
+
+      <ConfirmDialog
+        open={!!rejectTarget}
+        title={`${rejectTarget?.nickname ?? ""} 님의 선생님 신청을 반려할까요?`}
+        confirmLabel="반려하기"
+        onClose={() => setRejectTarget(null)}
+        onConfirm={async () => {
+          if (!rejectTarget) return;
+          try {
+            await setTeacherStatus(rejectTarget, "rejected");
+            setRejectTarget(null);
+          } catch (err) {
+            setRejectError(toAppError(err).message);
+          }
+        }}
+      >
+        <p>
+          반려하면 이 회원에게는 &lsquo;반려됨&rsquo;으로 보이고, 학교 정보를
+          다시 확인해 저장하면 승인 대기로 다시 신청할 수 있어요.
+        </p>
+        {rejectError && (
+          <p
+            role="alert"
+            className="mt-3 rounded-xl bg-red-50 px-4 py-3 text-[14px] text-red-800"
+          >
+            {rejectError}
+          </p>
+        )}
+      </ConfirmDialog>
     </div>
+  );
+}
+
+function TeacherApproval({
+  row,
+  onChange,
+  onRejectClick,
+}: {
+  row: AdminUserRow;
+  onChange: (row: AdminUserRow, status: "approved" | "rejected" | "pending") => void;
+  onRejectClick: () => void;
+}) {
+  const status = row.teacher_status;
+  if (!status) return null;
+  return (
+    <span className="mt-1 flex flex-wrap items-center gap-1.5">
+      <span
+        className={cx(
+          "inline-flex items-center rounded-md px-1.5 py-0.5 text-[12px] font-bold",
+          TEACHER_STATUS_LABEL[status].cls,
+        )}
+      >
+        {TEACHER_STATUS_LABEL[status].label}
+      </span>
+      {status !== "approved" && (
+        <button
+          type="button"
+          onClick={() => onChange(row, "approved")}
+          className="rounded-md px-1.5 py-0.5 text-[12px] font-semibold text-emerald-700 hover:bg-emerald-50"
+        >
+          승인
+        </button>
+      )}
+      {status !== "rejected" && (
+        <button
+          type="button"
+          onClick={onRejectClick}
+          className="rounded-md px-1.5 py-0.5 text-[12px] font-semibold text-red-700 hover:bg-red-50"
+        >
+          반려
+        </button>
+      )}
+    </span>
   );
 }
 
@@ -337,13 +580,14 @@ function TypeSelect({
   onChange,
 }: {
   row: AdminUserRow;
-  onChange: (row: AdminUserRow, v: "student" | "teacher") => void;
+  onChange: (row: AdminUserRow, v: "student" | "parent" | "teacher") => void;
 }) {
   return (
     <select
       value={row.user_type ?? ""}
       onChange={(e) =>
-        e.target.value && onChange(row, e.target.value as "student" | "teacher")
+        e.target.value &&
+        onChange(row, e.target.value as "student" | "parent" | "teacher")
       }
       className={cx(
         "h-9 rounded-lg border px-2 text-[13px] focus:ring-2 focus:ring-brand-400 focus:outline-none",
@@ -357,6 +601,7 @@ function TypeSelect({
         미선택
       </option>
       <option value="student">{TYPE_LABEL.student}</option>
+      <option value="parent">{TYPE_LABEL.parent}</option>
       <option value="teacher">{TYPE_LABEL.teacher}</option>
     </select>
   );

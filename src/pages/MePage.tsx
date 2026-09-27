@@ -6,12 +6,22 @@ import {
   loadProfile,
   openAgreement,
   openLogin,
+  saveMemberProfile,
   startAuth,
   updateNickname,
-  updateUserType,
   useAuth,
+  type Profile,
 } from "../auth/store";
 import { NicknameAvatar, RoleBadge } from "../components/auth/AccountButton";
+import {
+  EMPTY_MEMBER_FIELDS,
+  MemberDetailFields,
+  MemberTypeChooser,
+  memberFieldsFromProfile,
+  memberFieldsProblem,
+  memberFieldsToInput,
+  type MemberFieldsValue,
+} from "../components/auth/MemberFields";
 import {
   cx,
   EmptyState,
@@ -113,6 +123,7 @@ export default function MePage() {
         ) : (
           <>
             <ProfileCard />
+            <MemberProfileCard />
             <FavoritesCard />
             <AiConsentCard userId={auth.profile.id} />
             <PostsCard userId={auth.profile.id} />
@@ -212,7 +223,7 @@ function ProfileCard() {
         <div className="min-w-0">
           <p className="flex items-center gap-2 truncate text-[20px] font-bold text-gray-900">
             {profile.nickname}
-            <RoleBadge admin={admin} userType={profile.user_type} />
+            <RoleBadge admin={admin} userType={profile.user_type} teacherStatus={profile.teacher_status} />
           </p>
           {auth.email && (
             <p className="truncate text-[14px] text-gray-500">
@@ -230,8 +241,6 @@ function ProfileCard() {
           </button>
         </div>
       )}
-
-      <UserTypeField />
 
       <form onSubmit={submit} className="mt-6" noValidate>
         <label
@@ -279,20 +288,45 @@ function ProfileCard() {
   );
 }
 
-/** 학생/교사 구분 선택·변경. 기존 가입자로 아직 안 고른 경우 안내를 함께 보여 줍니다. */
-function UserTypeField() {
+const TEACHER_STATUS_CHIP: Record<
+  NonNullable<Profile["teacher_status"]>,
+  { label: string; cls: string }
+> = {
+  pending: { label: "승인 대기", cls: "bg-amber-100 text-amber-900" },
+  approved: { label: "승인됨", cls: "bg-emerald-100 text-emerald-900" },
+  rejected: { label: "반려됨", cls: "bg-red-100 text-red-800" },
+};
+
+/** 회원 정보(구분·이름·학교·학년반번호 또는 담당·학년반) 보기·수정. 기존 가입자로 아직 안 고른 경우 안내를 함께 보여 줍니다. */
+function MemberProfileCard() {
   const auth = useAuth();
   const profile = auth.profile!;
+  const [editing, setEditing] = useState(!profile.user_type);
+  const [fields, setFields] = useState<MemberFieldsValue>(() =>
+    memberFieldsFromProfile(profile),
+  );
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
 
-  const choose = async (v: "student" | "teacher") => {
-    if (v === profile.user_type || busy) return;
+  useEffect(() => {
+    if (!editing) setFields(memberFieldsFromProfile(profile));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [profile, editing]);
+
+  const problem = memberFieldsProblem(fields);
+
+  const submit = async (e: FormEvent) => {
+    e.preventDefault();
+    if (problem) {
+      setError(problem);
+      return;
+    }
     setBusy(true);
     setError("");
     try {
-      await updateUserType(v);
-      showToast("구분을 저장했어요.");
+      await saveMemberProfile(memberFieldsToInput(fields));
+      showToast("회원 정보를 저장했어요.");
+      setEditing(false);
     } catch (err) {
       setError(toAppError(err).message);
     } finally {
@@ -300,45 +334,137 @@ function UserTypeField() {
     }
   };
 
+  const status = profile.teacher_status;
+
   return (
-    <div
-      className={cx(
-        "mt-5 rounded-xl px-4 py-3",
-        profile.user_type
-          ? "bg-gray-50"
-          : "border border-amber-200 bg-amber-50",
-      )}
+    <Card
+      title="회원 정보"
+      description="학급·수업 단위 기능을 준비하기 위해 모으는 정보예요. 본인과 관리자만 볼 수 있어요."
     >
-      <p
-        className={cx(
-          "text-[15px] font-semibold",
-          profile.user_type ? "text-gray-800" : "text-amber-950",
-        )}
-      >
-        {profile.user_type
-          ? "구분"
-          : "학생인가요, 교사인가요? 알려 주시면 더 잘 맞는 안내를 드릴 수 있어요."}
-      </p>
-      <div className="mt-2 flex gap-2">
-        {(["student", "teacher"] as const).map((v) => (
-          <button
-            key={v}
-            type="button"
-            disabled={busy}
-            onClick={() => void choose(v)}
+      {!profile.user_type && !editing && (
+        <p className="mb-3 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-[15px] text-amber-950">
+          아직 회원 정보를 입력하지 않았어요. 학생·학부모·선생님 중 골라 주세요.
+        </p>
+      )}
+
+      {status && (
+        <div className="mb-4 flex flex-wrap items-center gap-2">
+          <span
             className={cx(
-              "flex-1 rounded-xl border px-4 py-2.5 text-[15px] font-semibold sm:flex-none sm:px-6",
-              profile.user_type === v
-                ? "border-brand-400 bg-brand-50 text-brand-800"
-                : "border-gray-200 bg-white text-gray-700 hover:bg-gray-100",
+              "inline-flex items-center rounded-full px-3 py-1 text-[13px] font-bold",
+              TEACHER_STATUS_CHIP[status].cls,
             )}
           >
-            {v === "student" ? "학생" : "교사"}
+            {TEACHER_STATUS_CHIP[status].label}
+          </span>
+          <span className="text-[13px] text-gray-500">
+            {status === "pending" &&
+              "관리자가 확인한 뒤 '선생님' 표시와 선생님 기능이 열려요. 확인 전에는 일반 회원처럼 이용할 수 있어요."}
+            {status === "approved" && "관리자가 선생님으로 확인했어요."}
+            {status === "rejected" &&
+              "학교 정보를 확인해 다시 저장하면 다시 확인 요청이 가요."}
+          </span>
+        </div>
+      )}
+
+      {editing ? (
+        <form onSubmit={submit} noValidate>
+          <fieldset>
+            <legend className="text-[15px] font-semibold text-gray-800">구분</legend>
+            <div className="mt-1.5">
+              <MemberTypeChooser
+                value={fields.userType}
+                onChange={(v) =>
+                  setFields(() => ({ ...EMPTY_MEMBER_FIELDS, userType: v }))
+                }
+              />
+            </div>
+            <MemberDetailFields
+              value={fields}
+              onChange={(patch) => setFields((f) => ({ ...f, ...patch }))}
+            />
+          </fieldset>
+          {error && (
+            <p role="alert" className="mt-3 text-[14px] text-red-700">
+              {error}
+            </p>
+          )}
+          <div className="mt-4 flex gap-2">
+            <button type="submit" disabled={busy} className={BTN_PRIMARY}>
+              {busy ? "저장하는 중…" : "저장"}
+            </button>
+            {profile.user_type && (
+              <button
+                type="button"
+                onClick={() => {
+                  setEditing(false);
+                  setError("");
+                }}
+                className={BTN_SECONDARY}
+              >
+                취소
+              </button>
+            )}
+          </div>
+        </form>
+      ) : (
+        <div>
+          <dl className="grid grid-cols-2 gap-y-1.5 text-[15px] text-gray-700 sm:grid-cols-[auto_1fr] sm:gap-x-6">
+            <dt className="text-gray-400">구분</dt>
+            <dd className="font-semibold">
+              {profile.user_type === "student"
+                ? "학생"
+                : profile.user_type === "parent"
+                  ? "학부모"
+                  : profile.user_type === "teacher"
+                    ? "선생님"
+                    : "—"}
+            </dd>
+            {profile.real_name && (
+              <>
+                <dt className="text-gray-400">이름</dt>
+                <dd>{profile.real_name}</dd>
+              </>
+            )}
+            {profile.school && (
+              <>
+                <dt className="text-gray-400">학교</dt>
+                <dd>{profile.school}</dd>
+              </>
+            )}
+            {profile.user_type === "student" && profile.grade && (
+              <>
+                <dt className="text-gray-400">학년·반·번호</dt>
+                <dd>
+                  {profile.grade}학년 {profile.class_no}반 {profile.student_no}번
+                </dd>
+              </>
+            )}
+            {profile.user_type === "teacher" && profile.teacher_role && (
+              <>
+                <dt className="text-gray-400">담당</dt>
+                <dd>
+                  {
+                    { homeroom: "담임", subject: "교과", homeroom_subject: "담임·교과" }[
+                      profile.teacher_role
+                    ]
+                  }
+                  {profile.teacher_grade &&
+                    ` · ${profile.teacher_grade}학년 ${profile.teacher_class}반`}
+                </dd>
+              </>
+            )}
+          </dl>
+          <button
+            type="button"
+            onClick={() => setEditing(true)}
+            className={cx(BTN_SECONDARY, "mt-4")}
+          >
+            {profile.user_type ? "회원 정보 수정" : "회원 정보 입력"}
           </button>
-        ))}
-      </div>
-      {error && <p className="mt-2 text-[14px] text-red-700">{error}</p>}
-    </div>
+        </div>
+      )}
+    </Card>
   );
 }
 

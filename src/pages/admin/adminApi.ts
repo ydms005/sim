@@ -12,7 +12,16 @@ export interface AdminUserRow {
   last_sign_in_at: string | null
   nickname: string
   role: 'user' | 'admin'
-  user_type: 'student' | 'teacher' | null
+  user_type: 'student' | 'parent' | 'teacher' | null
+  real_name: string | null
+  school: string | null
+  grade: number | null
+  class_no: number | null
+  student_no: number | null
+  teacher_role: 'homeroom' | 'subject' | 'homeroom_subject' | null
+  teacher_grade: number | null
+  teacher_class: number | null
+  teacher_status: 'pending' | 'approved' | 'rejected' | null
   question_count: number
   answer_count: number
   activity_count: number
@@ -24,9 +33,14 @@ export async function fetchAdminUsers(): Promise<AdminUserRow[]> {
   return unwrap(await sb.rpc('admin_list_users')) as AdminUserRow[]
 }
 
-export async function setAdminUserType(userId: string, userType: 'student' | 'teacher'): Promise<void> {
+export async function setAdminUserType(userId: string, userType: 'student' | 'parent' | 'teacher'): Promise<void> {
   const sb = await getSupabase()
   unwrap(await sb.rpc('admin_set_user_type', { p_user: userId, p_type: userType }))
+}
+
+export async function setAdminTeacherStatus(userId: string, status: 'approved' | 'rejected' | 'pending'): Promise<void> {
+  const sb = await getSupabase()
+  unwrap(await sb.rpc('admin_set_teacher_status', { p_user: userId, p_status: status }))
 }
 
 export interface TableStat {

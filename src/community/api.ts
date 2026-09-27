@@ -30,8 +30,11 @@ export interface Author {
   nickname: string;
   /** 관리자 계정이면 '관리자' 배지를 붙입니다. */
   is_admin: boolean;
-  /** 학생/교사 구분(0004 적용 전에는 오지 않을 수 있음). 교사 → '선생님', 학생 → '학생' 배지 */
-  user_type?: "student" | "teacher" | null;
+  /**
+   * 배지에 쓸 구분(0004 적용 전에는 오지 않을 수 있음). 학생 → '학생', 학부모 → '학부모',
+   * 교사는 관리자가 승인한 경우에만 'teacher' 로 옴(0005의 get_authors, 승인 전에는 null).
+   */
+  user_type?: "student" | "parent" | "teacher" | null;
 }
 
 export const TITLE_MIN = 2;

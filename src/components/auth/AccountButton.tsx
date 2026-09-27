@@ -103,6 +103,7 @@ export default function AccountButton() {
               <RoleBadge
                 admin={isAdmin(auth)}
                 userType={auth.profile?.user_type}
+                teacherStatus={auth.profile?.teacher_status}
               />
             </p>
             {auth.email && (
@@ -163,17 +164,31 @@ const ROLE_BADGE = {
   admin: { label: "관리자", cls: "bg-brand-100 text-brand-800" },
   teacher: { label: "선생님", cls: "bg-amber-100 text-amber-900" },
   student: { label: "학생", cls: "bg-sky-100 text-sky-900" },
+  parent: { label: "학부모", cls: "bg-violet-100 text-violet-900" },
 } as const;
 
-/** 닉네임 옆 배지: 관리자 → '관리자', 교사 → '선생님', 학생 → '학생'. 구분이 없으면 아무것도 붙이지 않습니다. */
+/**
+ * 닉네임 옆 배지: 관리자 → '관리자', 학생 → '학생', 학부모 → '학부모', 교사 → '선생님'(승인된 경우만).
+ * 구분이 없거나(null) 교사인데 아직 승인 전(teacherStatus 가 'approved' 가 아님)이면 아무것도 붙이지 않습니다.
+ * 커뮤니티 글쓴이(get_authors) 는 서버가 이미 승인된 교사만 'teacher' 로 내려주므로 teacherStatus 를 안 넘겨도 됩니다.
+ */
 export function RoleBadge({
   admin,
   userType,
+  teacherStatus,
 }: {
   admin?: boolean;
-  userType?: "student" | "teacher" | null;
+  userType?: "student" | "parent" | "teacher" | null;
+  teacherStatus?: "pending" | "approved" | "rejected" | null;
 }) {
-  const key = admin ? "admin" : userType;
+  const key =
+    admin
+      ? "admin"
+      : userType === "teacher"
+        ? teacherStatus === undefined || teacherStatus === "approved"
+          ? "teacher"
+          : null
+        : userType;
   if (!key) return null;
   const { label, cls } = ROLE_BADGE[key];
   return (

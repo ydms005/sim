@@ -12,6 +12,10 @@ import { showToast } from '../lib/toast'
  *  - 그 밖에는 '로그인' 버튼을 누르거나 커뮤니티·내 정보 화면을 열 때 받습니다.
  */
 
+export type UserType = 'student' | 'parent' | 'teacher'
+export type TeacherRole = 'homeroom' | 'subject' | 'homeroom_subject'
+export type TeacherStatus = 'pending' | 'approved' | 'rejected'
+
 export interface Profile {
   id: string
   nickname: string
@@ -19,8 +23,39 @@ export interface Profile {
   /** 이용 규칙·개인정보 처리방침 동의 시각. 없으면 아직 동의 전(글쓰기·찜 저장 불가) */
   agreed_at: string | null
   created_at: string
-  /** 학생/교사 구분. 기존 가입자는 아직 고르지 않아 null 일 수 있음 */
-  user_type: 'student' | 'teacher' | null
+  /** 학생/학부모/교사 구분. 기존 가입자는 아직 고르지 않아 null 일 수 있음 */
+  user_type: UserType | null
+  /** 실명. 본인과 관리자만 볼 수 있음 */
+  real_name: string | null
+  /** 학교 (학생: 학교, 학부모: 자녀 학교(선택), 교사: 학교) */
+  school: string | null
+  /** 학년 (학생) */
+  grade: number | null
+  /** 반 (학생) */
+  class_no: number | null
+  /** 번호 (학생) */
+  student_no: number | null
+  /** 담당 (교사): 담임 / 교과 / 담임·교과 */
+  teacher_role: TeacherRole | null
+  /** 담임 학년 (teacher_role 이 담임을 포함할 때 필수) */
+  teacher_grade: number | null
+  /** 담임 반 (teacher_role 이 담임을 포함할 때 필수) */
+  teacher_class: number | null
+  /** 교사 승인 상태. 학생/학부모는 null */
+  teacher_status: TeacherStatus | null
+}
+
+/** 회원 정보 화면(가입 동의·내 정보)에서 저장하는 값. 구분에 따라 필요한 항목만 채웁니다. */
+export interface MemberProfileInput {
+  user_type: UserType
+  real_name?: string | null
+  school?: string | null
+  grade?: number | null
+  class_no?: number | null
+  student_no?: number | null
+  teacher_role?: TeacherRole | null
+  teacher_grade?: number | null
+  teacher_class?: number | null
 }
 
 export type ProfileState = 'idle' | 'loading' | 'ready' | 'not_ready' | 'missing' | 'error'
@@ -180,7 +215,8 @@ function applySession(session: Session | null) {
   void loadProfile()
 }
 
-const PROFILE_COLS = 'id,nickname,role,agreed_at,created_at,user_type'
+const PROFILE_COLS =
+  'id,nickname,role,agreed_at,created_at,user_type,real_name,school,grade,class_no,student_no,teacher_role,teacher_grade,teacher_class,teacher_status'
 
 /** 내 프로필(닉네임·역할·동의 시각)을 다시 읽습니다. */
 export async function loadProfile() {
@@ -284,16 +320,16 @@ export async function signOut() {
 
 /**
  * 이용 규칙·개인정보 처리방침 동의 (동의 시각은 서버 시각으로 기록됩니다)
- * @param userType 처음 가입할 때 함께 고르는 학생/교사 구분 (필수 선택 항목)
+ * @param member 처음 가입할 때 함께 고르는 학생/학부모/교사 구분과 회원 정보 (필수)
  */
-export async function agreeToTerms(userType: 'student' | 'teacher') {
+export async function agreeToTerms(member: MemberProfileInput) {
   const uid = state.userId
   if (!uid) throw new AppError('auth', '로그인이 필요해요.')
   const client = await getSupabase()
   const profile = unwrap(
     await client
       .from('profiles')
-      .update({ agreed_at: new Date().toISOString(), user_type: userType })
+      .update({ agreed_at: new Date().toISOString(), ...member })
       .eq('id', uid)
       .select(PROFILE_COLS)
       .single<Profile>(),
@@ -301,12 +337,12 @@ export async function agreeToTerms(userType: 'student' | 'teacher') {
   set({ profile, profileState: 'ready' })
 }
 
-/** 학생/교사 구분을 고르거나 바꿉니다. (내 정보 화면) */
-export async function updateUserType(userType: 'student' | 'teacher') {
+/** 회원 정보(구분·이름·학교 등)를 고르거나 바꿉니다. (내 정보 화면) */
+export async function saveMemberProfile(member: MemberProfileInput) {
   const uid = state.userId
   if (!uid) throw new AppError('auth', '로그인이 필요해요.')
   const client = await getSupabase()
-  const profile = unwrap(await client.from('profiles').update({ user_type: userType }).eq('id', uid).select(PROFILE_COLS).single<Profile>())
+  const profile = unwrap(await client.from('profiles').update(member).eq('id', uid).select(PROFILE_COLS).single<Profile>())
   set({ profile })
   return profile
 }

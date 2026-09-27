@@ -335,6 +335,30 @@ Function 을 하나 더 배포해야 합니다.
    Supabase 가 자동으로 넣어 줍니다(Edge Functions → Secrets 목록에서 이 셋이 이미 있는지 확인만 하면 됩니다. 안 보이면 Supabase
    버전에 따라 이름이 다를 수 있으니 공식 문서의 "Default Secrets"를 확인하세요).
 
+### C. 회원 정보 확장 — 학생 · 학부모 · 교사, 교사 승인
+
+1. Supabase **SQL Editor** 에 [`supabase/migrations/0005_member_profile.sql`](migrations/0005_member_profile.sql) 전체를 붙여 넣고 **Run**
+   (`0001_stage3.sql`, `0003_admin.sql`, `0004_role_badges.sql` 을 먼저 실행해 두어야 합니다). 여러 번 실행해도 안전합니다.
+2. 확인: **Table Editor** 의 `profiles` 표에 `real_name`·`school`·`grade`·`class_no`·`student_no`·`teacher_role`·`teacher_grade`·
+   `teacher_class`·`teacher_status` 열이 추가되어 있으면 성공입니다.
+
+이 SQL 이 만드는 것:
+
+| 표·함수 | 내용 |
+|---|---|
+| `profiles.user_type` | '학부모(parent)'가 추가되어 학생/학부모/교사 세 가지가 됨 |
+| `profiles.real_name`·`school`·`grade`·`class_no`·`student_no` | 이름·학교·학년·반·번호(학생 필수, 학부모는 자녀 학교만 선택 입력). **본인과 관리자만** 볼 수 있음 |
+| `profiles.teacher_role`·`teacher_grade`·`teacher_class` | 교사의 담당(담임/교과/담임·교과)과 담임 학년·반(담임을 맡았으면 필수) |
+| `profiles.teacher_status` | 교사 승인 상태(승인 대기/승인됨/반려됨). 비회원가입 시 교사를 고르면 자동으로 '승인 대기'가 되고, **관리자가 확인해야** '선생님' 배지가 보임(관리자 계정 본인이 교사를 고르면 바로 승인됨). 사용자가 직접 바꿀 수 없음 |
+| `admin_set_teacher_status()` | 관리자가 교사 승인/반려/대기로 되돌리는 함수 |
+| `admin_set_user_type()` | '학부모' 선택을 지원하도록 확장 |
+| `admin_list_users()` | 이름·학교·학년·반·번호·담당·승인 상태도 함께 돌려주도록 확장(관리자만) |
+| `get_authors()` | 커뮤니티 글쓴이 배지 — 학생/학부모는 그대로, 교사는 **승인된 경우에만** '선생님' 배지가 보이도록 함(이름·학교 등은 여전히 절대 공개하지 않음) |
+
+관리자 페이지 '회원' 탭에서 학부모 수, '승인 대기 교사' 알림 칩, 회원별 승인/반려 버튼을 볼 수 있습니다.
+아직 '클래스'(담임·교과 교사가 학생 활동정리에 자료를 넣어 주는) 기능은 없습니다 — 계획은
+[`docs/class-plan.md`](../docs/class-plan.md) 를 참고하세요.
+
 ### 주의할 점
 
 - 관리자 페이지의 '탈퇴' 버튼은 되돌릴 수 없습니다. 계정과 그 사람이 쓴 질문·답변·활동 카드·찜 목록이 모두 함께 지워집니다.
