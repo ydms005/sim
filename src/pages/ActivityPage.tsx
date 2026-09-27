@@ -65,6 +65,19 @@ async function readPdfWithPasswordPrompt(file: File): Promise<PdfTextResult | nu
   return null
 }
 
+type DeskLayout = 'doc' | 'half' | 'ai'
+const LAYOUT_KEY = 'activity-layout'
+const LAYOUT_OPTIONS: { value: DeskLayout; label: string }[] = [
+  { value: 'doc', label: '문서 크게' },
+  { value: 'half', label: '반반' },
+  { value: 'ai', label: '채팅 크게 (문서 접기)' },
+]
+const LAYOUT_GRID: Record<DeskLayout, string> = {
+  doc: 'lg:grid-cols-[300px_minmax(0,1fr)_360px]',
+  half: 'lg:grid-cols-[260px_minmax(0,1fr)_minmax(0,1fr)]',
+  ai: 'lg:grid-cols-[260px_minmax(0,1fr)]',
+}
+
 export default function ActivityPage() {
   useDocumentTitle('활동정리')
   const auth = useAuth()
@@ -89,6 +102,23 @@ export default function ActivityPage() {
   const [deleteTarget, setDeleteTarget] = useState<LocalDocMeta | null>(null)
   const [clearAllOpen, setClearAllOpen] = useState(false)
   const [autoClear, setAutoClear] = useState(true)
+  const [layout, setLayoutState] = useState<DeskLayout>(() => {
+    try {
+      const v = localStorage.getItem(LAYOUT_KEY)
+      if (v === 'doc' || v === 'half' || v === 'ai') return v
+    } catch {
+      /* 저장소를 못 써도 기본값으로 */
+    }
+    return 'doc'
+  })
+  const setLayout = (v: DeskLayout) => {
+    setLayoutState(v)
+    try {
+      localStorage.setItem(LAYOUT_KEY, v)
+    } catch {
+      /* 무시 */
+    }
+  }
 
   useEffect(() => setAutoClear(getAutoClearOnLogout()), [])
 
@@ -266,6 +296,9 @@ export default function ActivityPage() {
     </div>
   )
 
+  // 활동 카드 편집은 가운데 칸에서 하므로, '채팅 크게'여도 카드를 고르면 가운데 칸을 보여 줍니다.
+  const deskLayout: DeskLayout = layout === 'ai' && (creatingCard || selection?.kind !== 'doc') ? 'half' : layout
+
   const asideCls = 'lg:sticky lg:top-[calc(var(--header-h)+16px)] lg:max-h-[calc(100dvh-var(--header-h)-32px)] lg:overflow-y-auto lg:rounded-2xl'
 
   return (
@@ -322,7 +355,30 @@ export default function ActivityPage() {
             </div>
           )}
 
-          <div className={cx(desktop && 'lg:grid lg:grid-cols-[300px_1fr_360px] lg:items-start lg:gap-4')}>
+          {desktop && (
+            <div className="mb-3 flex items-center justify-end gap-2">
+              <span className="text-[13px] text-gray-500">화면 배치</span>
+              <div role="radiogroup" aria-label="화면 배치" className="flex rounded-full bg-gray-100 p-1">
+                {LAYOUT_OPTIONS.map((o) => (
+                  <button
+                    key={o.value}
+                    type="button"
+                    role="radio"
+                    aria-checked={layout === o.value}
+                    onClick={() => setLayout(o.value)}
+                    className={cx(
+                      'rounded-full px-3.5 py-1.5 text-[13px] font-semibold transition-colors',
+                      layout === o.value ? 'bg-white text-brand-600 shadow-sm' : 'text-gray-500 hover:text-gray-800',
+                    )}
+                  >
+                    {o.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
+          <div className={cx(desktop && 'lg:grid lg:items-start lg:gap-4', desktop && LAYOUT_GRID[deskLayout])}>
             {(desktop || mobileTab === 'list') && (
               <aside className={cx(desktop && asideCls, !desktop && 'min-h-[70vh]')}>
                 <Sidebar
@@ -345,7 +401,7 @@ export default function ActivityPage() {
               </aside>
             )}
 
-            {(desktop || mobileTab === 'view') && <main className={cx('min-w-0', !desktop && 'mt-0 min-h-[70vh]')}>{centerContent}</main>}
+            {(desktop ? deskLayout !== 'ai' : mobileTab === 'view') && <main className={cx('min-w-0', !desktop && 'mt-0 min-h-[70vh]')}>{centerContent}</main>}
 
             {(desktop || mobileTab === 'ai') && (
               <aside className={cx(desktop && asideCls, !desktop && 'min-h-[70vh]')}>
